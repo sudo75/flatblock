@@ -1,0 +1,9 @@
+.game_container {
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+}
+
+.game_canvas {
+    position: absolute;
+}
