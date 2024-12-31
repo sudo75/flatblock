@@ -18,14 +18,13 @@ class Player extends Entity {
         this.real_x = this.game.width / 2 - this.width / 2;
         this.real_y = this.game.height / 2;
 
-        this.x = 29.5; // aligned to centre of player
-        this.y = this.calculateSpawnY(Math.floor(this.x)); // aligned to centre of player
+        this.setX(5); // aligned to centre of player
+        this.setY(this.calculateSpawnY(Math.floor(this.x))) // aligned to centre of player
 
         this.draw();
     }
 
     calculateSpawnY(x) {
-        const chunkID = this.calc.getChunkID(x);
         for (let y = 0; y < this.game.level.properties.height_blocks; y++) {
             const block_data = this.calc.getBlockData(x, y);
 
