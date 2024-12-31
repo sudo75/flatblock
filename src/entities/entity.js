@@ -9,7 +9,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
     }
 
     update(input) {
-        // player update code for inputs
+        // update code for inputs
     }
 }
 
