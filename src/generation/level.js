@@ -7,11 +7,12 @@ class Level {
         this.data = {};
         this.loaded_chunks = [];
         this.properties = {
-            width: 20,
-            height: 20
+            width_chunks: 2,
+            height_blocks: 20
         }
 
         this.chunk_size = 16;
+        this.calc = this.game.calculator;
     }
 
     unloadChunk(chunk_id) {
@@ -31,98 +32,37 @@ class Level {
 
         for (let x = 0; x < this.chunk_size; x++) {
             let col = [];
-            for (let y = 0; y < this.properties.height; y++) {
+            for (let y = 0; y < this.properties.height_blocks; y++) {
                 let name;
-                if (y === 10) {
+                if (y === 2) {
                     name = Math.round(Math.random()) === 0 ? 'dirt': 'air'
                 }
-                else if (y < 10) {
+                else if (y < 2) {
                     name = 'dirt';
                 } else {
                     name = 'air';
                 }
 
-                const block = name === 'dirt' ? new Block_dirt(x, y): new Block_Air(x, y);
+                const absolute_x = chunk_id * this.chunk_size + x;
+
+                const block = name === 'dirt' ? new Block_dirt(absolute_x, y): new Block_Air(absolute_x, y);
                 col.push(block);
             }
             chunck.push(col);
         }
         this.data[chunk_id] = { block_data: chunck };
-
-
-        for (let i = 0; i < this.properties.height; i++) {
-            let row = [];
-            for (let j = 0; j < this.chunk_size; j++) {
-                let name;
-                if (i == 10) {
-                    name = Math.round(Math.random()) === 0 ? 'dirt': 'air'
-                }
-                else if (i >= 10) {
-                    name = 'dirt';
-                } else {
-                    name = 'air';
-                }
-
-                const x = chunk_id * j + j;
-                const y = i
-                const block = new Block_dirt(j, i);
-                row.push(block);
-            }
-            chunck.push(row);
-        }
-
-        this.data[chunk_id] = { block_data: chunck };
     }
 
     generate() {
-        this.generate_chunk(0);
-        this.generate_chunk(-1);
-        this.generate_chunk(1);
+        const bounds = this.calc.getWorldBounds();
+
+        for (let i = bounds[0]; i <= bounds[1]; i++) {
+            this.generate_chunk(i);
+        }
+
+        this.data[1].block_data[15][6].name = 'dirt';
 
         console.log(this.data)
-    }
-
-    drawBlock(x, y, colour) {
-        //The first block will be y = 0, this aligns with the canvas coordinate system, and thus no recaululation is needed
-
-        const block_width = this.game.width / this.game.settings.blockview_width;
-        const block_height = this.game.height / this.game.settings.blockview_height;
-        const left = x * block_width; //dist from x axis (left)
-        const top = y * block_height; //dist from y axis (bottom)
-
-        this.ctx.fillStyle = colour;
-        this.ctx.fillRect(left, top, block_width, block_height);
-    }
-
-    drawOutline(x, y) {
-        const block_width = this.game.width / this.game.settings.blockview_width;
-        const block_height = this.game.height / this.game.settings.blockview_height;
-        const left = x * block_width; // Distance from x-axis (left)
-        const top = y * block_height; //dist from y axis (bottom)
-
-        this.ctx.beginPath();
-        this.ctx.rect(left, top, block_width, block_height);
-        this.ctx.strokeStyle = 'black'; // Outline color
-        this.ctx.stroke();
-    }
-
-    clear() {
-        this.ctx.clearRect(0, 0, this.game.width, this.game.height);
-    }
-
-    draw() {
-        this.clear();
-
-        for (let i = 0; i < this.properties.height; i++) {
-            for (let j = 0; j < this.properties.width; j++) {
-                if (this.block_data[i][j] == 1) {
-                    this.drawBlock(i, j, 'green');
-                } else {
-                    this.drawBlock(i, j, 'lightblue');
-                }
-                this.drawOutline(i, j);
-            }
-        }
     }
 }
 
