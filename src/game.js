@@ -15,9 +15,11 @@ class Game {
         this.level = null;
 
         this.settings = {
-            blockview_width: 20, //number of blocks viewable
-            blockview_height: 20
+            blockview_width: 16, //number of blocks viewable
+            blockview_height: 16
         };
+
+        this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
     }
 
     async loadModules() {
@@ -26,17 +28,20 @@ class Game {
         const { Player } = await import('./entities/player.js');
         const { InputHandler } = await import('./inputs/input.js');
         const { Level } = await import('./generation/level.js');
+        const { World_Renderer } = await import('./rendering/renderer.js');
 
         // Initialize game components
         this.player = new Player(this);
         this.input = new InputHandler();
         this.level = new Level(this);
+        this.renderer = new World_Renderer(this);
     }
 
     init() {
         this.loadModules().then(() => {
             // Initialize game components
             this.level.generate();
+            this.player.spawn();
             this.startGameLoop();
         });
     }
@@ -44,13 +49,13 @@ class Game {
     update() {
         // Update the game state
         this.player.update(this.input.keys);
-        this.player.draw();
     }
 
     startGameLoop() {
         const loop = () => {
             this.update();
-            this.level.draw();
+            this.renderer.drawWorld();
+            this.player.draw();
             requestAnimationFrame(loop);
         };
         loop();
