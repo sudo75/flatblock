@@ -48,17 +48,30 @@ class Game {
         });
     }
 
-    update() {
+    update(deltaTime) {
         // Update the game state
-        this.player.update(this.input.keys);
+        this.player.update(this.input.keys, deltaTime);
     }
 
     startGameLoop() {
         const loop = () => {
-            this.update();
+            const time_current = performance.now();
+
+            let deltaTime;
+            if (this.time_last) {
+                deltaTime = time_current - this.time_last; // In ms
+            } else {
+                deltaTime = 0;
+            }
+            
+            
+            this.update(deltaTime);
             this.renderer.drawWorld();
             this.player.draw();
             requestAnimationFrame(loop);
+
+
+            this.time_last = time_current;
         };
         loop();
     }
