@@ -15,8 +15,8 @@ class Game {
         this.level = null;
 
         this.settings = {
-            blockview_width: 16, //number of blocks viewable
-            blockview_height: 16
+            blockview_width: 15, //number of blocks viewable
+            blockview_height: 15
         };
 
         this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
@@ -24,6 +24,7 @@ class Game {
 
     async loadModules() {
         // Dynamically import modules
+        const { Calc_World } = await import('./calculations/calc_world.js');
         const { Entity } = await import('./entities/entity.js');
         const { Player } = await import('./entities/player.js');
         const { InputHandler } = await import('./inputs/input.js');
@@ -31,6 +32,7 @@ class Game {
         const { World_Renderer } = await import('./rendering/renderer.js');
 
         // Initialize game components
+        this.calculator = new Calc_World(this);
         this.player = new Player(this);
         this.input = new InputHandler();
         this.level = new Level(this);
