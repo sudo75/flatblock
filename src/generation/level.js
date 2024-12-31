@@ -1,50 +1,104 @@
+import { Block_Air, Block_dirt } from "./blocks.js";
+
 class Level {
     constructor(game) {
         this.game = game;
         this.ctx = this.game.ctx_world;
-        this.block_data = null;
+        this.data = {};
+        this.loaded_chunks = [];
         this.properties = {
             width: 20,
             height: 20
         }
+
+        this.chunk_size = 16;
     }
 
-    generate() { //GENERATES FROM TOP TO BOTTOM
+    unloadChunk(chunk_id) {
+        this.loaded_chunks = this.loaded_chunks.filter(id => id !== chunk_id);
+    }
+
+    loadChunk(chunk_id) {
+        if (!this.data[chunk_id]) {
+            this.generate_chunk(chunk_id); // Generate chunk if not already present
+        }
+        this.loaded_chunks.push(chunk_id);
+    }
+
+    generate_chunk(chunk_id) { //GENERATES FROM TOP TO BOTTOM
         // Logic to generate the game level
-        this.block_data = [];
+        let chunck = [];
+
+        for (let x = 0; x < this.chunk_size; x++) {
+            let col = [];
+            for (let y = 0; y < this.properties.height; y++) {
+                let name;
+                if (y === 10) {
+                    name = Math.round(Math.random()) === 0 ? 'dirt': 'air'
+                }
+                else if (y < 10) {
+                    name = 'dirt';
+                } else {
+                    name = 'air';
+                }
+
+                const block = name === 'dirt' ? new Block_dirt(x, y): new Block_Air(x, y);
+                col.push(block);
+            }
+            chunck.push(col);
+        }
+        this.data[chunk_id] = { block_data: chunck };
+
+
         for (let i = 0; i < this.properties.height; i++) {
             let row = [];
-            for (let j = 0; j < this.properties.width; j++) {
+            for (let j = 0; j < this.chunk_size; j++) {
+                let name;
                 if (i == 10) {
-                    row.push(Math.round(Math.random()));
+                    name = Math.round(Math.random()) === 0 ? 'dirt': 'air'
                 }
                 else if (i >= 10) {
-                    row.push(1);
+                    name = 'dirt';
                 } else {
-                    row.push(0);
+                    name = 'air';
                 }
+
+                const x = chunk_id * j + j;
+                const y = i
+                const block = new Block_dirt(j, i);
+                row.push(block);
             }
-            this.block_data.push(row);
+            chunck.push(row);
         }
+
+        this.data[chunk_id] = { block_data: chunck };
     }
 
-    drawBlock(row, col, colour) {
+    generate() {
+        this.generate_chunk(0);
+        this.generate_chunk(-1);
+        this.generate_chunk(1);
+
+        console.log(this.data)
+    }
+
+    drawBlock(x, y, colour) {
         //The first block will be y = 0, this aligns with the canvas coordinate system, and thus no recaululation is needed
 
         const block_width = this.game.width / this.game.settings.blockview_width;
         const block_height = this.game.height / this.game.settings.blockview_height;
-        const left = col * block_width; //dist from x axis (left)
-        const top = row * block_height; //dist from y axis (bottom)
+        const left = x * block_width; //dist from x axis (left)
+        const top = y * block_height; //dist from y axis (bottom)
 
         this.ctx.fillStyle = colour;
         this.ctx.fillRect(left, top, block_width, block_height);
     }
 
-    drawOutline(row, col) {
+    drawOutline(x, y) {
         const block_width = this.game.width / this.game.settings.blockview_width;
         const block_height = this.game.height / this.game.settings.blockview_height;
-        const left = col * block_width; // Distance from x-axis (left)
-        const top = row * block_height; //dist from y axis (bottom)
+        const left = x * block_width; // Distance from x-axis (left)
+        const top = y * block_height; //dist from y axis (bottom)
 
         this.ctx.beginPath();
         this.ctx.rect(left, top, block_width, block_height);
