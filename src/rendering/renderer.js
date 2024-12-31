@@ -14,10 +14,11 @@ class World_Renderer {
         this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
     }
 
-    drawOutline(x, y) {
+    drawOutline(x, y, weight) {
         const left = x; // Distance from x-axis (left)
         const top = this.game.height - y - this.game.block_size; //dist from y axis (bottom)
 
+        this.ctx.lineWidth = weight;
         this.ctx.beginPath();
         this.ctx.rect(left, top, this.game.block_size, this.game.block_size);
         this.ctx.strokeStyle = 'black'; // Outline color
@@ -62,11 +63,15 @@ class World_Renderer {
                 switch (block_data.name) {
                     case 'dirt':
                         this.drawBlock(real_x, real_y, 'green');
-                        this.drawOutline(real_x, real_y);
+                        this.drawOutline(real_x, real_y, 1);
                         break;
                 }
             }
         }
+
+        //DEBUG
+        //this.drawOutline((playerX - leftmost_blockX) * this.game.block_size - this.game.player.width / 2, (playerY - bottommost_blockY) * this.game.block_size, 4);
+
     }
 }
 
