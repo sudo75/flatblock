@@ -7,7 +7,7 @@ class Player extends Entity {
         this.ctx = this.game.ctx_player;
         this.calc = this.game.calculator;
 
-        this.width_blocks = 1; // in unit blocks
+        this.width_blocks = 0.65; // in unit blocks
         this.height_blocks = 2; // in unit blocks
 
         this.width = this.game.block_size * this.width_blocks;
@@ -18,8 +18,8 @@ class Player extends Entity {
         this.real_x = this.game.width / 2 - this.width / 2;
         this.real_y = this.game.height / 2;
 
-        this.setX(5); // aligned to centre of player
-        this.setY(this.calculateSpawnY(Math.floor(this.x))) // aligned to centre of player
+        this.x = 5; // aligned to left of player
+        this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
 
         this.draw();
     }
@@ -53,12 +53,12 @@ class Player extends Entity {
         }
 
 
-        this.real_x = this.game.width / 2 - this.width / 2;
+        this.real_x = this.game.width / 2;
         if (leftmost_blockX <= this.calc.getWorldBorders().minX) { // Horizontal centring
             const dist_left = this.x - leftmost_blockX; // dist between leftmost block and player Y
 
             if (dist_left < this.game.settings.blockview_width / 2) {
-                this.real_x = dist_left * this.game.block_size - this.width / 2;
+                this.real_x = dist_left * this.game.block_size;
             }
         }
 
@@ -67,7 +67,7 @@ class Player extends Entity {
             //const dist_left = this.game.settings.blockview_width - dist_right;
 
             if (dist_right < this.game.settings.blockview_width / 2) {
-                this.real_x = this.game.settings.blockview_width * this.game.block_size - (dist_right * this.game.block_size + this.width / 2);
+                this.real_x = this.game.settings.blockview_width * this.game.block_size - (dist_right * this.game.block_size);
             }
         }        
 
