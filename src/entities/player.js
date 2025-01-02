@@ -8,7 +8,7 @@ class Player extends Entity {
         this.calc = this.game.calculator;
 
         this.width_blocks = 0.65; // in unit blocks
-        this.height_blocks = 2; // in unit blocks
+        this.height_blocks = 1.75; // in unit blocks
 
         this.width = this.game.block_size * this.width_blocks;
         this.height = this.game.block_size * this.height_blocks;
