@@ -11,7 +11,6 @@ class InputHandler {
             if (this.acceptedKeys.includes(key)) {
                 this.keys.push(key);
             }
-            console.log(this.keys)
         });
 
         window.addEventListener('keyup', (event) => {
@@ -21,8 +20,6 @@ class InputHandler {
             if (this.keys.includes(key)) {
                 this.keys.splice(this.keys.indexOf(key), 1);
             }
-
-            console.log(this.keys)
         });
     }
 
