@@ -2,7 +2,8 @@ class World_Renderer {
     constructor(game) {
         this.game = game;
         this.ctx = this.game.ctx_world;
-        this.calc = this.game.calculator;    }
+        this.calc = this.game.calculator;    
+    }
 
     drawBlock(x, y, colour) {
         //The first block will be y = 0, this aligns with the canvas coordinate system, and thus no recaululation is needed
