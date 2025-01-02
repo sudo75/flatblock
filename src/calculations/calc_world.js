@@ -8,12 +8,32 @@ class Calc_World {
         return chunkID;
     }
 
+    isSolidBlock(x, y) {
+        const block_data = this.getBlockData(x, y);
+
+        if (block_data.type === 'solid') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     getBlockData(x, y) {
         const chunkID = this.getChunkID(x);
         const relativeX = Math.abs(x % this.game.level.chunk_size); // X-value relative to chunk
 
         const block_data = this.game.level.data[chunkID].block_data[relativeX][y];
         return block_data;
+    }
+
+    isWithinWorldBounds(x, y) {
+        const bounds = this.getWorldBorders();
+
+        if (x >= bounds.minX && x <= bounds.maxX && y >= 0 && y < this.game.level.properties.height_blocks) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     getWorldBounds() { // returns leftmost and rightmost chunk indicies
