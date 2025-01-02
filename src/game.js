@@ -20,6 +20,12 @@ class Game {
         };
 
         this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
+
+        this.tickSpeed_target = 20; // number of ticks per second
+        this.tick = 0; // resets to 0 at 9999
+
+        this.tickSpeed = null;
+        this.fps = null;
     }
 
     async loadModules() {
@@ -53,27 +59,55 @@ class Game {
         this.player.update(this.input.keys, deltaTime);
     }
 
+    update_world() {
+        // Logic that requires game ticks
+    }
+
     startGameLoop() {
-        const loop = () => {
+
+        let lastTick;
+        const tick_handler = () => {
+            const time_current = performance.now();
+
+            let tickTime;
+            if (lastTick) {
+                tickTime = time_current - lastTick; // In ms
+            } else {
+                tickTime = 0;
+            }
+            
+            
+            this.update_world();
+
+            this.tick = this.tick >= 9999 ? 0: this.tick + 1;
+            this.tickSpeed = tickTime;
+
+            lastTick = time_current;
+
+            setTimeout(tick_handler, this.tickSpeed_target);
+        };
+
+        let lastFrame;
+        const game_loop = () => {
             const time_current = performance.now();
 
             let deltaTime;
-            if (this.time_last) {
-                deltaTime = time_current - this.time_last; // In ms
+            if (lastFrame) {
+                deltaTime = (time_current - lastFrame) / 1000; // In sec
             } else {
                 deltaTime = 0;
-            }
-            
+            }            
             
             this.update(deltaTime);
             this.renderer.drawWorld();
             this.player.draw();
-            requestAnimationFrame(loop);
+            requestAnimationFrame(game_loop);
 
 
-            this.time_last = time_current;
+            lastFrame = time_current;
         };
-        loop();
+        tick_handler();
+        game_loop();
     }
 }
 
