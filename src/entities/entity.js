@@ -22,6 +22,9 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         this.h_vel = 0; // horizontal velocity
         this.v_vel = 0; // vertical velocity
+
+        this.hover = false;
+        this.fast = false;
     }
 
     jump() {
@@ -85,6 +88,31 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
             console.warn(`DeltaTime over 50ms: ${deltaTime * 1000}!`);
             deltaTime = 0.05;
         }
+
+        //Hover Mode
+        if (this.hover) {
+            this.h_vel = 0;
+            this.v_vel = 0;
+
+            const speed = this.fast ? 24: 8;
+            if (input.includes('ArrowLeft')) {
+                this.h_vel = -speed;
+            }
+            if (input.includes('ArrowRight')) {
+                this.h_vel = speed;
+            }
+    
+            if (input.includes('ArrowUp')) {
+                this.v_vel = speed;
+            }
+            if (input.includes('ArrowDown')) {
+                this.v_vel = -speed;
+            }
+            this.updatePos(deltaTime);
+            return;
+        }
+
+        //Standard Mode
 
         //Physics
         if (!this.isOnSolidBlock()) {
@@ -194,6 +222,10 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         }
 
         //Set entity position
+        this.updatePos(deltaTime);
+    }
+
+    updatePos(deltaTime) {
         this.x += this.h_vel * deltaTime;
         this.y += this.v_vel * deltaTime;
     }
