@@ -13,12 +13,12 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         //this.speed = 0; // in blocks per second
 
-        this.gravity_acceleration = -9.8;
+        this.gravity_acceleration = -24; //earth = -9.8
 
-        this.h_maxVel = 5;
-        this.h_minVel = -5;
-        this.v_maxVel = 5;
-        this.v_minVel = -5;
+        this.h_maxVel = 4;
+        this.h_minVel = -4;
+        this.v_maxVel = 10;
+        this.v_minVel = -4;
 
         this.h_vel = 0; // horizontal velocity
         this.v_vel = 0; // vertical velocity
@@ -37,6 +37,18 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
                 return true;
             }
             return false;
+        }
+        return false;
+    }
+
+    isSolidBlockAbove() { // Directly above - no space between
+        if ((this.y + this.height_blocks) % 1 === 0) {
+            if (
+                this.calc.isSolidBlock(Math.floor(this.x), this.y + this.height_blocks) ||
+                this.calc.isSolidBlock(Math.floor(this.x + this.width_blocks), this.y + this.height_blocks)
+            ) {
+                return true;
+            }
         }
         return false;
     }
@@ -69,30 +81,64 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
     update(input, deltaTime) {
         if (isNaN(this.x) || isNaN(this.y)) return;
 
+        if (deltaTime > 0.05) {
+            console.warn(`DeltaTime over 50ms: ${deltaTime * 1000}!`);
+            deltaTime = 0.05;
+        }
+
         //Physics
         if (!this.isOnSolidBlock()) {
             this.v_vel += this.gravity_acceleration * deltaTime;
         }
 
         //Set velocities
-        this.h_vel = 0;
+        //this.h_vel = 0;
         if (input.includes('ArrowLeft')) {
-            
-            this.h_vel = this.h_minVel;
+            if (this.isOnSolidBlock()) {
+                this.h_vel = this.h_minVel;
+            } else {
+                if (this.h_vel > this.h_minVel * 0.8) { // Max velocity when starting from 0 in air is 80% of that on ground
+                    this.h_vel = this.h_minVel * 0.8;
+                }
+            }
         }
         if (input.includes('ArrowRight')) {
-            this.h_vel = this.h_maxVel;
+            if (this.isOnSolidBlock()) {
+                this.h_vel = this.h_maxVel;
+            } else {
+                if (this.h_vel < this.h_maxVel * 0.8) {
+                    this.h_vel = this.h_maxVel * 0.8;
+                }
+            }
         }
 
-        //this.v_vel = 0;
         if (input.includes('ArrowUp')) {
-            if (this.isOnSolidBlock()) {
+            if (this.isOnSolidBlock() && !this.isSolidBlockAbove()) {
                 this.jump();
             }
         }
         if (input.includes('ArrowDown')) {
             //this.v_vel = this.v_minVel;
         }
+
+
+        //Induce horizontal glide
+        if (!input.includes('ArrowLeft') && !input.includes('ArrowRight') && this.h_vel !== 0) {
+            if (this.isOnSolidBlock()) {
+                const h_vel_change = (this.h_vel * 15) * deltaTime; //h_vel * resistance * delta_time
+                this.h_vel -= h_vel_change;
+                if (Math.abs(this.h_vel) < 0.05) {
+                    this.h_vel = 0;
+                }
+            } else {
+                const h_vel_change = (this.h_vel * 2) * deltaTime; //h_vel * resistance * delta_time
+                this.h_vel -= h_vel_change;
+                if (Math.abs(this.h_vel) < 0.05) {
+                    this.h_vel = 0;
+                }
+            }
+        }
+        
 
         //Ensure velocity limits
         if (this.h_vel > this.h_maxVel) {
