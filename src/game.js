@@ -101,10 +101,10 @@ class Game {
             this.update(deltaTime);
             this.renderer.drawWorld();
             this.player.draw();
-            requestAnimationFrame(game_loop);
-
 
             lastFrame = time_current;
+
+            requestAnimationFrame(game_loop);
         };
         tick_handler();
         game_loop();
