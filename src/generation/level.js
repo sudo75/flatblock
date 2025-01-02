@@ -7,7 +7,7 @@ class Level {
         this.data = {};
         this.loaded_chunks = [];
         this.properties = {
-            width_chunks: 2,
+            width_chunks: 5,
             height_blocks: 20
         }
 
@@ -34,10 +34,10 @@ class Level {
             let col = [];
             for (let y = 0; y < this.properties.height_blocks; y++) {
                 let name;
-                if (y === 2) {
+                if (y === 5) {
                     name = Math.round(Math.random()) === 0 ? 'dirt': 'air'
                 }
-                else if (y < 2) {
+                else if (y < 5) {
                     name = 'dirt';
                 } else {
                     name = 'air';
@@ -60,9 +60,9 @@ class Level {
             this.generate_chunk(i);
         }
 
-        this.data[1].block_data[15][6].name = 'dirt';
+        this.data[0].block_data[15][8] = new Block_dirt(15, 8);
 
-        console.log(this.data)
+        console.log(this.data);
     }
 }
 
