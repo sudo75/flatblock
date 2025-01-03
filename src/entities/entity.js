@@ -15,8 +15,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         this.gravity_acceleration = -24; //earth = -9.8
 
-        this.h_maxVel = 4; // blocks per second
-        this.h_minVel = -4;
+        this.h_maxVel = 3; // blocks per second
+        this.h_minVel = -3;
         this.v_maxVel = 10;
         this.v_minVel = -4;
 
@@ -89,6 +89,14 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
             deltaTime = 0.05;
         }
 
+        if (input.includes('Shift')) {
+            this.h_maxVel = 4;
+            this.h_minVel = -4;
+        } else {
+            this.h_maxVel = 3;
+            this.h_minVel = -3;
+        }
+
         //Hover Mode
         if (this.hover) {
             this.h_vel = 0;
@@ -120,7 +128,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         }
 
         //Set velocities
-        //this.h_vel = 0;
         if (input.includes('ArrowLeft')) {
             if (this.isOnSolidBlock()) {
                 this.h_vel = this.h_minVel;

@@ -2,7 +2,7 @@ class InputHandler {
     constructor() {
         this.keys = []; //arr to store held keys
 
-        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift'];
 
         window.addEventListener('keydown', (event) => {
             const key = event.key;
