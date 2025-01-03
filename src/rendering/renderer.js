@@ -61,6 +61,11 @@ class World_Renderer {
                         break;
                 }
                 this.drawOutline(real_x, real_y, 1);
+
+                const selectedBlock = this.game.player.selectedBlock;
+                if (x === selectedBlock.x && y === selectedBlock.y) {
+                    this.drawOutline(real_x, real_y, 4);
+                }
             }
         }
 

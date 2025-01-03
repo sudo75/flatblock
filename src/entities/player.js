@@ -12,6 +12,8 @@ class Player extends Entity {
 
         this.width = this.game.block_size * this.width_blocks;
         this.height = this.game.block_size * this.height_blocks;
+
+        this.selectedBlock = {};
     }
 
     spawn() {
@@ -34,6 +36,16 @@ class Player extends Entity {
         }
 
         return null;
+    }
+
+    updateCursor() {
+        const cursor = this.game.input.mouse;
+
+        const blockXY = this.calc.getBlockByRealXY(cursor.x, cursor.y);
+        this.selectedBlock = {
+            x: blockXY.x,
+            y: blockXY.y
+        }
     }
 
     update_real_pos() {

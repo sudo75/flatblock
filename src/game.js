@@ -40,7 +40,7 @@ class Game {
         // Initialize game components
         this.calculator = new Calc_World(this);
         this.player = new Player(this);
-        this.input = new InputHandler();
+        this.input = new InputHandler(this);
         this.level = new Level(this);
         this.renderer = new World_Renderer(this);
     }
@@ -96,11 +96,12 @@ class Game {
                 deltaTime = (time_current - lastFrame) / 1000; // In sec
             } else {
                 deltaTime = 0;
-            }            
+            }
             
             this.update(deltaTime);
             this.renderer.drawWorld();
             this.player.draw();
+            this.player.updateCursor();
 
             lastFrame = time_current;
 

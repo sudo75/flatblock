@@ -8,6 +8,13 @@ class Calc_World {
         return chunkID;
     }
 
+    getBlockByRealXY(real_x, real_y) {
+        const x = Math.floor(real_x / this.game.block_size + this.game.renderer.leftmost_blockX);
+        const y = Math.floor((this.game.height - real_y) / this.game.block_size + this.game.renderer.bottommost_blockY);
+
+        return {x: x, y: y};
+    }
+
     isSolidBlock(x, y) {
         const block_data = this.getBlockData(x, y);
 
