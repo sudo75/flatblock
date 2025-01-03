@@ -14,6 +14,7 @@ class Player extends Entity {
         this.height = this.game.block_size * this.height_blocks;
 
         this.selectedBlock = {};
+        this.cursorDistLim = 4;
     }
 
     spawn() {

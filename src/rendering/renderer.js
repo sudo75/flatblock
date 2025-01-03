@@ -2,7 +2,7 @@ class World_Renderer {
     constructor(game) {
         this.game = game;
         this.ctx = this.game.ctx_world;
-        this.calc = this.game.calculator;    
+        this.calc = this.game.calculator;  
     }
 
     drawBlock(x, y, colour) {
@@ -64,7 +64,9 @@ class World_Renderer {
 
                 const selectedBlock = this.game.player.selectedBlock;
                 if (x === selectedBlock.x && y === selectedBlock.y) {
-                    this.drawOutline(real_x, real_y, 4);
+                    if (this.calc.getBlockData(x, y).type === 'solid' && this.calc.getBlockDistance(x, y, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) <= this.game.player.cursorDistLim) {
+                        this.drawOutline(real_x, real_y, 4);
+                    }
                 }
             }
         }
