@@ -13,6 +13,8 @@ class Viewport {
         this.canvases.forEach(canvas => {
             canvas.width = this.width;
             canvas.height = this.height;
+            canvas.left = 0;
+            canvas.top = 0;
         });
     }
 }
