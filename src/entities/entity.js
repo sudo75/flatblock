@@ -15,7 +15,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         this.gravity_acceleration = -24; //earth = -9.8
 
-        this.h_maxVel = 4;
+        this.h_maxVel = 4; // blocks per second
         this.h_minVel = -4;
         this.v_maxVel = 10;
         this.v_minVel = -4;
@@ -208,7 +208,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
             if (crossedOverY_bottom) {
                 if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), this.hardRoundDown(possibleY + this.height_blocks), this.hardRoundDown(possibleX + this.height_blocks), this.hardRoundDown(possibleY + this.height_blocks))) {
                     this.v_vel = 0;
-                    this.y = Math.floor(possibleY);
+                    this.y = Math.floor(possibleY) + (Math.ceil(this.height_blocks) - this.height_blocks);
                 }
             }
 
