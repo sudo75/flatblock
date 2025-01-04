@@ -44,6 +44,30 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         return false;
     }
 
+    isSolidBlockAdjacent(direction) {
+        const minX = this.game.player.x;
+        const minY = this.game.player.y;
+        const maxX = this.game.player.x + this.game.player.width_blocks;
+        const maxY = this.game.player.y + this.game.player.height_blocks;
+
+        for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
+            if (direction === 'left') {
+                console.log(minY, maxY)
+                if (this.calc.isSolidBlock(this.hardRoundDown(minX), y)) {
+                    return true;
+                }
+            } else if (direction === 'right') {
+                if (this.calc.isSolidBlock(Math.floor(maxX), y)) {
+                    console.log(true)
+                    return true;
+                }
+            }
+        }
+
+        console.log(false)
+        return false;
+    }
+
     isSolidBlockAbove() { // Directly above - no space between
         if ((this.y + this.height_blocks) % 1 === 0) {
             if (
@@ -70,6 +94,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         const maxX = maxX_ ? maxX_: this.hardRoundDown(x + this.width_blocks);
         const maxY = maxY_ ? maxY_: this.hardRoundDown(y + this.height_blocks);
 
+        console.log(minX, maxX)
         for (let i = minX; i <= maxX; i++) {
             for (let j = minY; j <= maxY; j++) {
                 if (!this.calc.isWithinWorldBounds(i, j)) continue;
@@ -128,7 +153,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         }
 
         //Set velocities
-        if (input.includes('ArrowLeft')) {
+        if (input.includes('ArrowLeft') && !this.isSolidBlockAdjacent('left')) {
             if (this.isOnSolidBlock()) {
                 this.h_vel = this.h_minVel;
             } else {
@@ -137,7 +162,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
                 }
             }
         }
-        if (input.includes('ArrowRight')) {
+        if (input.includes('ArrowRight') && !this.isSolidBlockAdjacent('right')) {
             if (this.isOnSolidBlock()) {
                 this.h_vel = this.h_maxVel;
             } else {
