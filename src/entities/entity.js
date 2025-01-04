@@ -52,19 +52,15 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
             if (direction === 'left') {
-                console.log(minY, maxY)
                 if (this.calc.isSolidBlock(this.hardRoundDown(minX), y)) {
                     return true;
                 }
             } else if (direction === 'right') {
                 if (this.calc.isSolidBlock(Math.floor(maxX), y)) {
-                    console.log(true)
                     return true;
                 }
             }
         }
-
-        console.log(false)
         return false;
     }
 
@@ -94,7 +90,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         const maxX = maxX_ ? maxX_: this.hardRoundDown(x + this.width_blocks);
         const maxY = maxY_ ? maxY_: this.hardRoundDown(y + this.height_blocks);
 
-        console.log(minX, maxX)
         for (let i = minX; i <= maxX; i++) {
             for (let j = minY; j <= maxY; j++) {
                 if (!this.calc.isWithinWorldBounds(i, j)) continue;
