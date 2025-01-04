@@ -80,21 +80,25 @@ class Level {
                     resetBreakStatus();
                 }
             }
+            //console.log(this.calc.getBlockDistance(this.current_breaking.x, this.current_breaking.y, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2), this.game.player.cursorDistLim)
 
             this.current_breaking = {
                 x: this.game.player.selectedBlock.x,
                 y: this.game.player.selectedBlock.y
             };
 
-            //Set break status
-            this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status++;
-
-            //Break block
-            if (this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status >= this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].hardness) {
-                this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y] = new Block_Air(this.current_breaking.x, this.current_breaking.y);
-                this.current_breaking = null;
+            if (this.calc.getBlockDistance(this.current_breaking.x, this.current_breaking.y, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) <= this.game.player.cursorDistLim) {
+    
+                //Set break status
+                this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status++;
+    
+                //Break block
+                if (this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status >= this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].hardness) {
+                    this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y] = new Block_Air(this.current_breaking.x, this.current_breaking.y);
+                    this.current_breaking = null;
+                }
             }
-
+            
         } else {
             resetBreakStatus();
         }
