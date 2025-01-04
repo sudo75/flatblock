@@ -13,6 +13,8 @@ class Level {
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
+
+        this.current_breaking = null;
     }
 
     unloadChunk(chunk_id) {
@@ -63,6 +65,39 @@ class Level {
         this.data[0].block_data[15][8] = new Block_dirt(15, 8);
 
         console.log(this.data);
+    }
+
+    world_interaction() {
+        const resetBreakStatus = () => {
+            if (this.current_breaking) {
+                this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status = 0;
+            }
+            this.current_breaking = null;
+        };
+        if (this.game.input.mouseDown) {
+            if (this.current_breaking) {
+                if (this.game.player.selectedBlock.x !== this.current_breaking.x && this.game.player.selectedBlock.y !== this.current_breaking.y) {
+                    resetBreakStatus();
+                }
+            }
+
+            this.current_breaking = {
+                x: this.game.player.selectedBlock.x,
+                y: this.game.player.selectedBlock.y
+            };
+
+            //Set break status
+            this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status++;
+
+            //Break block
+            if (this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status >= this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].hardness) {
+                this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y] = new Block_Air(this.current_breaking.x, this.current_breaking.y);
+                this.current_breaking = null;
+            }
+
+        } else {
+            resetBreakStatus();
+        }
     }
 }
 

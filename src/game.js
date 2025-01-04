@@ -60,7 +60,8 @@ class Game {
     }
 
     update_world() {
-        // Logic that requires game ticks
+        // Logic that requires game ticks and world update logic
+        this.level.world_interaction(); // for breaking and placing blocks
     }
 
     startGameLoop() {
@@ -76,10 +77,11 @@ class Game {
                 tickTime = 0;
             }
             
-            
+
             this.update_world();
 
-            this.tick = this.tick >= 9999 ? 0: this.tick + 1;
+            //this.tick = this.tick >= 9999 ? 0: this.tick + 1;
+            this.tick++;
             this.tickSpeed = tickTime;
 
             lastTick = time_current;

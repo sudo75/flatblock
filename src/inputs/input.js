@@ -2,7 +2,8 @@ class InputHandler {
     constructor(game) {
         this.game = game;
         this.keys = []; //arr to store held keys
-        this.mouse = {};
+        this.mouse_realXY = {};
+        this.mouseDown = false;
 
         this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift'];
 
@@ -29,10 +30,18 @@ class InputHandler {
             let x = event.clientX - rect.left;
             let y = event.clientY - rect.top;
 
-            this.mouse = {
+            this.mouse_realXY = {
                 x: x,
                 y: y
             };
+        });
+
+        this.game.canvas_player.addEventListener('mousedown', () => {
+            this.mouseDown = true;
+        });
+
+        this.game.canvas_player.addEventListener('mouseup', () => {
+            this.mouseDown = false;
         });
     }
 

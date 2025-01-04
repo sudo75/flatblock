@@ -25,9 +25,15 @@ class Calc_World {
         }
     }
 
+    getRelativeX(x) {
+        const relativeX = Math.abs(x % this.game.level.chunk_size); // X-value relative to chunk
+        
+        return relativeX;
+    }
+
     getBlockData(x, y) {
         const chunkID = this.getChunkID(x);
-        const relativeX = Math.abs(x % this.game.level.chunk_size); // X-value relative to chunk
+        const relativeX = this.getRelativeX(x);
 
         const block_data = this.game.level.data[chunkID].block_data[relativeX][y];
         return block_data;

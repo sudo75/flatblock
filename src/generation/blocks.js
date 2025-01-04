@@ -36,6 +36,8 @@ class Block_Air extends Block {
 class Block_dirt extends Block_Solid {
     constructor(x, y) {
         super('dirt', x, y);
+        this.hardness = 10;
+        this.break_status = 0; // 0 - 5
     }
 
 }

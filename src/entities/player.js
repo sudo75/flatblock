@@ -40,7 +40,7 @@ class Player extends Entity {
     }
 
     updateCursor() {
-        const cursor = this.game.input.mouse;
+        const cursor = this.game.input.mouse_realXY;
 
         const blockXY = this.calc.getBlockByRealXY(cursor.x, cursor.y);
         this.selectedBlock = {
