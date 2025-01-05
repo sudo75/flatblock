@@ -30,6 +30,8 @@ class Block_Air extends Block {
         this.type = 'air';
         this.viscosity = 0;
         this.transparency = 1;
+
+        this.id = 0;
     }
 }
 
@@ -38,6 +40,8 @@ class Block_dirt extends Block_Solid {
         super('dirt', x, y);
         this.hardness = 10;
         this.break_status = 0; // 0 - 5
+
+        this.id = 1;
     }
 
 }
