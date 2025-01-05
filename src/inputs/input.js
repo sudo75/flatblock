@@ -4,6 +4,7 @@ class InputHandler {
         this.keys = []; //arr to store held keys
         this.mouse_realXY = {};
         this.mouseDown = false;
+        this.mouseDown_right = false;
 
         this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift'];
 
@@ -36,12 +37,26 @@ class InputHandler {
             };
         });
 
-        this.game.canvas_player.addEventListener('mousedown', () => {
-            this.mouseDown = true;
+        this.game.canvas_player.addEventListener('mousedown', (event) => {
+            if (event.which === 1) { // Left mouse
+                this.mouseDown = true;
+            }
+            if (event.which === 3) { // Right mouse
+                this.mouseDown_right = true;
+            }
         });
 
-        this.game.canvas_player.addEventListener('mouseup', () => {
-            this.mouseDown = false;
+        this.game.canvas_player.addEventListener('mouseup', (event) => {
+            if (event.which === 1) { // Left mouse
+                this.mouseDown = false;
+            }
+            if (event.which === 3) { // Right mouse
+                this.mouseDown_right = false;
+            }
+        });
+
+        this.game.canvas_player.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
         });
     }
 
