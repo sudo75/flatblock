@@ -3,6 +3,13 @@ class Calc_World {
         this.game = game;
     }
 
+    hardRoundDown(number) {
+        if (number % 1 === 0) { // Check if the number is whole
+            return number - 1;
+        }
+        return Math.floor(number);
+    }
+
     getChunkID(x) {
         const chunkID = Math.floor(x / this.game.level.chunk_size);
         return chunkID;
@@ -108,6 +115,17 @@ class Calc_World {
         };
     }
 
+    solidBlockAdjacent(x, y) {
+        if (
+            this.isSolidBlock(x + 1, y) ||
+            this.isSolidBlock(x - 1, y) ||
+            this.isSolidBlock(x, y + 1) ||
+            this.isSolidBlock(x, y - 1)
+        ) {
+            return true;
+        }
+        return false;
+    }
 
     getBlockDistance(x1, y1, x2, y2) {
         const dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5;
