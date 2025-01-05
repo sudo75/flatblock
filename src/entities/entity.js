@@ -52,7 +52,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
             if (direction === 'left') {
-                if (this.calc.isSolidBlock(this.hardRoundDown(minX), y)) {
+                if (this.calc.isSolidBlock(this.calc.hardRoundDown(minX), y)) {
                     return true;
                 }
             } else if (direction === 'right') {
@@ -76,19 +76,12 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         return false;
     }
 
-    hardRoundDown(number) {
-        if (number % 1 === 0) { // Check if the number is whole
-            return number - 1;
-        }
-        return Math.floor(number);
-    }
-
     willCollide(x, y, minX_, minY_, maxX_, maxY_) { // Input position to test
 
         const minX = minX_ ? minX_: Math.floor(x);
         const minY = minY_ ? minY_: Math.floor(y);
-        const maxX = maxX_ ? maxX_: this.hardRoundDown(x + this.width_blocks);
-        const maxY = maxY_ ? maxY_: this.hardRoundDown(y + this.height_blocks);
+        const maxX = maxX_ ? maxX_: this.calc.hardRoundDown(x + this.width_blocks);
+        const maxY = maxY_ ? maxY_: this.calc.hardRoundDown(y + this.height_blocks);
 
         for (let i = minX; i <= maxX; i++) {
             for (let j = minY; j <= maxY; j++) {
@@ -224,7 +217,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
             let crossedOverY_top = (possibleY < Math.ceil(possibleY) && this.y >= Math.ceil(possibleY));
 
             if (crossedOverY_top) {
-                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), Math.floor(possibleY), this.hardRoundDown(possibleX + this.width_blocks), Math.floor(possibleY))) {
+                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), Math.floor(possibleY), this.calc.hardRoundDown(possibleX + this.width_blocks), Math.floor(possibleY))) {
                     if (this.v_vel < 0) {
                         this.v_vel = 0;
                     }
@@ -233,7 +226,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
                 
             } else 
             if (crossedOverY_bottom) {
-                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), this.hardRoundDown(possibleY + this.height_blocks), this.hardRoundDown(possibleX + this.height_blocks), this.hardRoundDown(possibleY + this.height_blocks))) {
+                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), this.calc.hardRoundDown(possibleY + this.height_blocks), this.calc.hardRoundDown(possibleX + this.height_blocks), this.calc.hardRoundDown(possibleY + this.height_blocks))) {
                     this.v_vel = 0;
                     this.y = Math.floor(possibleY) + (Math.ceil(this.height_blocks) - this.height_blocks);
                 }

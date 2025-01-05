@@ -1,4 +1,5 @@
 import { Entity } from './entity.js';
+import { Inventory } from './inventory.js';
 
 class Player extends Entity {
     constructor(game) {
@@ -15,6 +16,8 @@ class Player extends Entity {
 
         this.selectedBlock = {};
         this.cursorDistLim = 4;
+
+        this.inventory = new Inventory();
     }
 
     spawn() {
@@ -24,7 +27,31 @@ class Player extends Entity {
         this.x = 5; // aligned to left of player
         this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
 
+        this.initInventory();
+        this.inventory_debug();
+
         this.draw();
+    }
+
+    inventory_debug() { // inventory test
+        this.inventory.setSlot(1, 0);
+    }
+
+    initInventory() {
+        let inventory = [];
+        for (let i = 0; i < 4; i++) {
+            let row = [];
+            for (let j = 0; j < 9; j++) {
+                row.push(
+                    {
+                        id: null,
+                        quantity: null
+                    }
+                );
+            }
+            inventory.push(row);
+        }
+        this.inventory.data = inventory;
     }
 
     calculateSpawnY(x) {
@@ -41,6 +68,14 @@ class Player extends Entity {
 
     updateCursor() {
         const cursor = this.game.input.mouse_realXY;
+
+        if (cursor.x == null || cursor.y == null) {
+            this.selectedBlock = {
+                x: null,
+                y: null
+            }
+            return;
+        }
 
         const blockXY = this.calc.getBlockByRealXY(cursor.x, cursor.y);
         this.selectedBlock = {
@@ -100,6 +135,10 @@ class Player extends Entity {
 
         this.ctx.fillStyle = 'grey';
         this.ctx.fillRect(left, this.game.height - bottom - this.height, this.width, this.height);
+    }
+
+    getBlockDistance(x, y) {
+        return this.calc.getBlockDistance(x, y, this.x + this.width_blocks / 2, this.y + this.height_blocks / 2);
     }
 }
 
