@@ -23,6 +23,7 @@ class Calc_World {
     }
 
     isSolidBlock(x, y) {
+        if (!this.isWithinWorldBounds(x, y)) return false;
         const block_data = this.getBlockData(x, y);
 
         if (block_data.type === 'solid') {

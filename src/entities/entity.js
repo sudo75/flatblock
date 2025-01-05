@@ -202,7 +202,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         const possibleY = this.y + this.v_vel * deltaTime;
 
         //Ensure world bound compliance
-        if (possibleY < 0) {
+        if (possibleY < 0 || possibleY + this.height_blocks > this.game.level.properties.height_blocks) {
             this.v_vel = 0;
         }
 

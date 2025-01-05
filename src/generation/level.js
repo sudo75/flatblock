@@ -110,7 +110,7 @@ class Level {
     computeBlockPlacing() {
         if (this.game.player.selectedBlock.x == null || this.game.player.selectedBlock.y == null) return;
 
-        if (this.game.input.mouseDown_right) {
+        if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)) {
             if (
                 this.calc.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y).type !== 'solid' &&
                 this.game.player.getBlockDistance(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) <= this.game.player.cursorDistLim &&
