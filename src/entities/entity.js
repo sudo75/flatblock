@@ -18,7 +18,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         this.h_maxVel = 3; // blocks per second
         this.h_minVel = -3;
         this.v_maxVel = 10;
-        this.v_minVel = -4;
+        this.v_minVel = -20;
 
         this.h_vel = 0; // horizontal velocity
         this.v_vel = 0; // vertical velocity
@@ -195,6 +195,12 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         if (this.v_vel > this.v_maxVel) {
             this.v_vel = this.v_maxVel;
         }
+        if (this.h_vel < this.h_minVel) {
+            this.h_vel = this.h_minVel;
+        }
+        if (this.v_vel < this.v_minVel) {
+            this.v_vel = this.v_minVel;
+        }
 
 
         //Calculate possible position
@@ -204,6 +210,9 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         //Ensure world bound compliance
         if (possibleY < 0 || possibleY + this.height_blocks > this.game.level.properties.height_blocks) {
             this.v_vel = 0;
+        }
+        if (possibleX < this.calc.getWorldBorders().minX || Math.ceil(possibleX + this.width_blocks) > this.calc.getWorldBorders().maxX + 1) {
+            this.h_vel = 0;
         }
 
         //Ensure block compliance - no phasing through blocks
