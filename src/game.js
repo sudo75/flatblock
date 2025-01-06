@@ -44,7 +44,37 @@ class Game {
         this.level = new Level(this);
         this.renderer = new World_Renderer(this);
     }
+    
+    async init() {
+        function logPerformance(taskName, startTime, style = "color: black; font-weight: normal;") {
+            const elapsedTime = (performance.now() - startTime).toFixed(1);
+            console.log(`%c${taskName}: ${elapsedTime}ms`, style);
+        }
 
+        const startTime = performance.now();
+    
+        const loadModulesStart = performance.now();
+        await this.loadModules();
+        logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
+    
+        const levelStart = performance.now();
+        this.level.generate();
+        logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
+    
+        const playerStart = performance.now();
+        this.player.spawn();
+        logPerformance("Player spawned", playerStart, "color: rgb(255, 220, 0); font-weight: bold;");
+    
+        const gameLoopStart = performance.now();
+        this.startGameLoop();
+        logPerformance("Game loop started", gameLoopStart, "color:rgb(255, 220, 0); font-weight: bold;");
+    
+        logPerformance("Total init execution time", startTime, "color: orange; font-size: 16px; font-weight: bold;");
+    }
+    
+    
+
+    /*
     init() {
         this.loadModules().then(() => {
             // Initialize game components
@@ -53,6 +83,7 @@ class Game {
             this.startGameLoop();
         });
     }
+        */
 
     update(deltaTime) {
         // Update the game state
