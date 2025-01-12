@@ -35,7 +35,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         if (this.y % 1 == 0 && this.y - 1 >= 0) {
             if (
                 this.calc.isSolidBlock(Math.floor(this.x), this.y - 1) ||
-                this.calc.isSolidBlock(Math.floor(this.x + this.width_blocks), this.y - 1)
+                this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1)
             ) {
                 return true;
             }
@@ -53,10 +53,12 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
             if (direction === 'left') {
                 if (this.calc.isSolidBlock(this.calc.hardRoundDown(minX), y)) {
+                    console.log(this.calc.hardRoundDown(minX), y)
                     return true;
                 }
             } else if (direction === 'right') {
                 if (this.calc.isSolidBlock(Math.floor(maxX), y)) {
+                    console.log(Math.floor(maxX), y)
                     return true;
                 }
             }
@@ -78,7 +80,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
     willCollide(x, y, minX_, minY_, maxX_, maxY_) { // Input position to test
 
-        const minX = minX_ ? minX_: Math.floor(x);
+        const minX = minX_ ? minX_: Math.floor(x); // minX of entity
         const minY = minY_ ? minY_: Math.floor(y);
         const maxX = maxX_ ? maxX_: this.calc.hardRoundDown(x + this.width_blocks);
         const maxY = maxY_ ? maxY_: this.calc.hardRoundDown(y + this.height_blocks);
@@ -200,8 +202,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         }
         if (this.v_vel < this.v_minVel) {
             this.v_vel = this.v_minVel;
-        }
-
+        }        
 
         //Calculate possible position
         const possibleX = this.x + this.h_vel * deltaTime;
@@ -235,18 +236,24 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
                 
             } else 
             if (crossedOverY_bottom) {
-                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), this.calc.hardRoundDown(possibleY + this.height_blocks), this.calc.hardRoundDown(possibleX + this.height_blocks), this.calc.hardRoundDown(possibleY + this.height_blocks))) {
+                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), this.calc.hardRoundDown(possibleY + this.height_blocks), this.calc.hardRoundDown(possibleX + this.width_blocks), this.calc.hardRoundDown(possibleY + this.height_blocks))) {
                     this.v_vel = 0;
                     this.y = Math.floor(possibleY) + (Math.ceil(this.height_blocks) - this.height_blocks);
                 }
             }
 
             if (crossedOverX_left) {
-                this.h_vel = 0;
-                this.x = Math.ceil(possibleX) - this.width_blocks;
+                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX + this.width_blocks), Math.floor(possibleY), Math.floor(possibleX + this.width_blocks), this.calc.hardRoundDown(possibleY + this.height_blocks))) {
+                    this.h_vel = 0;
+                    this.x = Math.ceil(possibleX) - this.width_blocks;
+                }
+                
             } else if (crossedOverX_right) {
-                this.h_vel = 0;
-                this.x = Math.ceil(possibleX);
+                if (this.willCollide(possibleX, possibleY, Math.floor(possibleX), Math.floor(possibleY), Math.floor(possibleX), this.calc.hardRoundDown(possibleY + this.height_blocks))) {
+                    this.h_vel = 0;
+                    this.x = Math.ceil(possibleX);
+                }
+                
             }   
         }
 
