@@ -53,12 +53,10 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
             if (direction === 'left') {
                 if (this.calc.isSolidBlock(this.calc.hardRoundDown(minX), y)) {
-                    console.log(this.calc.hardRoundDown(minX), y)
                     return true;
                 }
             } else if (direction === 'right') {
                 if (this.calc.isSolidBlock(Math.floor(maxX), y)) {
-                    console.log(Math.floor(maxX), y)
                     return true;
                 }
             }
