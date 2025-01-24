@@ -71,19 +71,6 @@ class Game {
     
         logPerformance("Total init execution time", startTime, "color: orange; font-size: 16px; font-weight: bold;");
     }
-    
-    
-
-    /*
-    init() {
-        this.loadModules().then(() => {
-            // Initialize game components
-            this.level.generate();
-            this.player.spawn();
-            this.startGameLoop();
-        });
-    }
-        */
 
     update(deltaTime) {
         // Update the game state
@@ -131,7 +118,7 @@ class Game {
                 deltaTime = 0;
             }
             
-            this.update(deltaTime);
+            this.update(deltaTime); //update player
             this.renderer.drawWorld();
             this.player.draw();
             this.player.updateCursor();
