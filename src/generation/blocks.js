@@ -42,7 +42,7 @@ class Block_Air extends Block {
 
 class Block_dirt extends Block_Solid {
     constructor(x, y) {
-        super('dirt', x, y, 10, '/assets/textures/grass.png');
+        super('dirt', x, y, 10, './assets/textures/grass.png');
         this.id = 1;
 
     }
