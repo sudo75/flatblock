@@ -40,12 +40,28 @@ class Block_Air extends Block {
     }
 }
 
+
+// BLOCKS ----------------------------------------->
+
 class Block_dirt extends Block_Solid {
     constructor(x, y) {
-        super('dirt', x, y, 10, './assets/textures/grass.png');
+        super('dirt', x, y, 10, './assets/textures/dirt.png');
         this.id = 1;
-
     }
 }
 
-export { Block_Air, Block_dirt };
+class Block_grass extends Block_Solid {
+    constructor(x, y) {
+        super('grass', x, y, 10, './assets/textures/grass.png');
+        this.id = 2;
+    }
+}
+
+class Block_stone extends Block_Solid {
+    constructor(x, y) {
+        super('stone', x, y, 50, './assets/textures/stone.png');
+        this.id = 3;
+    }
+}
+
+export { Block_Air, Block_dirt, Block_grass, Block_stone };

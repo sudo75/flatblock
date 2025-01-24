@@ -1,4 +1,4 @@
-import { Block_Air, Block_dirt } from "./blocks.js";
+import { Block_Air, Block_dirt, Block_grass, Block_stone } from "./blocks.js";
 
 class Level {
     constructor(game) {
@@ -35,19 +35,21 @@ class Level {
         for (let x = 0; x < this.chunk_size; x++) {
             let col = [];
             for (let y = 0; y < this.properties.height_blocks; y++) {
-                let name;
-                if (y === 5) {
-                    name = Math.round(Math.random()) === 0 ? 'dirt': 'air'
-                }
-                else if (y < 5) {
-                    name = 'dirt';
-                } else {
-                    name = 'air';
-                }
 
                 const absolute_x = chunk_id * this.chunk_size + x;
+                const chooseBlock = () => {
+                    if (y < 16) {
+                        return new Block_stone(absolute_x, y);
+                    } else if (y < 20) {
+                        return new Block_dirt(absolute_x, y);
+                    } else if (y === 20) {
+                        return new Block_grass(absolute_x, y);
+                    } else {
+                        return new Block_Air(absolute_x, y);
+                    }
+                };
 
-                const block = name === 'dirt' ? new Block_dirt(absolute_x, y): new Block_Air(absolute_x, y);
+                const block = chooseBlock();
                 col.push(block);
             }
             chunck.push(col);
@@ -62,7 +64,7 @@ class Level {
             this.generate_chunk(i);
         }
 
-        this.data[0].block_data[15][8] = new Block_dirt(15, 8);
+        this.data[0].block_data[15][8] = new Block_stone(15, 8);
 
         console.log(this.data);
     }
