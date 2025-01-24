@@ -73,12 +73,11 @@ class World_Renderer {
 
                 const real_x = (x - this.leftmost_blockX) * this.game.block_size;
                 const real_y = (y - this.bottommost_blockY) * this.game.block_size;
-                switch (block_data.name) {
-                    case 'dirt':
-                        this.drawBlock(x, y, real_x, real_y, 'green');
-                        break;
+                
+                if (block_data.type === 'solid') {
+                    this.drawBlock(x, y, real_x, real_y, 'green');
                 }
-                this.drawOutline(real_x, real_y, 1);
+                this.drawOutline(real_x, real_y, 0.5);
 
                 //Draw cursor (block outline)
                 const selectedBlock = this.game.player.selectedBlock;
@@ -86,7 +85,6 @@ class World_Renderer {
                 if (x === selectedBlock.x && y === selectedBlock.y) {
                     if ((this.calc.getBlockData(x, y).type === 'solid' || this.calc.solidBlockAdjacent(x, y)) && this.calc.getBlockDistance(x, y, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) <= this.game.player.cursorDistLim) {
                         this.drawOutline(real_x, real_y, 4);
-                        //console.log(this.calc.blocksBetweenPlayer(x, y));
                     }
                 }
             }
