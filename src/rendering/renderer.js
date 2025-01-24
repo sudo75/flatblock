@@ -2,17 +2,35 @@ class World_Renderer {
     constructor(game) {
         this.game = game;
         this.ctx = this.game.ctx_world;
-        this.calc = this.game.calculator;  
+        this.calc = this.game.calculator;
+
+        this.textureCache = {};
     }
 
-    drawBlock(x, y, colour) {
+    drawBlock(x, y, real_x, real_y, colour) {
         //The first block will be y = 0, this aligns with the canvas coordinate system, and thus no recaululation is needed
 
-        const left = x;
-        const top = this.game.height - y - this.game.block_size;
+        const texture_location = this.calc.getBlockData(x, y).texture_location;
 
-        this.ctx.fillStyle = colour;
-        this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+        if (texture_location) {
+            let image;
+            if (!this.textureCache[texture_location]) {
+                image = new Image();
+                image.src = texture_location;
+    
+                this.textureCache[texture_location] = image;
+            } else {
+                image = this.textureCache[texture_location];
+            }
+    
+            const left = real_x;
+            const top = this.game.height - real_y - this.game.block_size;
+            
+            this.ctx.drawImage(image, left, top, this.game.block_size, this.game.block_size);
+        } else {
+            this.ctx.fillStyle = colour;
+            this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+        }
     }
 
     drawOutline(x, y, weight) {
@@ -57,16 +75,18 @@ class World_Renderer {
                 const real_y = (y - this.bottommost_blockY) * this.game.block_size;
                 switch (block_data.name) {
                     case 'dirt':
-                        this.drawBlock(real_x, real_y, 'green');
+                        this.drawBlock(x, y, real_x, real_y, 'green');
                         break;
                 }
                 this.drawOutline(real_x, real_y, 1);
 
                 //Draw cursor (block outline)
                 const selectedBlock = this.game.player.selectedBlock;
+
                 if (x === selectedBlock.x && y === selectedBlock.y) {
                     if ((this.calc.getBlockData(x, y).type === 'solid' || this.calc.solidBlockAdjacent(x, y)) && this.calc.getBlockDistance(x, y, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) <= this.game.player.cursorDistLim) {
                         this.drawOutline(real_x, real_y, 4);
+                        //console.log(this.calc.blocksBetweenPlayer(x, y));
                     }
                 }
             }
