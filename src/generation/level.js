@@ -1,4 +1,4 @@
-import { Block_Air, Block_dirt, Block_grass, Block_stone } from "./blocks.js";
+import { Generator } from "./generator.js";
 
 class Level {
     constructor(game) {
@@ -7,14 +7,16 @@ class Level {
         this.data = {};
         this.loaded_chunks = [];
         this.properties = {
-            width_chunks: 5,
-            height_blocks: 50
+            width_chunks: 20,
+            height_blocks: 120
         }
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
 
         this.current_breaking = null;
+
+        this.generator = new Generator(game, this.data, this.properties);
     }
 
     unloadChunk(chunk_id) {
@@ -28,43 +30,12 @@ class Level {
         this.loaded_chunks.push(chunk_id);
     }
 
-    generate_chunk(chunk_id) { //GENERATES FROM TOP TO BOTTOM
-        // Logic to generate the game level
-        let chunck = [];
-
-        for (let x = 0; x < this.chunk_size; x++) {
-            let col = [];
-            for (let y = 0; y < this.properties.height_blocks; y++) {
-
-                const absolute_x = chunk_id * this.chunk_size + x;
-                const chooseBlock = () => {
-                    if (y < 16) {
-                        return new Block_stone(absolute_x, y);
-                    } else if (y < 20) {
-                        return new Block_dirt(absolute_x, y);
-                    } else if (y === 20) {
-                        return new Block_grass(absolute_x, y);
-                    } else {
-                        return new Block_Air(absolute_x, y);
-                    }
-                };
-
-                const block = chooseBlock();
-                col.push(block);
-            }
-            chunck.push(col);
-        }
-        this.data[chunk_id] = { block_data: chunck };
-    }
-
     generate() {
         const bounds = this.calc.getWorldBounds();
 
         for (let i = bounds[0]; i <= bounds[1]; i++) {
-            this.generate_chunk(i);
+            this.generator.generate_chunk(i);
         }
-
-        this.data[0].block_data[15][8] = new Block_stone(15, 8);
 
         console.log(this.data);
     }
@@ -72,24 +43,6 @@ class Level {
     world_interaction() {
         this.computeBlockBreaking();
         this.computeBlockPlacing();
-    }
-
-    placeBlock(blockID, x, y) {
-        let block;
-        switch (blockID) { //UPGRADE CODE LATER
-            case 1:
-                block = Block_dirt;
-                break;
-            default:
-                console.warn('Can\'t place block!');
-                return;
-        }
-
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
-    }
-
-    breakBlock(x, y) {
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Block_Air(x, y);
     }
 
     blockCanBePlaced(x, y) {
@@ -119,7 +72,7 @@ class Level {
                 this.calc.solidBlockAdjacent(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) &&
                 this.blockCanBePlaced(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)
             ) {
-                this.placeBlock(this.game.player.inventory.data[this.game.player.inventory.selection_index].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
+                this.generator.placeBlock(this.game.player.inventory.data[this.game.player.inventory.selection_index].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
             }
         }
     }
@@ -153,7 +106,7 @@ class Level {
                 //Break block
                 if (this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status >= this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].hardness) {
                     //this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y] = new Block_Air(this.current_breaking.x, this.current_breaking.y);
-                    this.breakBlock(this.current_breaking.x, this.current_breaking.y);
+                    this.generator.breakBlock(this.current_breaking.x, this.current_breaking.y);
                     this.current_breaking = null;
                 }
             }
