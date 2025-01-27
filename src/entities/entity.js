@@ -115,7 +115,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
             this.h_vel = 0;
             this.v_vel = 0;
 
-            const speed = this.fast ? 24: 8;
+            const speed = this.fast ? 32: 12;
             if (input.includes('ArrowLeft')) {
                 this.h_vel = -speed;
             }
