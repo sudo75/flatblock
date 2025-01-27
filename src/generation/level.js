@@ -68,7 +68,7 @@ class Level {
         if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)) {
             if (
                 this.calc.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y).type !== 'solid' &&
-                this.game.player.getBlockDistance(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) <= this.game.player.cursorDistLim &&
+                this.game.player.getBlockDistance(this.game.player.selectedBlock.x + 0.5, this.game.player.selectedBlock.y + 0.5) <= this.game.player.cursorDistLim &&
                 this.calc.solidBlockAdjacent(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) &&
                 this.blockCanBePlaced(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)
             ) {
@@ -96,7 +96,7 @@ class Level {
                 y: this.game.player.selectedBlock.y
             };
 
-            if (this.game.player.getBlockDistance(this.current_breaking.x, this.current_breaking.y) <= this.game.player.cursorDistLim) {
+            if (this.game.player.getBlockDistance(this.current_breaking.x + 0.5, this.current_breaking.y + 0.5) <= this.game.player.cursorDistLim) {
     
                 //Set break status
                 if (this.calc.getBlockData(this.current_breaking.x, this.current_breaking.y).type === 'solid' && this.calc.getBlockData(this.current_breaking.x, this.current_breaking.y).hardness) {

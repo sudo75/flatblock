@@ -83,7 +83,7 @@ class World_Renderer {
                 const selectedBlock = this.game.player.selectedBlock;
 
                 if (x === selectedBlock.x && y === selectedBlock.y) {
-                    if ((this.calc.getBlockData(x, y).type === 'solid' || this.calc.solidBlockAdjacent(x, y)) && this.calc.getBlockDistance(x, y, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) <= this.game.player.cursorDistLim) {
+                    if ((this.calc.getBlockData(x, y).type === 'solid' || this.calc.solidBlockAdjacent(x, y)) && this.calc.getBlockDistance(x + 0.5, y + 0.5, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) < this.game.player.cursorDistLim) {
                         this.drawOutline(real_x, real_y, 4);
                     }
                 }
