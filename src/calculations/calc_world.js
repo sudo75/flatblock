@@ -34,8 +34,8 @@ class Calc_World {
     }
 
     getRelativeX(x) {
-        const relativeX = Math.abs(x % this.game.level.chunk_size); // X-value relative to chunk
-        
+        const relativeX = (x % 16 + 16) % 16; // X-value relative to chunk
+
         return relativeX;
     }
 
