@@ -11,8 +11,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         this.x = x; // x = 0 at left
         this.y = y; // y = 0 at bottom
 
-        //this.speed = 0; // in blocks per second
-
         this.gravity_acceleration = -24; //earth = -9.8
 
         this.h_maxVel = 3; // blocks per second
@@ -103,8 +101,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         }
 
         if (input.includes('Shift')) {
-            this.h_maxVel = 4;
-            this.h_minVel = -4;
+            this.h_maxVel = 5;
+            this.h_minVel = -5;
         } else {
             this.h_maxVel = 3;
             this.h_minVel = -3;
