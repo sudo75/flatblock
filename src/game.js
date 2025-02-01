@@ -9,6 +9,9 @@ class Game {
         this.canvas_player = document.querySelector('#game_canvas_fore');
         this.ctx_player = this.canvas_player.getContext('2d');
 
+        this.canvas_menu = document.querySelector('#game_canvas_fore2');
+        this.ctx_menu = this.canvas_menu.getContext('2d');
+
         this.width = width;
         this.height = height;
         
@@ -36,6 +39,7 @@ class Game {
         const { InputHandler } = await import('./inputs/input.js');
         const { Level } = await import('./generation/level.js');
         const { World_Renderer } = await import('./rendering/renderer.js');
+        const { MenuHandler } = await import('./menus/game_menus.js');
 
         // Initialize game components
         this.calculator = new Calc_World(this);
@@ -43,6 +47,7 @@ class Game {
         this.input = new InputHandler(this);
         this.level = new Level(this);
         this.renderer = new World_Renderer(this);
+        this.menu_handler = new MenuHandler(this)
     }
     
     async init() {
@@ -82,6 +87,10 @@ class Game {
         this.level.world_interaction(); // for breaking and placing blocks
     }
 
+    menus() {
+        this.menu_handler.update(this.input.keys);
+    }
+
     startGameLoop() {
 
         let lastTick;
@@ -98,7 +107,6 @@ class Game {
 
             this.update_world();
 
-            //this.tick = this.tick >= 9999 ? 0: this.tick + 1;
             this.tick++;
             this.tickSpeed = tickTime;
 
@@ -114,6 +122,8 @@ class Game {
             let deltaTime;
             if (lastFrame) {
                 deltaTime = (time_current - lastFrame) / 1000; // In sec
+
+                this.fps = Math.round(1 / deltaTime);
             } else {
                 deltaTime = 0;
             }
@@ -122,13 +132,25 @@ class Game {
             this.renderer.drawWorld();
             this.player.draw();
             this.player.updateCursor();
+            this.menus();
 
             lastFrame = time_current;
 
             requestAnimationFrame(game_loop);
         };
+
+        const debug = () => {
+            console.log('FPS: ' + this.fps);
+
+            setTimeout(() => {
+                debug();
+            }, 1500);
+        };
+
+
         tick_handler();
         game_loop();
+        debug();
     }
 }
 

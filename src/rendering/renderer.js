@@ -77,7 +77,7 @@ class World_Renderer {
                 if (block_data.type === 'solid') {
                     this.drawBlock(x, y, real_x, real_y, 'green');
                 }
-                this.drawOutline(real_x, real_y, 0.5);
+                //this.drawOutline(real_x, real_y, 0.5);
 
                 //Draw cursor (block outline)
                 const selectedBlock = this.game.player.selectedBlock;

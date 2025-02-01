@@ -3,6 +3,10 @@
     display: flex;
 }
 
+#game_canvas_fore2 {
+    pointer-events: none;
+}
+
 .game_canvas {
     position: absolute;
 }

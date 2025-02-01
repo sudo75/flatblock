@@ -96,7 +96,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         if (isNaN(this.x) || isNaN(this.y)) return;
 
         if (deltaTime > 0.05) {
-            console.warn(`DeltaTime over 50ms: ${deltaTime * 1000}!`);
             deltaTime = 0.05;
         }
 

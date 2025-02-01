@@ -64,4 +64,15 @@ class Block_stone extends Block_Solid {
     }
 }
 
+export const getTextureLocationByID = (id) => {
+    const items = {
+        '0': null,
+        '1': './assets/textures/dirt.png',
+        '2': './assets/textures/grass.png',
+        '3': './assets/textures/stone.png'
+    }
+
+    return items[id];
+};
+
 export { Block_Air, Block_dirt, Block_grass, Block_stone };

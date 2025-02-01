@@ -27,31 +27,16 @@ class Player extends Entity {
         this.x = 5; // aligned to left of player
         this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
 
-        this.initInventory();
+        this.inventory.init();
         this.inventory_debug();
 
         this.draw();
     }
 
     inventory_debug() { // inventory test
-        this.inventory.setSlot(1, 0);
-    }
-
-    initInventory() {
-        let inventory = [];
-        for (let i = 0; i < 4; i++) {
-            let row = [];
-            for (let j = 0; j < 9; j++) {
-                row.push(
-                    {
-                        id: null,
-                        quantity: null
-                    }
-                );
-            }
-            inventory.push(row);
-        }
-        this.inventory.data = inventory;
+        this.inventory.setSlot(1, 0, 3);
+        this.inventory.setSlot(3, 1, 5);
+        this.inventory.setSlot(1, 3, 5);
     }
 
     calculateSpawnY(x) {
