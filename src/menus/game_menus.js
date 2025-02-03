@@ -612,7 +612,7 @@ class MenuHandler {
             }
             if (!this.aMenuIsOpen()) {
                 this.hotbar.close();
-                this.menus.inventory.open();
+                this.menus.crafting.open();
             } else {
                 this.closeAllMenus();
                 this.hotbar.open();
