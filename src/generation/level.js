@@ -72,7 +72,7 @@ class Level {
                 this.calc.solidBlockAdjacent(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) &&
                 this.blockCanBePlaced(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)
             ) {
-                this.generator.placeBlock(this.game.player.inventory.data[this.game.player.inventory.selection_index].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
+                this.generator.placeBlock(this.game.player.inventory.data[this.game.player.inventory.selectedSlot].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
             }
         }
     }

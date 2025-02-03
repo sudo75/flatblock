@@ -474,6 +474,83 @@ class Menu_ComponentUI_Crafting {
     }
 }
 
+class Menu_Hotbar extends Menu {
+    constructor(canvas_menu, ctx, inventory) {
+        super(canvas_menu, ctx, 0.6, 0.1);
+
+        this.textureCache = {};
+
+        this.margin = 20;
+        this.y = this.canvas_height - this.real_height - this.margin;
+
+        this.inventory_data = inventory.data;
+        this.inventory = inventory;
+        this.slotSize = this.real_width / this.inventory.cols;
+
+        this.slot_margin = 5;
+        this.slotPadding = 5;
+    }
+
+    open() {
+        super.open();
+        this.canvas_menu.style.pointerEvents = 'none'; //Override pointer events code in super
+        // Draw item slots
+        for (let i = 0; i < this.inventory.cols; i++) {
+            const item = this.inventory_data[i];
+
+            let slot_x = this.x + i * (this.slotSize + this.slot_margin);
+            let slot_y = this.y;
+
+            // Draw background
+            this.ctx.fillStyle = "lightgrey";
+            this.ctx.fillRect(slot_x, slot_y, this.slotSize, this.slotSize);
+
+            //Outline slots
+            this.ctx.strokeStyle = "black";
+            this.ctx.lineWidth = i === this.inventory.selectedSlot ? 4: 1;
+            this.ctx.strokeRect(slot_x, slot_y, this.slotSize, this.slotSize);
+
+            // Render item in the slot
+            if (this.inventory_data[i]) {
+                const texture_location = getTextureLocationByID(item.id);
+                const itemQuantity = item.quantity;
+
+                if (texture_location) {
+                    let image;
+                    if (!this.textureCache[texture_location]) {
+                        image = new Image();
+                        image.src = texture_location;
+            
+                        this.textureCache[texture_location] = image;
+                    } else {
+                        image = this.textureCache[texture_location];
+                    }
+                    
+                    this.ctx.drawImage(image, slot_x + this.slotPadding, slot_y + this.slotPadding, this.slotSize - this.slotPadding * 2, this.slotSize - this.slotPadding * 2);
+                } else if (item.id != null) {
+                    this.ctx.fillStyle = 'purple';
+                    this.ctx.fillRect(slot_x + this.slotPadding, slot_y + this.slotPadding, this.slotSize - this.slotPadding * 2, this.slotSize - this.slotPadding * 2);
+                }
+
+                if (itemQuantity > 1) {
+                    this.ctx.font = "bold 16px Arial";
+                    this.ctx.fillStyle = "black";
+                    this.ctx.fillText(itemQuantity, slot_x + this.slotPadding, slot_y + this.slotSize - this.slotPadding);
+                }
+            }
+        }
+    }
+
+    setSlot(index) {
+        if (index >= 0 && index < this.inventory.cols) {
+            this.inventory.selectedSlot = index;
+            this.close();
+            this.open(); // Re-render hotbar
+        }
+    }
+}
+
+
 class MenuHandler {
     constructor(game) {
         this.game = game;
@@ -485,13 +562,23 @@ class MenuHandler {
             inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory'),
             crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting')
         }
-        
+
         this.closeAllMenus();
+
+        this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
 
         this.keyHold = {
             e: false,
             c: false
         };
+
+        this.init();
+    }
+
+    init() {
+        setTimeout(() => {
+            this.hotbar.open();
+        }, 100);
     }
 
     aMenuIsOpen() {
@@ -508,9 +595,11 @@ class MenuHandler {
                 return;
             }
             if (!this.aMenuIsOpen()) {
+                this.hotbar.close();
                 this.menus.inventory.open();
             } else {
                 this.closeAllMenus();
+                this.hotbar.open();
             }
             this.keyHold.e = true;
         } else {
@@ -522,13 +611,43 @@ class MenuHandler {
                 return;
             }
             if (!this.aMenuIsOpen()) {
-                this.menus.crafting.open();
+                this.hotbar.close();
+                this.menus.inventory.open();
             } else {
                 this.closeAllMenus();
+                this.hotbar.open();
             }
             this.keyHold.c = true;
         } else {
             this.keyHold.c = false;
+        }
+
+        if (input.includes('1')) {
+            this.hotbar.setSlot(0);
+        }
+        if (input.includes('2')) {
+            this.hotbar.setSlot(1);
+        }
+        if (input.includes('3')) {
+            this.hotbar.setSlot(2);
+        }
+        if (input.includes('4')) {
+            this.hotbar.setSlot(3);
+        }
+        if (input.includes('5')) {
+            this.hotbar.setSlot(4);
+        }
+        if (input.includes('6')) {
+            this.hotbar.setSlot(5);
+        }
+        if (input.includes('7')) {
+            this.hotbar.setSlot(6);
+        }
+        if (input.includes('8')) {
+            this.hotbar.setSlot(7);
+        }
+        if (input.includes('9')) {
+            this.hotbar.setSlot(8);
         }
     }
     

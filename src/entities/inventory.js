@@ -1,7 +1,7 @@
 class Inventory {
     constructor() {
         this.data = [];
-        this.selection_index = 0; // 0 - 35
+        this.selectedSlot = 0; // 0 - 35
 
         this.rows = 4;
         this.cols = 9;
