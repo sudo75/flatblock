@@ -321,13 +321,13 @@ class Menu_ComponentUI_Crafting {
 
         this.ctx = main.ctx;
 
+        this.margin = 10;
+
         this.real_width = main.real_width * this.width;
         this.real_height = main.real_height * this.height;
         this.x = main.x + main.real_width - this.real_width;
-        this.y = main.y;
+        this.y = main.y + this.margin;
         
-        this.margin = 10;
-
         this.slotPosition = []; // Required for integration with main menu
 
         this.recipies = recipies;
