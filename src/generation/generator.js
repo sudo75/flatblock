@@ -170,6 +170,12 @@ class Generator {
             case 1:
                 block = Block_dirt;
                 break;
+            case 2:
+                block = Block_grass;
+                break;
+            case 3:
+                block = Block_stone;
+                break;
             default:
                 console.warn('Can\'t place block!');
                 return;

@@ -56,6 +56,17 @@ class Inventory {
             this.setSlot(null, index_source, null);
         }
     }
+
+    add(fromIndex) {
+        this.data[fromIndex].quantity++;
+    }
+
+    subtract(fromIndex) {
+        this.data[fromIndex].quantity--;
+        if (this.data[fromIndex].quantity <= 0) {
+            this.setSlot(null, fromIndex, null);
+        }
+    }
 }
 
 export { Inventory };
