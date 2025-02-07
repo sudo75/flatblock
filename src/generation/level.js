@@ -72,7 +72,8 @@ class Level {
                 this.calc.solidBlockAdjacent(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) &&
                 this.blockCanBePlaced(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)
             ) {
-                this.generator.placeBlock(this.game.player.inventory.data[this.game.player.inventory.selectedSlot].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
+                const selectedSlot = this.game.player.inventory.selectedSlot;
+                this.generator.placeBlock(this.game.player.inventory.data[selectedSlot].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
             }
         }
     }
@@ -105,7 +106,6 @@ class Level {
 
                 //Break block
                 if (this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status >= this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].hardness) {
-                    //this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y] = new Block_Air(this.current_breaking.x, this.current_breaking.y);
                     this.generator.breakBlock(this.current_breaking.x, this.current_breaking.y);
                     this.current_breaking = null;
                 }
