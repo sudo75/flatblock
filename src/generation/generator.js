@@ -182,10 +182,17 @@ class Generator {
         }
 
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
+
+        const selectedSlot = this.game.player.inventory.selectedSlot;
+        this.game.player.inventory.subtract(selectedSlot);
     }
 
     breakBlock(x, y) {
+        const oldBlockID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].id;
+
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Block_Air(x, y);
+
+        this.game.player.inventory.addItems(oldBlockID);
     }
 }
 

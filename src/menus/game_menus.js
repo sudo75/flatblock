@@ -590,6 +590,12 @@ class MenuHandler {
     }
 
     update(input) {
+        if (this.hotbar.isOpen) { // Refreshes hotbar
+            this.hotbar.close();
+            this.hotbar.open();
+        }
+
+
         if (input.includes('e')) {
             if (this.keyHold.e) {
                 return;

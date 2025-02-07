@@ -7,7 +7,7 @@ class Inventory {
         this.cols = 9;
         this.init();
 
-        this.maxStackSize = 16;
+        this.maxStackSize = 16; // 1 - 1024
     }
 
     init() {
@@ -28,6 +28,13 @@ class Inventory {
             return;
         }
         if (this.data[index_new].id === this.data[index_old].id) { // If both slots have same item id
+            if (this.data[index_new].quantity + this.data[index_old].quantity > this.maxStackSize) {
+                for (let i = 0; i < 1024; i++) {
+                    this.addItemFrom(index_old, index_new);
+                }
+                return;
+            }
+
             this.data[index_new].quantity += this.data[index_old].quantity;
             this.setSlot(null, index_old, null);
         } else {
@@ -47,6 +54,7 @@ class Inventory {
 
             this.data[index_source].quantity--;
         } else if (this.data[index_source].quantity > 0 && this.data[index_source].id === this.data[index_new].id) { //If source has > 0 & new stack exists
+            if (this.data[index_new].quantity + 1 > this.maxStackSize) return;
             this.data[index_new].quantity++;
             this.data[index_source].quantity--;
         }
@@ -57,14 +65,27 @@ class Inventory {
         }
     }
 
-    add(fromIndex) {
-        this.data[fromIndex].quantity++;
+    addItems(itemID) {
+        for (let i = 0; i < this.rows * this.cols - 1; i++) {
+            if (this.data[i].id === itemID && this.data[i].quantity < this.maxStackSize) {
+                this.add(i);
+                return;
+            }
+            if (this.data[i].id === null) {
+                this.setSlot(itemID, i, 1);
+                return;
+            }
+        }
     }
 
-    subtract(fromIndex) {
-        this.data[fromIndex].quantity--;
-        if (this.data[fromIndex].quantity <= 0) {
-            this.setSlot(null, fromIndex, null);
+    add(index) {
+        this.data[index].quantity++;
+    }
+
+    subtract(index) {
+        this.data[index].quantity--;
+        if (this.data[index].quantity <= 0) {
+            this.setSlot(null, index, null);
         }
     }
 }
