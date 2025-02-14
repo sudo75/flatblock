@@ -10,6 +10,21 @@ class Calc_World {
         return Math.floor(number);
     }
 
+    getLoadedChunks() {
+        const minX = Math.floor(this.getRenderingCornerstones().leftmost_blockX);
+        const maxX = Math.floor(this.getRenderingCornerstones().rightmost_blockX);
+        
+        let chunks = [];
+        for (let x = minX; x < maxX; x++) {
+            const chunkID = this.getChunkID(x);
+            if (!chunks.includes(chunkID)) {
+                chunks.push(chunkID);
+            }
+        }
+
+        return chunks;
+    }
+
     getChunkID(x) {
         const chunkID = Math.floor(x / this.game.level.chunk_size);
         return chunkID;

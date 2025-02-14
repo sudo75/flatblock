@@ -40,6 +40,7 @@ class Game {
         const { Level } = await import('./generation/level.js');
         const { World_Renderer } = await import('./rendering/renderer.js');
         const { MenuHandler } = await import('./menus/game_menus.js');
+        const { EntityHandler } = await import('./entities/entity.js');
 
         // Initialize game components
         this.calculator = new Calc_World(this);
@@ -47,7 +48,8 @@ class Game {
         this.input = new InputHandler(this);
         this.level = new Level(this);
         this.renderer = new World_Renderer(this);
-        this.menu_handler = new MenuHandler(this)
+        this.menu_handler = new MenuHandler(this);
+        this.entity_handler = new EntityHandler(this);
     }
     
     async init() {
@@ -80,6 +82,7 @@ class Game {
     update(deltaTime) {
         // Update the game state
         this.player.update(this.input.keys, deltaTime);
+        this.entity_handler.update(deltaTime);
     }
 
     update_world() {

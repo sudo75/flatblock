@@ -1,5 +1,5 @@
 class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a subclass
-    constructor(game, x, y, width, height, width_blocks, height_blocks) {
+    constructor(game, entityID, x, y, width, height, width_blocks, height_blocks) {
         this.game = game;
         this.ctx = this.game.ctx_entities;
         this.width = width;
@@ -7,6 +7,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         this.width_blocks = width_blocks;
         this.height_blocks = height_blocks;
         this.calc = this.game.calculator;
+        this.id = entityID;
 
         this.x = x; // x = 0 at left
         this.y = y; // y = 0 at bottom
@@ -263,3 +264,58 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 }
 
 export { Entity };
+
+import { getTextureLocationByID } from '../generation/blocks.js';
+class Entity_item extends Entity {
+    constructor(game, entityID, x, y, itemID) {
+        super(game, entityID, x, y, 0.5, 0.5);
+        this.width_blocks = 0.5; // in unit blocks
+        this.height_blocks = 0.5; // in unit blocks
+
+        this.width = this.game.block_size * this.width_blocks;
+        this.height = this.game.block_size * this.height_blocks;
+        
+        this.itemID = itemID;
+
+        this.texture_location = getTextureLocationByID(this.itemID);
+    }
+}
+
+class EntityHandler {
+    constructor(game) {
+        this.game = game;
+        this.calc = this.game.calculator;
+
+        this.level_data = this.game.level.data;
+
+        this.nextEntityID = 1;
+    }
+
+    newEntity_Item(x, y, itemID, h_vel, v_vel) {
+        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID);
+        entity.h_vel = h_vel;
+        entity.v_vel = v_vel;
+        
+        this.nextEntityID++;
+
+        this.level_data[this.calc.getChunkID(x)].entity_data.push(entity);
+    }
+
+    update(deltaTime) {
+        const loaded_chunks = this.calc.getLoadedChunks();
+
+        for (let i = 0; i < loaded_chunks.length; i++) {
+            const currentChunkID = loaded_chunks[i];
+
+            for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
+                const entity = this.game.level.data[currentChunkID].entity_data[j];
+                
+                entity.update([], deltaTime);
+            }
+
+            
+        }
+    }
+}
+
+export { EntityHandler };

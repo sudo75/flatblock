@@ -161,7 +161,7 @@ class Generator {
             }
             chunck.push(col);
         }
-        this.data[chunk_id] = { block_data: chunck };
+        this.data[chunk_id] = { block_data: chunck, entity_data: [] };
     }
 
     placeBlock(blockID, x, y) {

@@ -3,10 +3,12 @@ import { Inventory } from './inventory.js';
 
 class Player extends Entity {
     constructor(game) {
-        super(game);
+        super(game, 0);
         this.game = game;
         this.ctx = this.game.ctx_player;
         this.calc = this.game.calculator;
+
+        this.direction = 'right'; //facing direction
 
         this.width_blocks = 0.65; // in unit blocks
         this.height_blocks = 1.75; // in unit blocks
@@ -31,6 +33,20 @@ class Player extends Entity {
         this.inventory_debug();
 
         this.draw();
+    }
+
+    throwItem(inventory_slot) {
+        const itemDropPoint = {
+            x: this.x + this.height_blocks / 2,
+            y: this.y + this.width_blocks / 2
+        };
+
+        const itemID = this.inventory.data[inventory_slot].id;
+
+        this.game.entity_handler.newEntity_Item(itemDropPoint.x, itemDropPoint.y, itemID, 4, 8);
+
+        //Subtract Item
+        this.inventory.subtract(inventory_slot);
     }
 
     inventory_debug() { // inventory test

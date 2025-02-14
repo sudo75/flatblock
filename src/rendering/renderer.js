@@ -64,6 +64,8 @@ class World_Renderer {
         const leftmost_blockX_int = Math.floor(this.leftmost_blockX);
         const bottommost_blockY_int = Math.floor(this.bottommost_blockY);
 
+
+        // DRAW BLOCKS
         for (let x = leftmost_blockX_int; x <= leftmost_blockX_int + viewWidth; x++) {
             for (let y = bottommost_blockY_int; y <= bottommost_blockY_int + viewHeight; y++) {
                 if (y < 0 || y >= this.game.level.properties.height_blocks) continue;
@@ -86,6 +88,38 @@ class World_Renderer {
                     if ((this.calc.getBlockData(x, y).type === 'solid' || this.calc.solidBlockAdjacent(x, y)) && this.calc.getBlockDistance(x + 0.5, y + 0.5, this.game.player.x + this.game.player.width_blocks / 2, this.game.player.y + this.game.player.height_blocks / 2) < this.game.player.cursorDistLim) {
                         this.drawOutline(real_x, real_y, 4);
                     }
+                }
+            }
+        }
+
+        //DRAW ENTITIES
+        const loaded_chunks = this.calc.getLoadedChunks();
+        for (let i = 0; i < loaded_chunks.length; i++) {
+            const currentChunkID = loaded_chunks[i];
+
+            for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
+                const entity = this.game.level.data[currentChunkID].entity_data[j];
+                
+                const texture_location = entity.texture_location;
+
+                const real_x = (entity.x - this.leftmost_blockX) * this.game.block_size;
+                const real_y = (entity.y - this.bottommost_blockY) * this.game.block_size;
+
+                if (texture_location) {
+                    let image;
+                    if (!this.textureCache[texture_location]) {
+                        image = new Image();
+                        image.src = texture_location;
+            
+                        this.textureCache[texture_location] = image;
+                    } else {
+                        image = this.textureCache[texture_location];
+                    }
+            
+                    const left = real_x;
+                    const top = this.game.height - real_y - this.game.block_size * entity.height_blocks;
+                    
+                    this.ctx.drawImage(image, left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
                 }
             }
         }
