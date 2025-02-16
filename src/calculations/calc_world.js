@@ -17,7 +17,7 @@ class Calc_World {
         let chunks = [];
         for (let x = minX; x < maxX; x++) {
             const chunkID = this.getChunkID(x);
-            if (!chunks.includes(chunkID)) {
+            if (!chunks.includes(chunkID) && this.isWithinWorldBounds(x, 0)) {
                 chunks.push(chunkID);
             }
         }
