@@ -663,24 +663,8 @@ class MenuHandler {
                 return;
             }
             if (!this.aMenuIsOpen()) {
-                    const inventory_slot = this.game.player.inventory.selectedSlot;
-                    this.game.player.throwItem(inventory_slot);
-                
-
-                /*
-                const playerLocation = {x: this.game.player.x, y: this.game.player.y};
-                const playerHight = this.game.player.height_blocks;
-                const playerWidth = this.game.player.width_blocks;
-
-                const itemDropPoint = {
-                    x: playerLocation.x + playerWidth / 2,
-                    y: playerLocation.y + playerHight / 2
-                };
-
-                const hotbarItemID = this.game.player.inventory.data[this.game.player.inventory.selectedSlot].id;
-
-                this.game.entity_handler.newEntity_Item(itemDropPoint.x, itemDropPoint.y, hotbarItemID, 6, 12);
-                */
+                const inventory_slot = this.game.player.inventory.selectedSlot;
+                this.game.player.throwItem(inventory_slot);
             }
             this.keyHold.q = true;
         } else {

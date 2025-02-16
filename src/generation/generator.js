@@ -192,7 +192,8 @@ class Generator {
 
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Block_Air(x, y);
 
-        this.game.player.inventory.addItems(oldBlockID);
+        //Drop item
+        this.game.player.dropItem(x + 0.25, y, oldBlockID, 0, 0); // +0.25 to centre
     }
 }
 

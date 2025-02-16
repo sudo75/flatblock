@@ -35,6 +35,10 @@ class Player extends Entity {
         this.draw();
     }
 
+    dropItem(x, y, itemID, h_vel, v_vel) {
+        this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel);
+    }
+
     throwItem(inventory_slot) {
         const itemDropPoint = {
             x: this.x + this.height_blocks / 2,
@@ -43,7 +47,7 @@ class Player extends Entity {
 
         const itemID = this.inventory.data[inventory_slot].id;
 
-        this.game.entity_handler.newEntity_Item(itemDropPoint.x, itemDropPoint.y, itemID, 4, 8);
+        this.dropItem(itemDropPoint.x, itemDropPoint.y, itemID, 4, 8);
 
         //Subtract Item
         this.inventory.subtract(inventory_slot);
