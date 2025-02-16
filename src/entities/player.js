@@ -8,8 +8,6 @@ class Player extends Entity {
         this.ctx = this.game.ctx_player;
         this.calc = this.game.calculator;
 
-        this.direction = 'right'; //facing direction
-
         this.width_blocks = 0.65; // in unit blocks
         this.height_blocks = 1.75; // in unit blocks
 
@@ -41,13 +39,15 @@ class Player extends Entity {
 
     throwItem(inventory_slot) {
         const itemDropPoint = {
-            x: this.x + this.height_blocks / 2,
-            y: this.y + this.width_blocks / 2
+            x: this.x + this.width_blocks / 2 - 0.25, // -0.25 to centre
+            y: this.y + this.height_blocks / 2
         };
 
         const itemID = this.inventory.data[inventory_slot].id;
 
-        this.dropItem(itemDropPoint.x, itemDropPoint.y, itemID, 4, 8);
+        const h_vel = this.direction === 'right' ? 8: -8;
+        const v_vel = 6;
+        this.dropItem(itemDropPoint.x, itemDropPoint.y, itemID, h_vel, v_vel);
 
         //Subtract Item
         this.inventory.subtract(inventory_slot);

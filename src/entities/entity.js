@@ -9,6 +9,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         this.calc = this.game.calculator;
         this.id = entityID;
 
+        this.direction = 'right'; //facing direction
+
         this.x = x; // x = 0 at left
         this.y = y; // y = 0 at bottom
 
@@ -96,6 +98,15 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     }
 
     update(input, deltaTime) {
+        //set direction
+        if (input.includes('ArrowLeft')) {
+            this.direction = 'left';
+        }
+        if (input.includes('ArrowRight')) {
+            this.direction = 'right';
+        }
+
+
         if (isNaN(this.x) || isNaN(this.y)) return;
 
         if (deltaTime > 0.05) {
@@ -282,7 +293,7 @@ class Entity_item extends Entity {
         this.texture_location = getTextureLocationByID(this.itemID);
 
         this.spawnTick = spawnTick;
-        this.pickup_grace = 20; //ticks
+        this.pickup_grace = 30; //ticks
         this.player_maxReach = 1;
     }
 
