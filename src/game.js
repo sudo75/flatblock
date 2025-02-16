@@ -88,6 +88,7 @@ class Game {
     update_world() {
         // Logic that requires game ticks and world update logic
         this.level.world_interaction(); // for breaking and placing blocks
+        this.entity_handler.run_gametick_logic(this.tick);
     }
 
     menus() {

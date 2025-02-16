@@ -1,4 +1,4 @@
-class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a subclass
+class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperately
     constructor(game, entityID, x, y, width, height, width_blocks, height_blocks) {
         this.game = game;
         this.ctx = this.game.ctx_entities;
@@ -12,7 +12,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
         this.x = x; // x = 0 at left
         this.y = y; // y = 0 at bottom
 
-        this.gravity_acceleration = -24; //earth = -9.8
+        this.gravity_acceleration = -24; //earth = -9.8, default = 24
 
         this.h_maxVel = 3; // blocks per second
         this.h_minVel = -3;
@@ -24,6 +24,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done with a su
 
         this.hover = false;
         this.fast = false;
+
+        this.active = true; //Determines whether or not the entity handler will delete it next check
     }
 
     jump() {
@@ -267,7 +269,7 @@ export { Entity };
 
 import { getTextureLocationByID } from '../generation/blocks.js';
 class Entity_item extends Entity {
-    constructor(game, entityID, x, y, itemID) {
+    constructor(game, entityID, x, y, itemID, spawnTick) {
         super(game, entityID, x, y, 0.5, 0.5);
         this.width_blocks = 0.5; // in unit blocks
         this.height_blocks = 0.5; // in unit blocks
@@ -278,6 +280,39 @@ class Entity_item extends Entity {
         this.itemID = itemID;
 
         this.texture_location = getTextureLocationByID(this.itemID);
+
+        this.spawnTick = spawnTick;
+        this.pickup_grace = 20; //ticks
+        this.player_maxReach = 1;
+    }
+
+    update(input, deltaTime) {
+        super.update(input, deltaTime);
+        
+    }
+
+    run_gametick_logic(tick) {
+        // Calculate player pick-up
+        const playerPos_adjusted = {
+            x: this.game.player.x + this.game.player.width_blocks / 2,
+            y: this.game.player.y + this.game.player.height_blocks / 2
+        }
+
+        const entityPos_adjusted = {
+            x: this.x + this.width_blocks / 2,
+            y: this.y + this.height_blocks / 2,
+        }
+
+
+        //Pickup items
+        if (tick - this.spawnTick >= this.pickup_grace) { // Calculate pickup grace
+            console.log(this.calc.getBlockDistance(playerPos_adjusted.x, playerPos_adjusted.y, entityPos_adjusted.x, entityPos_adjusted.y), this.player_maxReach)
+            if (this.calc.getBlockDistance(playerPos_adjusted.x, playerPos_adjusted.y, entityPos_adjusted.x, entityPos_adjusted.y) <= this.player_maxReach) {
+                this.game.player.inventory.addItems(this.itemID);
+                this.active = false;
+            }
+        }
+        
     }
 }
 
@@ -292,7 +327,8 @@ class EntityHandler {
     }
 
     newEntity_Item(x, y, itemID, h_vel, v_vel) {
-        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID);
+        const spawnTick = this.game.tick;
+        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID, spawnTick);
         entity.h_vel = h_vel;
         entity.v_vel = v_vel;
         
@@ -313,7 +349,25 @@ class EntityHandler {
                 entity.update([], deltaTime);
             }
 
-            
+        }
+    }
+
+    run_gametick_logic(tick) {
+        const loaded_chunks = this.calc.getLoadedChunks();
+
+        for (let i = 0; i < loaded_chunks.length; i++) {
+            const currentChunkID = loaded_chunks[i];
+
+            for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
+                const entity = this.game.level.data[currentChunkID].entity_data[j];                
+                entity.run_gametick_logic(tick);
+
+                //Delete item if 'unactive'
+                if (!entity.active) {
+                    this.game.level.data[currentChunkID].entity_data.splice(j, 1);
+                }
+            }
+
         }
     }
 }
