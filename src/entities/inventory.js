@@ -65,6 +65,19 @@ class Inventory {
         }
     }
 
+    canAddItem(itemID) {
+        for (let i = 0; i < this.rows * this.cols - 1; i++) {
+            if (this.data[i].id === itemID && this.data[i].quantity < this.maxStackSize) {
+                return true;
+            }
+            if (this.data[i].id === null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     addItems(itemID) {
         for (let i = 0; i < this.rows * this.cols - 1; i++) {
             if (this.data[i].id === itemID && this.data[i].quantity < this.maxStackSize) {

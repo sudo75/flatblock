@@ -317,10 +317,13 @@ class Entity_item extends Entity {
 
         //Pickup items
         if (tick - this.spawnTick >= this.pickup_grace) { // Calculate pickup grace
-            console.log(this.calc.getBlockDistance(playerPos_adjusted.x, playerPos_adjusted.y, entityPos_adjusted.x, entityPos_adjusted.y), this.player_maxReach)
             if (this.calc.getBlockDistance(playerPos_adjusted.x, playerPos_adjusted.y, entityPos_adjusted.x, entityPos_adjusted.y) <= this.player_maxReach) {
-                this.game.player.inventory.addItems(this.itemID);
-                this.active = false;
+                
+                if (this.game.player.inventory.canAddItem(this.itemID)) { //If can be picked up
+                    this.game.player.inventory.addItems(this.itemID);
+                    this.active = false;
+                }
+                
             }
         }
         
