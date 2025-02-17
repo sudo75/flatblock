@@ -302,10 +302,10 @@ export { Entity };
 
 import { getTextureLocationByID } from '../generation/blocks.js';
 class Entity_item extends Entity {
-    constructor(game, entityID, x, y, itemID, spawnTick) {
+    constructor(game, entityID, x, y, itemID, spawnTick, dimensions) {
         super(game, entityID, x, y, 0.5, 0.5);
-        this.width_blocks = 0.5; // in unit blocks
-        this.height_blocks = 0.5; // in unit blocks
+        this.width_blocks = dimensions.width; // in unit blocks
+        this.height_blocks = dimensions.height; // in unit blocks
 
         this.width = this.game.block_size * this.width_blocks;
         this.height = this.game.block_size * this.height_blocks;
@@ -316,12 +316,11 @@ class Entity_item extends Entity {
 
         this.spawnTick = spawnTick;
         this.pickup_grace = 40; //ticks
-        this.player_maxReach = 1;
+        this.player_maxReach = 1.05;
     }
 
     update(input, deltaTime) {
         super.update(input, deltaTime);
-        
     }
 
     run_gametick_logic(tick) {
@@ -335,7 +334,6 @@ class Entity_item extends Entity {
             x: this.x + this.width_blocks / 2,
             y: this.y + this.height_blocks / 2,
         }
-
 
         //Pickup items
         if (tick - this.spawnTick >= this.pickup_grace) { // Calculate pickup grace
@@ -360,11 +358,15 @@ class EntityHandler {
         this.level_data = this.game.level.data;
 
         this.nextEntityID = 1;
+        this.entity_item_dimensions = {
+            width: 0.5,
+            height: 0.5
+        };
     }
 
     newEntity_Item(x, y, itemID, h_vel, v_vel) {
         const spawnTick = this.game.tick;
-        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID, spawnTick);
+        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID, spawnTick, this.entity_item_dimensions);
         entity.h_vel = h_vel;
         entity.v_vel = v_vel;
         

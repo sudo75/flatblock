@@ -39,7 +39,7 @@ class Player extends Entity {
 
     throwItem(inventory_slot) {
         const itemDropPoint = {
-            x: this.x + this.width_blocks / 2 - 0.25, // -0.25 to centre
+            x: this.x + this.width_blocks / 2 - this.game.entity_handler.entity_item_dimensions.width / 2, // subtract half the item width width to centre
             y: this.y + this.height_blocks / 2
         };
 
