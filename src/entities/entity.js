@@ -47,6 +47,19 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         return false;
     }
 
+    isInSolidBlock() {
+        if (this.y >= 0) {
+            if (
+                this.calc.isSolidBlock(Math.floor(this.x), Math.floor(this.y)) ||
+                this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y))
+            ) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
     isSolidBlockAdjacent(direction) {
         const minX = this.game.player.x;
         const minY = this.game.player.y;
@@ -273,6 +286,15 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     updatePos(deltaTime) {
         this.x += this.h_vel * deltaTime;
         this.y += this.v_vel * deltaTime;
+
+
+        if (this.isInSolidBlock()) {
+            this.punt();
+        }
+    }
+
+    punt() {
+        this.y++;
     }
 }
 
