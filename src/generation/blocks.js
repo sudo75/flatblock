@@ -50,6 +50,7 @@ class Block_dirt extends Block_Solid {
     constructor(x, y) {
         super('dirt', x, y, 10, './assets/textures/dirt.png');
         this.id = 1;
+        this.itemDrop_id = 1;
     }
 }
 
@@ -57,6 +58,7 @@ class Block_grass extends Block_Solid {
     constructor(x, y) {
         super('grass', x, y, 10, './assets/textures/grass.png');
         this.id = 2;
+        this.itemDrop_id = 2;
     }
 }
 
@@ -64,6 +66,7 @@ class Block_stone extends Block_Solid {
     constructor(x, y) {
         super('stone', x, y, 50, './assets/textures/stone.png');
         this.id = 3;
+        this.itemDrop_id = 3;
     }
 }
 
@@ -71,6 +74,7 @@ class Block_treeLog extends Block_Solid {
     constructor(x, y) {
         super('treeLog', x, y, 10, './assets/textures/log.png');
         this.id = 4;
+        this.itemDrop_id = 5;
         this.physics = false;
     }
 }
@@ -79,6 +83,7 @@ class Block_log extends Block_Solid {
     constructor(x, y) {
         super('log', x, y, 10, './assets/textures/log.png');
         this.id = 5;
+        this.itemDrop_id = 5;
     }
 }
 
@@ -86,6 +91,7 @@ class Block_treeleaves extends Block_Solid {
     constructor(x, y) {
         super('treeLeaves', x, y, 20, './assets/textures/leaves.png');
         this.id = 6;
+        this.itemDrop_id = 7;
         this.physics = false;
     }
 }
@@ -94,6 +100,7 @@ class Block_leaves extends Block_Solid {
     constructor(x, y) {
         super('leaves', x, y, 20, './assets/textures/leaves.png');
         this.id = 7;
+        this.itemDrop_id = 7;
     }
 }
 

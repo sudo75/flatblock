@@ -270,12 +270,12 @@ class Generator {
     }
 
     breakBlock(x, y) {
-        const oldBlockID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].id;
+        const itemID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
 
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Block_Air(x, y);
 
         //Drop item
-        this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, oldBlockID, 0, 0); // add half item width to centre
+        this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
     }
 }
 
