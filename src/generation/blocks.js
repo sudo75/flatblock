@@ -125,10 +125,9 @@ class Item_Directory {
 
         const blockClass = this.item[id];
         const blockInstance = new blockClass;
-        
+
         return blockInstance.texture_location;
     }
 }
 
 export { Item_Directory };
-export { Block_Air, Block_dirt, Block_grass, Block_stone, Block_treeLog, Block_log, Block_treeleaves, Block_leaves };

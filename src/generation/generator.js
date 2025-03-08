@@ -1,4 +1,3 @@
-import { Block_Air, Block_dirt, Block_grass, Block_stone, Block_treeLog, Block_log, Block_treeleaves, Block_leaves } from "./blocks.js";
 import { Item_Directory } from "./blocks.js";
 
 class Generator {
@@ -251,7 +250,9 @@ class Generator {
     breakBlock(x, y) {
         const itemID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
 
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Block_Air(x, y);
+        const Air_class = this.item_directory.item[0];
+
+        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Air_class(x, y);
 
         //Drop item
         this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
