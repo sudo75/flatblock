@@ -1,4 +1,4 @@
-import { Block_Air, Block_dirt, Block_grass, Block_stone } from "./blocks.js";
+import { Block_Air, Block_dirt, Block_grass, Block_stone, Block_log, Block_leaves } from "./blocks.js";
 
 class Generator {
     constructor(game, data, properties) {
@@ -162,6 +162,79 @@ class Generator {
             chunck.push(col);
         }
         this.data[chunk_id] = { block_data: chunck, entity_data: [] };
+        this.generate_embellishments(chunk_id);
+    }
+
+    generate_embellishments(chunk_id) {
+        for (let x = 0; x < this.chunk_size; x++) {
+            const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
+            
+
+            //Generate trees at 10% probability
+            if (this.calc.randomBool(10)) {
+                this.generateTree(absoluteX, this.getContour(absoluteX) + 1, chunk_id);
+            }
+        }
+    }
+
+    generateTree(x, y, chunk_id) {  //Attempts tree generation
+        console.log(x)
+        const blocks_template = [
+            {id: 4, dx: 0, dy: 0, chance: 100},
+            {id: 4, dx: 0, dy: 1, chance: 100},
+            {id: 4, dx: 0, dy: 2, chance: 100},
+            {id: 4, dx: 0, dy: 3, chance: 100},
+
+            {id: 5, dx: -1, dy: 2, chance: 100},
+            {id: 5, dx: -1, dy: 3, chance: 100},
+            {id: 5, dx: -1, dy: 4, chance: 100},
+            {id: 5, dx: 0, dy: 4, chance: 100},
+            {id: 5, dx: 1, dy: 4, chance: 100},
+            {id: 5, dx: 1, dy: 3, chance: 100},
+            {id: 5, dx: 1, dy: 2, chance: 100},
+            
+            {id: 5, dx: -2, dy: 2, chance: 80},
+            {id: 5, dx: -2, dy: 3, chance: 80},
+            {id: 5, dx: -1, dy: 5, chance: 80},
+            {id: 5, dx: 0, dy: 5, chance: 100},
+            {id: 5, dx: 1, dy: 5, chance: 80},
+            {id: 5, dx: 2, dy: 3, chance: 80},
+            {id: 5, dx: 2, dy: 2, chance: 80},
+        ];
+
+        let blocks = [];
+
+        // Calculate block positions
+        for (let i = 0; i < blocks_template.length; i++) {
+            console.log(blocks_template[i].chance)
+            if (this.calc.randomBool(blocks_template[i].chance)) {
+                blocks.push(blocks_template[i]);
+            }
+        }
+
+        //Ensure collision requirements
+        for (let i = 0; i < blocks.length; i++) {
+            const blockX = x + blocks[i].dx;
+            const blockY = y + blocks[i].dy;
+
+            const block_chunkID = this.calc.getChunkID(blockX);
+
+            if (!this.calc.chunkIsGenerated(block_chunkID)) {
+                return;
+            }
+            if (this.calc.getBlockData(blockX, blockY).id !== 0) {
+                return;
+            }
+        }
+
+        //Build tree
+        for (let i = 0; i < blocks.length; i++) {
+            const blockID = blocks[i].id;
+            const blockX = x + blocks[i].dx;
+            const blockY = y + blocks[i].dy;
+
+            this.placeBlock(blockID, blockX, blockY);
+        }
     }
 
     placeBlock(blockID, x, y) {
@@ -175,6 +248,12 @@ class Generator {
                 break;
             case 3:
                 block = Block_stone;
+                break;
+            case 4:
+                block = Block_log;
+                break;
+            case 5:
+                block = Block_leaves;
                 break;
             default:
                 console.warn('Can\'t place block!');

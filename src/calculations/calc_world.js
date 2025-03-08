@@ -30,6 +30,15 @@ class Calc_World {
         return chunkID;
     }
 
+    randomBool(chance) { //in percent
+        const rand = Math.ceil(Math.random() * 100);
+
+        if (rand <= chance) {
+            return true;
+        }
+        return false;
+    }
+
     getBlockByRealXY(real_x, real_y) {
         const x = Math.floor(real_x / this.game.block_size + this.game.renderer.leftmost_blockX);
         const y = Math.floor((this.game.height - real_y) / this.game.block_size + this.game.renderer.bottommost_blockY);
@@ -54,6 +63,12 @@ class Calc_World {
         return relativeX;
     }
 
+    getAbsoluteX(relativeX, chunkID) {
+        const absoluteX = this.game.level.generator.chunk_size * chunkID + relativeX;
+
+        return absoluteX;
+    }
+
     getBlockData(x, y) {
         const chunkID = this.getChunkID(x);
         const relativeX = this.getRelativeX(x);
@@ -66,6 +81,14 @@ class Calc_World {
         const bounds = this.getWorldBorders();
 
         if (x >= bounds.minX && x <= bounds.maxX && y >= 0 && y < this.game.level.properties.height_blocks) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    chunkIsGenerated(chunkID) {
+        if (this.game.level.data[chunkID]) {
             return true;
         } else {
             return false;

@@ -64,15 +64,31 @@ class Block_stone extends Block_Solid {
     }
 }
 
+class Block_log extends Block_Solid {
+    constructor(x, y) {
+        super('log', x, y, 10, './assets/textures/log.png');
+        this.id = 4;
+    }
+}
+
+class Block_leaves extends Block_Solid {
+    constructor(x, y) {
+        super('leaves', x, y, 20, './assets/textures/leaves.png');
+        this.id = 5;
+    }
+}
+
 export const getTextureLocationByID = (id) => {
     const items = {
         '0': null,
         '1': './assets/textures/dirt.png',
         '2': './assets/textures/grass.png',
-        '3': './assets/textures/stone.png'
+        '3': './assets/textures/stone.png',
+        '4': './assets/textures/log.png',
+        '5': './assets/textures/leaves.png',
     }
 
     return items[id];
 };
 
-export { Block_Air, Block_dirt, Block_grass, Block_stone };
+export { Block_Air, Block_dirt, Block_grass, Block_stone, Block_log, Block_leaves };
