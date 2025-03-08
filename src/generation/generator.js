@@ -141,7 +141,6 @@ class Generator {
 
                 const grassLevel = this.getContour(absolute_x);
 
-                //console.log(absolute_x, grassLevel)
                 const dirtLevel = grassLevel - 4;
 
                 const chooseBlock = () => {
@@ -178,7 +177,6 @@ class Generator {
     }
 
     generateTree(x, y, chunk_id) {  //Attempts tree generation
-        console.log(x)
         const blocks_template = [
             {id: 4, dx: 0, dy: 0, chance: 100},
             {id: 4, dx: 0, dy: 1, chance: 100},
@@ -206,7 +204,6 @@ class Generator {
 
         // Calculate block positions
         for (let i = 0; i < blocks_template.length; i++) {
-            console.log(blocks_template[i].chance)
             if (this.calc.randomBool(blocks_template[i].chance)) {
                 blocks.push(blocks_template[i]);
             }

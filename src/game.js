@@ -18,8 +18,8 @@ class Game {
         this.level = null;
 
         this.settings = {
-            blockview_width: 45, //number of blocks viewable - default = 15
-            blockview_height: 45
+            blockview_width: 15, //number of blocks viewable - default = 15
+            blockview_height: 15
         };
 
         this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
