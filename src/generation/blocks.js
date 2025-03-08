@@ -17,6 +17,8 @@ class Block_Solid extends Block {
 
         this.hardness = hardness;
         this.break_status = 0; // 0 - 5
+
+        this.physics = true; //Follows physics rules
     }
 }
 
@@ -26,6 +28,7 @@ class Block_Liquid extends Block {
         this.type = 'liquid';
         this.viscosity = 0;
         this.transparency = 0.8;
+        this.physics = true;
     }
 }
 
@@ -64,17 +67,33 @@ class Block_stone extends Block_Solid {
     }
 }
 
+class Block_treeLog extends Block_Solid {
+    constructor(x, y) {
+        super('treeLog', x, y, 10, './assets/textures/log.png');
+        this.id = 4;
+        this.physics = false;
+    }
+}
+
 class Block_log extends Block_Solid {
     constructor(x, y) {
         super('log', x, y, 10, './assets/textures/log.png');
-        this.id = 4;
+        this.id = 5;
+    }
+}
+
+class Block_treeleaves extends Block_Solid {
+    constructor(x, y) {
+        super('treeLeaves', x, y, 20, './assets/textures/leaves.png');
+        this.id = 6;
+        this.physics = false;
     }
 }
 
 class Block_leaves extends Block_Solid {
     constructor(x, y) {
         super('leaves', x, y, 20, './assets/textures/leaves.png');
-        this.id = 5;
+        this.id = 7;
     }
 }
 
@@ -85,10 +104,12 @@ export const getTextureLocationByID = (id) => {
         '2': './assets/textures/grass.png',
         '3': './assets/textures/stone.png',
         '4': './assets/textures/log.png',
-        '5': './assets/textures/leaves.png',
+        '5': './assets/textures/log.png',
+        '6': './assets/textures/leaves.png',
+        '7': './assets/textures/leaves.png',
     }
 
     return items[id];
 };
 
-export { Block_Air, Block_dirt, Block_grass, Block_stone, Block_log, Block_leaves };
+export { Block_Air, Block_dirt, Block_grass, Block_stone, Block_treeLog, Block_log, Block_treeleaves, Block_leaves };

@@ -46,6 +46,17 @@ class Calc_World {
         return {x: x, y: y};
     }
 
+    hasPhysics(x, y) {
+        if (!this.isWithinWorldBounds(x, y)) return false;
+        const block_data = this.getBlockData(x, y);
+
+        if (block_data.physics) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     isSolidBlock(x, y) {
         if (!this.isWithinWorldBounds(x, y)) return false;
         const block_data = this.getBlockData(x, y);

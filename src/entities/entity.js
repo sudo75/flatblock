@@ -37,8 +37,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     isOnSolidBlock() {
         if (this.y % 1 == 0 && this.y - 1 >= 0) {
             if (
-                this.calc.isSolidBlock(Math.floor(this.x), this.y - 1) ||
-                this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1)
+                (this.calc.isSolidBlock(Math.floor(this.x), this.y - 1) && this.calc.hasPhysics(Math.floor(this.x), this.y - 1)) ||
+                (this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1) && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1))
             ) {
                 return true;
             }
@@ -50,8 +50,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     isInSolidBlock() {
         if (this.y >= 0) {
             if (
-                this.calc.isSolidBlock(Math.floor(this.x), Math.floor(this.y)) ||
-                this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y))
+                (this.calc.isSolidBlock(Math.floor(this.x), Math.floor(this.y)) && this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y))) ||
+                (this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)) && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)))
             ) {
                 return true;
             }
@@ -68,11 +68,11 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
         for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
             if (direction === 'left') {
-                if (this.calc.isSolidBlock(this.calc.hardRoundDown(minX), y)) {
+                if (this.calc.isSolidBlock(this.calc.hardRoundDown(minX), y) && this.calc.hasPhysics(this.calc.hardRoundDown(minX), y)) {
                     return true;
                 }
             } else if (direction === 'right') {
-                if (this.calc.isSolidBlock(Math.floor(maxX), y)) {
+                if (this.calc.isSolidBlock(Math.floor(maxX), y) && this.calc.hasPhysics(Math.floor(maxX), y)) {
                     return true;
                 }
             }
@@ -83,8 +83,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     isSolidBlockAbove() { // Directly above - no space between
         if ((this.y + this.height_blocks) % 1 === 0) {
             if (
-                this.calc.isSolidBlock(Math.floor(this.x), this.y + this.height_blocks) ||
-                this.calc.isSolidBlock(Math.floor(this.x + this.width_blocks), this.y + this.height_blocks)
+                (this.calc.isSolidBlock(Math.floor(this.x), this.y + this.height_blocks) && this.calc.hasPhysics(Math.floor(this.x), this.y + this.height_blocks)) ||
+                (this.calc.isSolidBlock(Math.floor(this.x + this.width_blocks), this.y + this.height_blocks) && this.calc.hasPhysics(Math.floor(this.x + this.width_blocks), this.y + this.height_blocks))
             ) {
                 return true;
             }
@@ -102,7 +102,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         for (let i = minX; i <= maxX; i++) {
             for (let j = minY; j <= maxY; j++) {
                 if (!this.calc.isWithinWorldBounds(i, j)) continue;
-                if (this.calc.isSolidBlock(i, j)) {
+                if (this.calc.isSolidBlock(i, j) && this.calc.hasPhysics(i, j)) {
                     return true;
                 }
             }

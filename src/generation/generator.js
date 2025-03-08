@@ -1,4 +1,4 @@
-import { Block_Air, Block_dirt, Block_grass, Block_stone, Block_log, Block_leaves } from "./blocks.js";
+import { Block_Air, Block_dirt, Block_grass, Block_stone, Block_treeLog, Block_log, Block_treeleaves, Block_leaves } from "./blocks.js";
 
 class Generator {
     constructor(game, data, properties) {
@@ -183,21 +183,21 @@ class Generator {
             {id: 4, dx: 0, dy: 2, chance: 100},
             {id: 4, dx: 0, dy: 3, chance: 100},
 
-            {id: 5, dx: -1, dy: 2, chance: 100},
-            {id: 5, dx: -1, dy: 3, chance: 100},
-            {id: 5, dx: -1, dy: 4, chance: 100},
-            {id: 5, dx: 0, dy: 4, chance: 100},
-            {id: 5, dx: 1, dy: 4, chance: 100},
-            {id: 5, dx: 1, dy: 3, chance: 100},
-            {id: 5, dx: 1, dy: 2, chance: 100},
+            {id: 6, dx: -1, dy: 2, chance: 100},
+            {id: 6, dx: -1, dy: 3, chance: 100},
+            {id: 6, dx: -1, dy: 4, chance: 100},
+            {id: 6, dx: 0, dy: 4, chance: 100},
+            {id: 6, dx: 1, dy: 4, chance: 100},
+            {id: 6, dx: 1, dy: 3, chance: 100},
+            {id: 6, dx: 1, dy: 2, chance: 100},
             
-            {id: 5, dx: -2, dy: 2, chance: 80},
-            {id: 5, dx: -2, dy: 3, chance: 80},
-            {id: 5, dx: -1, dy: 5, chance: 80},
-            {id: 5, dx: 0, dy: 5, chance: 100},
-            {id: 5, dx: 1, dy: 5, chance: 80},
-            {id: 5, dx: 2, dy: 3, chance: 80},
-            {id: 5, dx: 2, dy: 2, chance: 80},
+            {id: 6, dx: -2, dy: 2, chance: 80},
+            {id: 6, dx: -2, dy: 3, chance: 80},
+            {id: 6, dx: -1, dy: 5, chance: 80},
+            {id: 6, dx: 0, dy: 5, chance: 100},
+            {id: 6, dx: 1, dy: 5, chance: 80},
+            {id: 6, dx: 2, dy: 3, chance: 80},
+            {id: 6, dx: 2, dy: 2, chance: 80},
         ];
 
         let blocks = [];
@@ -247,9 +247,15 @@ class Generator {
                 block = Block_stone;
                 break;
             case 4:
-                block = Block_log;
+                block = Block_treeLog;
                 break;
             case 5:
+                block = Block_log;
+                break;
+            case 6:
+                block = Block_treeleaves;
+                break;
+            case 7:
                 block = Block_leaves;
                 break;
             default:
