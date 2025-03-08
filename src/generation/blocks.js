@@ -1,10 +1,17 @@
-class Block {
-    constructor(name, x, y, texture_location) {
+class Meta {
+    constructor(name, texture_location) {
         this.name = name;
+        this.texture_location = texture_location;
+
+        this.isBlock = true;
+    }
+}
+
+class Block extends Meta {
+    constructor(name, x, y, texture_location) {
+        super(name, texture_location);
         this.x = x;
         this.y = y;
-
-        this.texture_location = texture_location;
     }
 }
 
@@ -43,12 +50,35 @@ class Block_Air extends Block {
     }
 }
 
+class Item extends Meta {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+        this.isBlock = false;
+    }
+}
+
+class Tool extends Item {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+        this.purpose = [] //list of block IDs the tool breaks
+    }
+}
+
+// ITEMS ------------------------------------------>
+
+class Item_woodenPicaxe extends Tool {
+    constructor(x, y) {
+        super('wooden_picaxe', './assets/items/wooden_picaxe.png');
+        this.id = 128;
+    }
+}
+
 
 // BLOCKS ----------------------------------------->
 
 class Block_dirt extends Block_Solid {
     constructor(x, y) {
-        super('dirt', x, y, 10, './assets/textures/dirt.png');
+        super('dirt', x, y, 20, './assets/textures/dirt.png');
         this.id = 1;
         this.itemDrop_id = 1;
     }
@@ -56,7 +86,7 @@ class Block_dirt extends Block_Solid {
 
 class Block_grass extends Block_Solid {
     constructor(x, y) {
-        super('grass', x, y, 10, './assets/textures/grass.png');
+        super('grass', x, y, 30, './assets/textures/grass.png');
         this.id = 2;
         this.itemDrop_id = 2;
     }
@@ -64,7 +94,7 @@ class Block_grass extends Block_Solid {
 
 class Block_stone extends Block_Solid {
     constructor(x, y) {
-        super('stone', x, y, 50, './assets/textures/stone.png');
+        super('stone', x, y, 100, './assets/textures/stone.png');
         this.id = 3;
         this.itemDrop_id = 3;
     }
@@ -72,7 +102,7 @@ class Block_stone extends Block_Solid {
 
 class Block_treeLog extends Block_Solid {
     constructor(x, y) {
-        super('treeLog', x, y, 10, './assets/textures/log.png');
+        super('treeLog', x, y, 50, './assets/textures/log.png');
         this.id = 4;
         this.itemDrop_id = 5;
         this.physics = false;
@@ -81,7 +111,7 @@ class Block_treeLog extends Block_Solid {
 
 class Block_log extends Block_Solid {
     constructor(x, y) {
-        super('log', x, y, 10, './assets/textures/log.png');
+        super('log', x, y, 50, './assets/textures/log.png');
         this.id = 5;
         this.itemDrop_id = 5;
     }
@@ -89,7 +119,7 @@ class Block_log extends Block_Solid {
 
 class Block_treeleaves extends Block_Solid {
     constructor(x, y) {
-        super('treeLeaves', x, y, 20, './assets/textures/leaves.png');
+        super('treeLeaves', x, y, 10, './assets/textures/leaves.png');
         this.id = 6;
         this.itemDrop_id = 7;
         this.physics = false;
@@ -98,13 +128,11 @@ class Block_treeleaves extends Block_Solid {
 
 class Block_leaves extends Block_Solid {
     constructor(x, y) {
-        super('leaves', x, y, 20, './assets/textures/leaves.png');
+        super('leaves', x, y, 10, './assets/textures/leaves.png');
         this.id = 7;
         this.itemDrop_id = 7;
     }
 }
-
-
 
 class Item_Directory {
     constructor() {
@@ -116,17 +144,24 @@ class Item_Directory {
             '4': Block_treeLog,
             '5': Block_treeLog,
             '6': Block_treeleaves,
-            '7': Block_leaves
+            '7': Block_leaves,
+
+            '128': Item_woodenPicaxe
         }
     }
 
-    getTextureLocationByID(id) {
+    getProperty(id, property) {
         if (!this.item[id]) return;
 
-        const blockClass = this.item[id];
-        const blockInstance = new blockClass;
+        const itemClass = this.item[id];
+        const itemInstance = new itemClass;
 
-        return blockInstance.texture_location;
+        return itemInstance[property];
+    }
+
+    getTextureLocationByID(id) {
+
+        return this.getProperty(id, 'texture_location');
     }
 }
 

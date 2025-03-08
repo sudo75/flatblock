@@ -241,6 +241,8 @@ class Generator {
     placeBlock(blockID, x, y) {
         let block = this.item_directory.item[blockID];
 
+        if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
+
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
 
         const selectedSlot = this.game.player.inventory.selectedSlot;
