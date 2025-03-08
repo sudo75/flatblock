@@ -300,7 +300,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
 export { Entity };
 
-import { getTextureLocationByID } from '../generation/blocks.js';
+import { Item_Directory } from '../generation/blocks.js';
 class Entity_item extends Entity {
     constructor(game, entityID, x, y, itemID, spawnTick, dimensions) {
         super(game, entityID, x, y, 0.5, 0.5);
@@ -312,7 +312,8 @@ class Entity_item extends Entity {
         
         this.itemID = itemID;
 
-        this.texture_location = getTextureLocationByID(this.itemID);
+        this.item_directory = new Item_Directory();
+        this.texture_location = this.item_directory.getTextureLocationByID(this.itemID);
 
         this.spawnTick = spawnTick;
         this.pickup_grace = 40; //ticks

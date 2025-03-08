@@ -104,19 +104,31 @@ class Block_leaves extends Block_Solid {
     }
 }
 
-export const getTextureLocationByID = (id) => {
-    const items = {
-        '0': null,
-        '1': './assets/textures/dirt.png',
-        '2': './assets/textures/grass.png',
-        '3': './assets/textures/stone.png',
-        '4': './assets/textures/log.png',
-        '5': './assets/textures/log.png',
-        '6': './assets/textures/leaves.png',
-        '7': './assets/textures/leaves.png',
+
+
+class Item_Directory {
+    constructor() {
+        this.item = {
+            '0': Block_Air,
+            '1': Block_dirt,
+            '2': Block_grass,
+            '3': Block_stone,
+            '4': Block_treeLog,
+            '5': Block_treeLog,
+            '6': Block_treeleaves,
+            '7': Block_leaves
+        }
     }
 
-    return items[id];
-};
+    getTextureLocationByID(id) {
+        if (!this.item[id]) return;
 
+        const blockClass = this.item[id];
+        const blockInstance = new blockClass;
+        
+        return blockInstance.texture_location;
+    }
+}
+
+export { Item_Directory };
 export { Block_Air, Block_dirt, Block_grass, Block_stone, Block_treeLog, Block_log, Block_treeleaves, Block_leaves };

@@ -1,4 +1,4 @@
-import { getTextureLocationByID } from '../generation/blocks.js';
+import { Item_Directory } from '../generation/blocks.js';
 
 const recipies = [
     { // 4 dirt => 1 grass
@@ -51,6 +51,8 @@ class Menu {
         this.real_height = this.canvas_height * this.height;
         this.x = (this.canvas_width - this.real_width) / 2;
         this.y = (this.canvas_height - this.real_height) / 2;
+
+        this.item_directory = new Item_Directory();
     }
 
     open() {
@@ -272,7 +274,7 @@ class Menu_Inventory extends Menu {
                 const slot_x = this.slotPosition[index].slot_x;
                 const slot_y = this.slotPosition[index].slot_y;
 
-                const texture_location = getTextureLocationByID(item.id);
+                const texture_location = this.item_directory.getTextureLocationByID(item.id);
                 const itemQuantity = item.quantity;
 
                 if (texture_location) {
@@ -512,7 +514,7 @@ class Menu_Hotbar extends Menu {
 
             // Render item in the slot
             if (this.inventory_data[i]) {
-                const texture_location = getTextureLocationByID(item.id);
+                const texture_location = this.item_directory.getTextureLocationByID(item.id);
                 const itemQuantity = item.quantity;
 
                 if (texture_location) {

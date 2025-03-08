@@ -1,9 +1,11 @@
 import { Block_Air, Block_dirt, Block_grass, Block_stone, Block_treeLog, Block_log, Block_treeleaves, Block_leaves } from "./blocks.js";
+import { Item_Directory } from "./blocks.js";
 
 class Generator {
     constructor(game, data, properties) {
         this.game = game;
         this.calc = this.game.calculator;
+        this.item_directory = new Item_Directory();
 
         this.properties = properties;
 
@@ -144,15 +146,18 @@ class Generator {
                 const dirtLevel = grassLevel - 4;
 
                 const chooseBlock = () => {
+                    let blockClass = this.item_directory.item[0]; //Default to air
+
+
                     if (y < dirtLevel) {
-                        return new Block_stone(absolute_x, y);
+                        blockClass = this.item_directory.item[3]; //Stone
                     } else if (y < grassLevel) {
-                        return new Block_dirt(absolute_x, y);
+                        blockClass = this.item_directory.item[1]; //Dirt
                     } else if (y === grassLevel) {
-                        return new Block_grass(absolute_x, y);
-                    } else {
-                        return new Block_Air(absolute_x, y);
+                        blockClass = this.item_directory.item[2]; //Grass
                     }
+
+                    return new blockClass(absolute_x, y);
                 };
 
                 const block = chooseBlock();
@@ -235,33 +240,7 @@ class Generator {
     }
 
     placeBlock(blockID, x, y) {
-        let block;
-        switch (blockID) { //UPGRADE CODE LATER
-            case 1:
-                block = Block_dirt;
-                break;
-            case 2:
-                block = Block_grass;
-                break;
-            case 3:
-                block = Block_stone;
-                break;
-            case 4:
-                block = Block_treeLog;
-                break;
-            case 5:
-                block = Block_log;
-                break;
-            case 6:
-                block = Block_treeleaves;
-                break;
-            case 7:
-                block = Block_leaves;
-                break;
-            default:
-                console.warn('Can\'t place block!');
-                return;
-        }
+        let block = this.item_directory.item[blockID];
 
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
 
