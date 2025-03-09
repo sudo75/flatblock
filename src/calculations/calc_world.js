@@ -69,13 +69,14 @@ class Calc_World {
     }
 
     getRelativeX(x) {
-        const relativeX = (x % 16 + 16) % 16; // X-value relative to chunk
+        const chunkSize = this.game.level.chunk_size;
+        const relativeX = (x % chunkSize + chunkSize) % chunkSize; // X-value relative to chunk
 
         return relativeX;
     }
 
     getAbsoluteX(relativeX, chunkID) {
-        const absoluteX = this.game.level.generator.chunk_size * chunkID + relativeX;
+        const absoluteX = this.game.level.chunk_size * chunkID + relativeX;
 
         return absoluteX;
     }

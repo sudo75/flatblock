@@ -6,7 +6,6 @@ class Generator {
 
         this.properties = properties;
 
-        this.chunk_size = 16;
         this.data = data;
 
         this.seed = this.generateSeed();
@@ -132,11 +131,11 @@ class Generator {
         // Logic to generate the game level
         let chunck = [];
 
-        for (let x = 0; x < this.chunk_size; x++) {
+        for (let x = 0; x < this.game.level.chunk_size; x++) {
             let col = [];
             for (let y = 0; y < this.properties.height_blocks; y++) {
 
-                const absolute_x = chunk_id * this.chunk_size + x;
+                const absolute_x = chunk_id * this.game.level.chunk_size + x;
 
                 const grassLevel = this.getContour(absolute_x);
 
@@ -167,9 +166,8 @@ class Generator {
     }
 
     generate_embellishments(chunk_id) {
-        for (let x = 0; x < this.chunk_size; x++) {
+        for (let x = 0; x < this.game.level.chunk_size; x++) {
             const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
-            
 
             //Generate trees at 10% probability
             if (this.calc.randomBool(10)) {
