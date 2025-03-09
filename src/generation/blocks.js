@@ -66,13 +66,31 @@ class Tool extends Item {
 
 // ITEMS ------------------------------------------>
 
+class Item_stick extends Item {
+    constructor() {
+        super('stick', './assets/items/stick.png');
+        this.id = 128;
+    }
+}
+
 class Item_woodenPicaxe extends Tool {
     constructor() {
         super('wooden_picaxe', './assets/items/wooden_picaxe.png');
-        this.id = 128;
+        this.id = 129;
         this.durability = 5;
 
         this.strength = 2;
+        this.purpose = [3]; //list of block IDs the tool breaks
+    }
+}
+
+class Item_stonePicaxe extends Tool {
+    constructor() {
+        super('stone_picaxe', './assets/items/stone_picaxe.png');
+        this.id = 130;
+        this.durability = 5;
+
+        this.strength = 3;
         this.purpose = [3]; //list of block IDs the tool breaks
     }
 }
@@ -138,6 +156,14 @@ class Block_leaves extends Block_Solid {
     }
 }
 
+class Block_planks extends Block_Solid {
+    constructor(x, y) {
+        super('planks', x, y, 40, './assets/textures/planks.png');
+        this.id = 8;
+        this.itemDrop_id = 8;
+    }
+}
+
 class Item_Directory {
     constructor() {
         this.item = {
@@ -149,8 +175,11 @@ class Item_Directory {
             '5': Block_treeLog,
             '6': Block_treeleaves,
             '7': Block_leaves,
+            '8': Block_planks,
 
-            '128': Item_woodenPicaxe
+            '128': Item_stick,
+            '129': Item_woodenPicaxe,
+            '130': Item_stonePicaxe
         }
     }
 

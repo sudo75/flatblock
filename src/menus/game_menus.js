@@ -1,39 +1,5 @@
 import { Item_Directory } from '../generation/blocks.js';
-
-const recipies = [
-    { // 4 dirt => 1 grass
-        result: 2,
-        quantity: 1,
-        recipie: [
-            [
-                [1, 1, null],
-                [1, 1, null],
-                [null, null, null]
-            ],
-            [
-                [null, 1, 1],
-                [null, 1, 1],
-                [null, null, null]
-            ]
-        ]
-    },
-    { //4 stone => 2 dirt
-        result: 1,
-        quantity: 2,
-        recipie: [
-            [
-                [3, 3, null],
-                [3, 3, null],
-                [null, null, null]
-            ],
-            [
-                [null, 3, 3],
-                [null, 3, 3],
-                [null, null, null]
-            ]
-        ]
-    }
-];
+import { recipies } from './crafting_recipies.js';
 
 class Menu {
     constructor(canvas_menu, ctx, width, height) {
@@ -53,6 +19,7 @@ class Menu {
         this.y = (this.canvas_height - this.real_height) / 2;
 
         this.item_directory = new Item_Directory();
+        this.recipies = recipies;
     }
 
     open() {
@@ -87,10 +54,10 @@ class Menu_Inventory extends Menu {
         
         switch (type) {
             case 'inventory':
-                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 2, 2, recipies);
+                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 2, 2, this.recipies);
                 break;
             case 'crafting':
-                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 3, 3, recipies);
+                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 3, 3, this.recipies);
                 this.Menu_ComponentUI_1.x = this.x + (this.real_width - this.Menu_ComponentUI_1.real_width) / 2;
                 break;
         }
@@ -333,7 +300,7 @@ class Menu_ComponentUI_Crafting {
         this.slotPosition = []; // Required for integration with main menu
 
         this.recipies = recipies;
-
+        this.item_directory = new Item_Directory();
 
         this.button_crafting = {
 
@@ -356,11 +323,13 @@ class Menu_ComponentUI_Crafting {
 
         const result = this.checkCraftingGrid().resultID;
         const addQuantity = this.checkCraftingGrid().quantity;
+        const durability = this.item_directory.getProperty(result, 'durability');
 
         if (result !== this.main.inventory_data[this.main.getResultSlotIndex()].id && this.main.inventory_data[this.main.getResultSlotIndex()].id !== null) return;
 
         this.main.inventory_data[this.main.getResultSlotIndex()].id = result;
         this.main.inventory_data[this.main.getResultSlotIndex()].quantity += addQuantity;
+        this.main.inventory_data[this.main.getResultSlotIndex()].durability = durability;
 
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {

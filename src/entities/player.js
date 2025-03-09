@@ -59,7 +59,9 @@ class Player extends Entity {
         this.inventory.setSlot(1, 0, 3);
         this.inventory.setSlot(3, 1, 10);
         this.inventory.setSlot(1, 3, 12);
-        this.inventory.setSlot(128, 2, 1);
+        this.inventory.setSlot(129, 2, 1);
+
+        console.log(this.inventory.data)
     }
 
     calculateSpawnY(x) {
