@@ -1,3 +1,5 @@
+import { Item_Directory } from './generation/blocks.js';
+
 class Game {
     constructor(width, height) {
         this.canvas_world = document.querySelector('#game_canvas_back');
@@ -33,6 +35,7 @@ class Game {
 
     async loadModules() {
         // Dynamically import modules
+        const { Item_Directory } = await import('./generation/blocks.js');
         const { Calc_World } = await import('./calculations/calc_world.js');
         const { Entity } = await import('./entities/entity.js');
         const { Player } = await import('./entities/player.js');
@@ -44,6 +47,7 @@ class Game {
 
         // Initialize game components
         this.calculator = new Calc_World(this);
+        this.item_directory = new Item_Directory();
         this.player = new Player(this);
         this.input = new InputHandler(this);
         this.level = new Level(this);

@@ -1,15 +1,16 @@
 class Meta {
-    constructor(name, texture_location) {
+    constructor(name, texture_location, item_type) {
         this.name = name;
         this.texture_location = texture_location;
 
+        this.item_type = item_type;
         this.isBlock = true;
     }
 }
 
 class Block extends Meta {
     constructor(name, x, y, texture_location) {
-        super(name, texture_location);
+        super(name, texture_location, 'block');
         this.x = x;
         this.y = y;
     }
@@ -23,7 +24,7 @@ class Block_Solid extends Block {
         this.transparency = 0;
 
         this.hardness = hardness;
-        this.break_status = 0; // 0 - 5
+        this.break_status = 0; // 0 - hardness
 
         this.physics = true; //Follows physics rules
     }
@@ -52,7 +53,7 @@ class Block_Air extends Block {
 
 class Item extends Meta {
     constructor(name, texture_location) {
-        super(name, texture_location);
+        super(name, texture_location, 'tool');
         this.isBlock = false;
     }
 }
@@ -60,16 +61,19 @@ class Item extends Meta {
 class Tool extends Item {
     constructor(name, texture_location) {
         super(name, texture_location);
-        this.purpose = [] //list of block IDs the tool breaks
     }
 }
 
 // ITEMS ------------------------------------------>
 
 class Item_woodenPicaxe extends Tool {
-    constructor(x, y) {
+    constructor() {
         super('wooden_picaxe', './assets/items/wooden_picaxe.png');
         this.id = 128;
+        this.durability = 5;
+
+        this.strength = 2;
+        this.purpose = [3]; //list of block IDs the tool breaks
     }
 }
 

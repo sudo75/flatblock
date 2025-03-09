@@ -17,7 +17,9 @@ class Player extends Entity {
         this.selectedBlock = {};
         this.cursorDistLim = 4;
 
-        this.inventory = new Inventory();
+        this.inventory = new Inventory(game);
+
+        this.strength = 1; //block-breaking strength
     }
 
     spawn() {

@@ -1,10 +1,8 @@
-import { Item_Directory } from "./blocks.js";
-
 class Generator {
     constructor(game, data, properties) {
         this.game = game;
         this.calc = this.game.calculator;
-        this.item_directory = new Item_Directory();
+        this.item_directory = this.game.item_directory;
 
         this.properties = properties;
 
@@ -261,4 +259,4 @@ class Generator {
     }
 }
 
-export { Generator }
+export { Generator };

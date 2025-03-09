@@ -1,5 +1,6 @@
 class Inventory {
-    constructor() {
+    constructor(game) {
+        this.game = game;
         this.data = [];
         this.selectedSlot = 0; // 0 - 35
 
@@ -7,20 +8,25 @@ class Inventory {
         this.cols = 9;
         this.init();
 
+        this.item_directory = this.game.item_directory;
+
         this.maxStackSize = 16; // 1 - 1024
     }
 
     init() {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
-                this.data.push({id: null, quantity: null});
+                this.data.push({id: null, quantity: null, durability: null});
             }
         }
     }
 
     setSlot(itemID, index, quantity) {
+        const durability = this.item_directory.getProperty(itemID, 'durability');
+                
         this.data[index].id = itemID;
         this.data[index].quantity = quantity;
+        this.data[index].durability = durability;
     }
 
     swapItem(index_old, index_new) {
@@ -85,7 +91,7 @@ class Inventory {
                 return;
             }
             if (this.data[i].id === null) {
-                this.setSlot(itemID, i, 1);
+                this.setSlot(itemID, i, 1, null);
                 return;
             }
         }
@@ -99,6 +105,16 @@ class Inventory {
         this.data[index].quantity--;
         if (this.data[index].quantity <= 0) {
             this.setSlot(null, index, null);
+        }
+    }
+
+    decrementDurability(index) {
+        if (!this.data[index].durability) return; 
+            
+        this.data[index].durability--;
+
+        if (this.data[index].durability <= 0) {
+            this.subtract(index);
         }
     }
 }

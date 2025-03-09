@@ -17,6 +17,7 @@ class Level {
         this.current_breaking = null;
 
         this.generator = new Generator(game, this.data, this.properties);
+        this.item_directory = this.game.item_directory;
     }
 
     unloadChunk(chunk_id) {
@@ -98,16 +99,41 @@ class Level {
             };
 
             if (this.game.player.getBlockDistance(this.current_breaking.x + 0.5, this.current_breaking.y + 0.5) <= this.game.player.cursorDistLim) {
-    
+
+                const blockData = this.calc.getBlockData(this.current_breaking.x, this.current_breaking.y);
+                const blockType = blockData.type;
+                const hardness = blockData.hardness;
+                const blockID = blockData.id;
+
+                const breakStatus = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status;
+
                 //Set break status
-                if (this.calc.getBlockData(this.current_breaking.x, this.current_breaking.y).type === 'solid' && this.calc.getBlockData(this.current_breaking.x, this.current_breaking.y).hardness) {
-                    this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status++;
+                const selectedSlot = this.game.player.inventory.selectedSlot;
+                const seletedItemID = this.game.player.inventory.data[selectedSlot].id;
+
+                const selectedItemType = this.item_directory.getProperty(seletedItemID, 'item_type');
+
+                let strength = this.game.player.strength;
+                if (selectedItemType === 'tool') {
+                    const purpose = this.item_directory.getProperty(seletedItemID, 'purpose');
+
+                    if (purpose.includes(blockID)) {
+                        strength = this.item_directory.getProperty(seletedItemID, 'strength');
+                    }
+                }
+
+                if (blockType === 'solid' && hardness) {
+                    this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status += strength;
                 }
 
                 //Break block
-                if (this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status >= this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].hardness) {
+                if (breakStatus >= hardness) {
                     this.generator.breakBlock(this.current_breaking.x, this.current_breaking.y);
                     this.current_breaking = null;
+
+                    if (selectedItemType === 'tool') {
+                        this.game.player.inventory.decrementDurability(selectedSlot);
+                    }
                 }
             }
             
