@@ -21,9 +21,12 @@ class Generator {
 
         let seed = '';
         
-        for (let i = 0; i < 5; i++) {
-            seed += JSON.stringify(Math.floor(Math.random())) + JSON.stringify(Math.floor(Math.random() * 10)) + JSON.stringify(Math.floor(Math.random())) + JSON.stringify(Math.floor(Math.random() * 10)) + JSON.stringify(Math.floor(Math.random() * 10));
+        if (seed === '') {
+            for (let i = 0; i < 5; i++) {
+                seed += JSON.stringify(Math.floor(Math.random())) + JSON.stringify(Math.floor(Math.random() * 10)) + JSON.stringify(Math.floor(Math.random())) + JSON.stringify(Math.floor(Math.random() * 10)) + JSON.stringify(Math.floor(Math.random() * 10));
+            }
         }
+        
         
         console.log(seed);
         return seed;
@@ -166,14 +169,19 @@ class Generator {
     }
 
     generate_embellishments(chunk_id) {
+        let attempts = 0
+        let trees = 0
         for (let x = 0; x < this.game.level.chunk_size; x++) {
             const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
 
-            //Generate trees at 10% probability
-            if (this.calc.randomBool(10)) {
+            //Attempt to generate trees at 15% probability
+            if (this.calc.randomBoolByTwoSeeds(this.seed, absoluteX, 15)) {
+                trees++
                 this.generateTree(absoluteX, this.getContour(absoluteX) + 1, chunk_id);
             }
+            attempts++
         }
+        console.log(Math.round(trees/(attempts) * 100) + '%')
     }
 
     generateTree(x, y, chunk_id) {  //Attempts tree generation
@@ -204,6 +212,7 @@ class Generator {
 
         // Calculate block positions
         for (let i = 0; i < blocks_template.length; i++) {
+            const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
             if (this.calc.randomBool(blocks_template[i].chance)) {
                 blocks.push(blocks_template[i]);
             }
