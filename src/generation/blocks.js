@@ -5,6 +5,8 @@ class Meta {
 
         this.item_type = item_type;
         this.isBlock = true;
+
+        this.maxStackSize = 8;
     }
 }
 
@@ -61,6 +63,7 @@ class Item extends Meta {
 class Tool extends Item {
     constructor(name, texture_location) {
         super(name, texture_location);
+        this.maxStackSize = 1;
     }
 }
 

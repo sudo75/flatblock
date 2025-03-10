@@ -34,7 +34,12 @@ class Inventory {
             return;
         }
         if (this.data[index_new].id === this.data[index_old].id) { // If both slots have same item id
-            if (this.data[index_new].quantity + this.data[index_old].quantity > this.maxStackSize) {
+
+            const itemID = this.data[index_new].id;
+            const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
+
+            console.log(maxStackSize)
+            if (this.data[index_new].quantity + this.data[index_old].quantity > maxStackSize) {
                 for (let i = 0; i < 1024; i++) {
                     this.addItemFrom(index_old, index_new);
                 }
@@ -53,6 +58,9 @@ class Inventory {
     }
 
     addItemFrom(index_source, index_new) {
+        const itemID = this.data[index_new].id;
+        const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize'); //Of new index
+        
         if (this.data[index_source].quantity > 0 && this.data[index_new].id === null) { //If source has > 0 & new stack does not exist
             const data_index_source = { ...this.data[index_source] };
             this.data[index_new] = data_index_source;
@@ -60,7 +68,7 @@ class Inventory {
 
             this.data[index_source].quantity--;
         } else if (this.data[index_source].quantity > 0 && this.data[index_source].id === this.data[index_new].id) { //If source has > 0 & new stack exists
-            if (this.data[index_new].quantity + 1 > this.maxStackSize) return;
+            if (this.data[index_new].quantity + 1 > maxStackSize) return;
             this.data[index_new].quantity++;
             this.data[index_source].quantity--;
         }
@@ -72,8 +80,9 @@ class Inventory {
     }
 
     canAddItem(itemID) {
+        const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
         for (let i = 0; i < this.rows * this.cols - 1; i++) {
-            if (this.data[i].id === itemID && this.data[i].quantity < this.maxStackSize) {
+            if (this.data[i].id === itemID && this.data[i].quantity < maxStackSize) {
                 return true;
             }
             if (this.data[i].id === null) {
@@ -85,8 +94,9 @@ class Inventory {
     }
 
     addItems(itemID) {
+        const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
         for (let i = 0; i < this.rows * this.cols - 1; i++) {
-            if (this.data[i].id === itemID && this.data[i].quantity < this.maxStackSize) {
+            if (this.data[i].id === itemID && this.data[i].quantity < maxStackSize) {
                 this.add(i);
                 return;
             }

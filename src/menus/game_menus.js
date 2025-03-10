@@ -325,7 +325,8 @@ class Menu_ComponentUI_Crafting {
         const addQuantity = this.checkCraftingGrid().quantity;
         const durability = this.item_directory.getProperty(result, 'durability');
 
-        if (result !== this.main.inventory_data[this.main.getResultSlotIndex()].id && this.main.inventory_data[this.main.getResultSlotIndex()].id !== null) return;
+        const maxStackSize = this.item_directory.getProperty(result, 'maxStackSize');
+        if (result !== this.main.inventory_data[this.main.getResultSlotIndex()].id && this.main.inventory_data[this.main.getResultSlotIndex()].id !== null || this.main.inventory_data[this.main.getResultSlotIndex()].quantity >= maxStackSize) return;
 
         this.main.inventory_data[this.main.getResultSlotIndex()].id = result;
         this.main.inventory_data[this.main.getResultSlotIndex()].quantity += addQuantity;

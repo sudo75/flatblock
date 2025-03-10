@@ -169,19 +169,14 @@ class Generator {
     }
 
     generate_embellishments(chunk_id) {
-        let attempts = 0
-        let trees = 0
         for (let x = 0; x < this.game.level.chunk_size; x++) {
             const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
 
             //Attempt to generate trees at 15% probability
             if (this.calc.randomBoolByTwoSeeds(this.seed, absoluteX, 15)) {
-                trees++
                 this.generateTree(absoluteX, this.getContour(absoluteX) + 1, chunk_id);
             }
-            attempts++
         }
-        console.log(Math.round(trees/(attempts) * 100) + '%')
     }
 
     generateTree(x, y, chunk_id) {  //Attempts tree generation
