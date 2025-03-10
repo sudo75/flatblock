@@ -6,7 +6,7 @@ class Meta {
         this.item_type = item_type;
         this.isBlock = true;
 
-        this.maxStackSize = 8;
+        this.maxStackSize = 16;
     }
 }
 
