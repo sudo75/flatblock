@@ -436,7 +436,6 @@ class EntityHandler {
             }
         }
         
-
         this.entity_data = data;
     }
 
@@ -454,13 +453,12 @@ class EntityHandler {
                 if (!entity.active) {
                     this.game.level.data[currentChunkID].entity_data.splice(j, 1);
                 }
-
-                //Save
-                if (tick % 20 === 0) {
-                    this.saveEntityData();
-                }
             }
+        }
 
+        //Save
+        if (tick % 20 === 0) {
+            this.saveEntityData();
         }
     }
 }
