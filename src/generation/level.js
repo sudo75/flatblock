@@ -7,8 +7,8 @@ class Level {
         this.data = {};
         this.loaded_chunks = [];
         this.properties = {
-            width_chunks: 2,
-            height_blocks: 120
+            width_chunks: 5,
+            height_blocks: 100
         }
 
         this.chunk_size = 16;
