@@ -4,6 +4,7 @@
 }
 
 #game_canvas_fore2 {
+    border: 2px solid black;
     pointer-events: none;
 }
 

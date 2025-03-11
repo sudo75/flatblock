@@ -1,5 +1,3 @@
-import { Inventory } from './entities/inventory.js';
-
 class Game {
     constructor(width, height) {
         this.canvas_world = document.querySelector('#game_canvas_back');
@@ -135,13 +133,20 @@ class Game {
                     closeSlotMenu();
                     this.init(i);
                 }},
-                {txt: ['Load game'], callback: () => {
-                    console.log('loading game...');
-    
-                    closeSlotMenu();
-                    this.loadGame(i);
+                {txt: ['Load game'], callback: () => {    
+                    if (this.saveExists(i)) {
+                        closeSlotMenu();
+                        this.loadGame(i);
+
+                        console.log('loading game...');
+                    } else {
+                        console.log('Can not load game...');
+                    }
                 }},
                 {txt: ['Clear slot'], callback: () => {
+                    if (confirm(`Clear slot ${i}?`)) {
+                        localStorage.removeItem(`slot_${i}`);
+                    }
                     console.log('clearing slot...');
                 }},
     
@@ -215,6 +220,16 @@ class Game {
         };
 
         localStorage.setItem(`slot_${this.slotLoaded}`, JSON.stringify(data));
+    }
+
+    saveExists(slot) {
+        const gameData = localStorage.getItem(`slot_${slot}`);
+
+        if (gameData) {
+            return true
+        } else {
+            return false;
+        }
     }
 
     async loadGame(slot) {
