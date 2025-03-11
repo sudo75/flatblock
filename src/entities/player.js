@@ -35,6 +35,15 @@ class Player extends Entity {
         this.draw();
     }
 
+    copy(position, inventory_data) { //copy from saved data
+        this.x = position.x;
+        this.y = position.y;
+
+        this.inventory.data = inventory_data;
+
+        this.draw();
+    }
+
     dropItem(x, y, itemID, h_vel, v_vel) {
         this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel);
     }

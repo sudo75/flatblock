@@ -312,12 +312,14 @@ class Entity_item extends Entity {
         
         this.itemID = itemID;
 
-        this.item_directory = new Item_Directory();
+        this.item_directory = this.game.item_directory;
         this.texture_location = this.item_directory.getTextureLocationByID(this.itemID);
 
         this.spawnTick = spawnTick;
         this.pickup_grace = 40; //ticks
         this.player_maxReach = 1.05;
+
+        this.entityType = 'item';
     }
 
     update(input, deltaTime) {
@@ -357,12 +359,33 @@ class EntityHandler {
         this.calc = this.game.calculator;
 
         this.level_data = this.game.level.data;
+        this.entity_data = []; //formatted for local storage saving
 
         this.nextEntityID = 1;
         this.entity_item_dimensions = {
             width: 0.5,
             height: 0.5
         };
+    }
+
+    copy(data) { //from saved data
+        for (let i = 0; i < data.length; i++) {
+            const entity = data[i];
+            const entity_data = {
+                itemID: entity.itemID,
+                x: entity.x,
+                y: entity.y,
+                width: entity.width,
+                height: entity.height,
+                h_vel: entity.h_vel,
+                v_vel: entity.v_vel,
+                entityType: entity.entityType
+            };
+
+            if (entity_data.entityType === 'item') {
+                this.newEntity_Item(entity_data.x, entity_data.y, entity_data.itemID, entity_data.h_vel, entity_data.v_vel);
+            }
+        }
     }
 
     newEntity_Item(x, y, itemID, h_vel, v_vel) {
@@ -391,6 +414,32 @@ class EntityHandler {
         }
     }
 
+    saveEntityData() {
+        let data = [];
+        const minChunk = this.calc.getChunkID(this.calc.getWorldBorders().minX);
+        const maxChunk = this.calc.getChunkID(this.calc.getWorldBorders().maxX);
+        for (let i = minChunk; i < maxChunk; i++) {
+            for (let j = 0; j < this.game.level.data[i].entity_data.length; j++) {
+                const entity = this.game.level.data[i].entity_data[j];
+                
+                const entity_data = {
+                    itemID: entity.itemID,
+                    x: entity.x,
+                    y: entity.y,
+                    width: entity.width,
+                    height: entity.height,
+                    h_vel: entity.h_vel,
+                    v_vel: entity.v_vel,
+                    entityType: entity.entityType
+                };
+                data.push(entity_data);
+            }
+        }
+        
+
+        this.entity_data = data;
+    }
+
     run_gametick_logic(tick) {
         const loaded_chunks = this.calc.getLoadedChunks();
 
@@ -404,6 +453,11 @@ class EntityHandler {
                 //Delete item if 'unactive'
                 if (!entity.active) {
                     this.game.level.data[currentChunkID].entity_data.splice(j, 1);
+                }
+
+                //Save
+                if (tick % 20 === 0) {
+                    this.saveEntityData();
                 }
             }
 

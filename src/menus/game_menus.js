@@ -530,6 +530,25 @@ class MenuHandler {
         this.canvas_menu = this.game.canvas_menu;
         this.ctx_menu = this.game.ctx_menu;
         
+        /*
+        this.menus = {
+            inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory'),
+            crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting')
+        }
+
+        this.closeAllMenus();
+
+        this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
+        */
+
+        this.keyHold = {
+            e: false,
+            c: false,
+            q: false
+        };
+    }
+
+    init() {
         this.menus = {
             inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory'),
             crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting')
@@ -539,16 +558,6 @@ class MenuHandler {
 
         this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
 
-        this.keyHold = {
-            e: false,
-            c: false,
-            q: false
-        };
-
-        this.init();
-    }
-
-    init() {
         setTimeout(() => {
             this.hotbar.open();
         }, 100);

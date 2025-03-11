@@ -7,7 +7,7 @@ class Level {
         this.data = {};
         this.loaded_chunks = [];
         this.properties = {
-            width_chunks: 40,
+            width_chunks: 2,
             height_blocks: 120
         }
 
@@ -39,6 +39,21 @@ class Level {
         }
 
         console.log(this.data);
+    }
+
+    copy(level_data, entity_data, seed) { //use saved data
+        this.data = level_data;
+
+        //Update generator data
+        this.generator.seed = seed;
+        this.generator.data = level_data;
+
+        //Update calculator
+        this.calc.game = this.game;
+
+        //Update entity handler data
+        this.game.entity_handler.level_data = level_data;
+        this.game.entity_handler.copy(entity_data);
     }
 
     world_interaction() {

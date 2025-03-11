@@ -25,4 +25,4 @@ viewport.init();
 import { Game } from './game.js';
 // Initialize and run the game
 const game = new Game(600, 600);
-game.init();
+game.init_menu();
