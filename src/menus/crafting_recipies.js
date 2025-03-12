@@ -155,6 +155,40 @@ const recipies = [
                 [null, 128, null]
             ]
         ]
+    },
+
+    { //3 stone + 2 sticks => 1 wooden axe
+        result: 131,
+        quantity: 1,
+        recipie: [
+            [
+                [8, 8, null],
+                [8, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 8, 8],
+                [null, 128, 8],
+                [null, 128, null]
+            ]
+        ]
+    },
+
+    { //3 stone + 2 sticks => 1 stone axe
+        result: 132,
+        quantity: 1,
+        recipie: [
+            [
+                [3, 3, null],
+                [3, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 3, 3],
+                [null, 128, 3],
+                [null, 128, null]
+            ]
+        ]
     }
 ];
 
