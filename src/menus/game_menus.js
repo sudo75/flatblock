@@ -440,7 +440,7 @@ class Menu_ComponentUI_Crafting {
     }
 
     close() {
-        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols + 1; i++) { //+1 for result slot
             const item = this.main.inventory_data[i];
             if (item) {
                 const itemQuant = item.quantity;
@@ -720,9 +720,14 @@ class MenuHandler {
 
         if (this.mouseDown_right) {
             const blockData = this.game.calculator.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
-            if (blockData.id === 9 && !this.aMenuIsOpen()) {
+            if (blockData.id === 9 && !this.aMenuIsOpen()) { //chest
                 this.hotbar.close();
                 this.menus.chest.open(blockData.inventory);
+            }
+
+            if (blockData.id === 10 && !this.aMenuIsOpen()) { //crafting table
+                this.hotbar.close();
+                this.menus.crafting.open();
             }
         }
 
@@ -746,22 +751,6 @@ class MenuHandler {
             this.keyHold.e = true;
         } else {
             this.keyHold.e = false;
-        }
-        
-        if (input.includes('c')) {
-            if (this.keyHold.c) {
-                return;
-            }
-            if (!this.aMenuIsOpen()) {
-                this.hotbar.close();
-                this.menus.crafting.open();
-            } else {
-                this.closeAllMenus();
-                this.hotbar.open();
-            }
-            this.keyHold.c = true;
-        } else {
-            this.keyHold.c = false;
         }
 
         //Update chest menu
