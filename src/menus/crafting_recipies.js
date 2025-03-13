@@ -157,7 +157,7 @@ const recipies = [
         ]
     },
 
-    { //3 stone + 2 sticks => 1 wooden axe
+    { //3 planks + 2 sticks => 1 wooden axe
         result: 131,
         quantity: 1,
         recipie: [
@@ -187,6 +187,45 @@ const recipies = [
                 [null, 3, 3],
                 [null, 128, 3],
                 [null, 128, null]
+            ]
+        ]
+    },
+
+    { //8 planks => 1 chest
+        result: 9,
+        quantity: 1,
+        recipie: [
+            [
+                [8, 8, 8],
+                [8, null, 8],
+                [8, 8, 8]
+            ]
+        ]
+    },
+
+    { //4 planks => 1 crafting table
+        result: 10,
+        quantity: 1,
+        recipie: [
+            [
+                [8, 8, null],
+                [8, 8, null],
+                [null, null, null]
+            ],
+            [
+                [null, 8, 8],
+                [null, 8, 8],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [8, 8, null],
+                [8, 8, null]
+            ],
+            [
+                [null, null, null],
+                [null, 8, 8],
+                [null, 8, 8]
             ]
         ]
     }

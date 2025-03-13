@@ -302,10 +302,11 @@ export { Entity };
 
 import { Item_Directory } from '../generation/blocks.js';
 class Entity_item extends Entity {
-    constructor(game, entityID, x, y, itemID, spawnTick, dimensions) {
+    constructor(game, entityID, x, y, itemID, spawnTick, dimensions, durability) {
         super(game, entityID, x, y, 0.5, 0.5);
         this.width_blocks = dimensions.width; // in unit blocks
         this.height_blocks = dimensions.height; // in unit blocks
+        this.durability = durability;
 
         this.width = this.game.block_size * this.width_blocks;
         this.height = this.game.block_size * this.height_blocks;
@@ -343,7 +344,7 @@ class Entity_item extends Entity {
             if (this.calc.getBlockDistance(playerPos_adjusted.x, playerPos_adjusted.y, entityPos_adjusted.x, entityPos_adjusted.y) <= this.player_maxReach) {
                 
                 if (this.game.player.inventory.canAddItem(this.itemID)) { //If can be picked up
-                    this.game.player.inventory.addItems(this.itemID);
+                    this.game.player.inventory.addItems(this.itemID, this.durability);
                     this.active = false;
                 }
                 
@@ -379,18 +380,19 @@ class EntityHandler {
                 height: entity.height,
                 h_vel: entity.h_vel,
                 v_vel: entity.v_vel,
-                entityType: entity.entityType
+                entityType: entity.entityType,
+                durability: entity.durability
             };
 
             if (entity_data.entityType === 'item') {
-                this.newEntity_Item(entity_data.x, entity_data.y, entity_data.itemID, entity_data.h_vel, entity_data.v_vel);
+                this.newEntity_Item(entity_data.x, entity_data.y, entity_data.itemID, entity_data.h_vel, entity_data.v_vel, entity_data.durability);
             }
         }
     }
 
-    newEntity_Item(x, y, itemID, h_vel, v_vel) {
+    newEntity_Item(x, y, itemID, h_vel, v_vel, durability) {
         const spawnTick = this.game.tick;
-        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID, spawnTick, this.entity_item_dimensions);
+        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID, spawnTick, this.entity_item_dimensions, durability);
         entity.h_vel = h_vel;
         entity.v_vel = v_vel;
         
@@ -430,7 +432,8 @@ class EntityHandler {
                     height: entity.height,
                     h_vel: entity.h_vel,
                     v_vel: entity.v_vel,
-                    entityType: entity.entityType
+                    entityType: entity.entityType,
+                    durability: entity.durability
                 };
                 data.push(entity_data);
             }

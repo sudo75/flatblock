@@ -252,12 +252,29 @@ class Generator {
     breakBlock(x, y) {
         const itemID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
 
+        //Drop item
+        this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
+
+        //Drop inventory
+        const block_inventory = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].inventory;
+        if (block_inventory) {
+            const block_inventory_data = block_inventory.data;
+            for (let i = 0; i < block_inventory_data.length; i++) {
+                const itemQuantity = block_inventory_data[i].quantity
+                const itemID = block_inventory_data[i].id;
+                const itemDurability = block_inventory_data[i].durability;
+
+                for (let j = 0; j < itemQuantity; j++) {
+                    this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0, itemDurability); // add half item width to centre
+                }
+            }
+        }
+
+
+        //Set block to air
         const Air_class = this.item_directory.item[0];
 
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Air_class(x, y);
-
-        //Drop item
-        this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
     }
 }
 

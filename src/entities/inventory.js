@@ -1,6 +1,7 @@
+import { Item_Directory } from '../generation/blocks.js';
+
 class Inventory {
-    constructor(game) {
-        this.game = game;
+    constructor() {
         this.data = [];
         this.selectedSlot = 0; // 0 - 35
 
@@ -8,7 +9,7 @@ class Inventory {
         this.cols = 9;
         this.init();
 
-        this.item_directory = this.game.item_directory;
+        this.item_directory = new Item_Directory();
 
         this.maxStackSize = 16; // 1 - 1024
     }
@@ -21,12 +22,12 @@ class Inventory {
         }
     }
 
-    setSlot(itemID, index, quantity) {
-        const durability = this.item_directory.getProperty(itemID, 'durability');
+    setSlot(itemID, index, quantity, input_durability) {
+        const durability = input_durability ? input_durability: this.item_directory.getProperty(itemID, 'durability');
                 
         this.data[index].id = itemID;
         this.data[index].quantity = quantity;
-        this.data[index].durability = durability;
+        this.data[index].durability = durability ? durability: null;
     }
 
     swapItem(index_old, index_new) {
@@ -38,7 +39,6 @@ class Inventory {
             const itemID = this.data[index_new].id;
             const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
 
-            console.log(maxStackSize)
             if (this.data[index_new].quantity + this.data[index_old].quantity > maxStackSize) {
                 for (let i = 0; i < 1024; i++) {
                     this.addItemFrom(index_old, index_new);
@@ -47,7 +47,7 @@ class Inventory {
             }
 
             this.data[index_new].quantity += this.data[index_old].quantity;
-            this.setSlot(null, index_old, null);
+            this.setSlot(null, index_old, null, null);
         } else {
             const data_index_old = { ...this.data[index_old] };
             const data_index_new = { ...this.data[index_new] };
@@ -75,7 +75,7 @@ class Inventory {
 
         //If source runs out
         if (this.data[index_source].quantity <= 0) {
-            this.setSlot(null, index_source, null);
+            this.setSlot(null, index_source, null, null);
         }
     }
 
@@ -93,15 +93,15 @@ class Inventory {
         return false;
     }
 
-    addItems(itemID) {
+    addItems(itemID, durability) {
         const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
         for (let i = 0; i < this.rows * this.cols - 1; i++) {
-            if (this.data[i].id === itemID && this.data[i].quantity < maxStackSize) {
+            if (this.data[i].id === itemID && this.data[i].quantity < maxStackSize) { //If stack does not exist
                 this.add(i);
                 return;
             }
-            if (this.data[i].id === null) {
-                this.setSlot(itemID, i, 1, null);
+            if (this.data[i].id === null) { //create new stack for item
+                this.setSlot(itemID, i, 1, durability); //durability for tools
                 return;
             }
         }
@@ -114,7 +114,7 @@ class Inventory {
     subtract(index) {
         this.data[index].quantity--;
         if (this.data[index].quantity <= 0) {
-            this.setSlot(null, index, null);
+            this.setSlot(null, index, null, null);
         }
     }
 

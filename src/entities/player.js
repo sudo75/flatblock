@@ -17,7 +17,7 @@ class Player extends Entity {
         this.selectedBlock = {};
         this.cursorDistLim = 4;
 
-        this.inventory = new Inventory(game);
+        this.inventory = new Inventory();
 
         this.strength = 1; //block-breaking strength
     }
@@ -44,8 +44,8 @@ class Player extends Entity {
         this.draw();
     }
 
-    dropItem(x, y, itemID, h_vel, v_vel) {
-        this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel);
+    dropItem(x, y, itemID, h_vel, v_vel, durability) {
+        this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel, durability);
     }
 
     throwItem(inventory_slot) {
@@ -55,10 +55,11 @@ class Player extends Entity {
         };
 
         const itemID = this.inventory.data[inventory_slot].id;
+        const durability = this.inventory.data[inventory_slot].durability;
 
         const h_vel = this.direction === 'right' ? 8: -8;
         const v_vel = 6;
-        this.dropItem(itemDropPoint.x, itemDropPoint.y, itemID, h_vel, v_vel);
+        this.dropItem(itemDropPoint.x, itemDropPoint.y, itemID, h_vel, v_vel, durability);
 
         //Subtract Item
         this.inventory.subtract(inventory_slot);
@@ -66,9 +67,9 @@ class Player extends Entity {
 
     inventory_debug() { // inventory test
         this.inventory.setSlot(5, 0, 16);
-        this.inventory.setSlot(3, 1, 10);
-        this.inventory.setSlot(1, 3, 12);
-        this.inventory.setSlot(129, 2, 1);
+        this.inventory.setSlot(9, 1, 3);
+        this.inventory.setSlot(10, 2, 2);
+        this.inventory.setSlot(129, 3, 1);
 
         console.log(this.inventory.data)
     }

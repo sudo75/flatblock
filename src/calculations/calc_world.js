@@ -89,6 +89,12 @@ class Calc_World {
         return false;
     }
 
+    deepCloneObj(obj) {
+        const deepCopy = structuredClone(obj);
+
+        return deepCopy;
+    }
+
     getBlockByRealXY(real_x, real_y) {
         const x = Math.floor(real_x / this.game.block_size + this.game.renderer.leftmost_blockX);
         const y = Math.floor((this.game.height - real_y) / this.game.block_size + this.game.renderer.bottommost_blockY);
@@ -137,6 +143,13 @@ class Calc_World {
 
         const block_data = this.game.level.data[chunkID].block_data[relativeX][y];
         return block_data;
+    }
+
+    setBlockProperty(x, y, property, value) {
+        const chunkID = this.getChunkID(x);
+        const relativeX = this.getRelativeX(x);
+
+        this.game.level.data[chunkID].block_data[relativeX][y][property] = value;
     }
 
     isWithinWorldBounds(x, y) {

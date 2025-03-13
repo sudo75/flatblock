@@ -36,8 +36,9 @@ class Menu {
 }
 
 class Menu_Inventory extends Menu {
-    constructor(canvas_menu, ctx, inventory, type) {
-        super(canvas_menu, ctx, 0.8, 0.7);
+    constructor(canvas_menu, ctx, inventory, type, game) {
+        super(canvas_menu, ctx, 0.8, 0.8);
+        this.game = game;
         this.inventory_data = inventory.data;
         this.inventory = inventory;
         this.textureCache = {};
@@ -60,7 +61,12 @@ class Menu_Inventory extends Menu {
                 this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 3, 3, this.recipies);
                 this.Menu_ComponentUI_1.x = this.x + (this.real_width - this.Menu_ComponentUI_1.real_width) / 2;
                 break;
+            case 'chest':
+                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Chest(this, 0.95, 0.5, 4, 9);
+                break;
         }
+
+        this.Menu_ComponentUI_1.minSlotIndex = this.inventory.rows * this.inventory.cols;
 
         this.canvas_menu.addEventListener('click', (event) => {
             if (!this.isOpen) return;
@@ -98,13 +104,13 @@ class Menu_Inventory extends Menu {
             }
 
 
-            this.close();
-            this.open();
+            this.refresh();
         });
 
         this.canvas_menu.addEventListener('contextmenu', (event) => {
             if (!this.isOpen) return;
             event.preventDefault();
+
 
             let rect = this.canvas_menu.getBoundingClientRect();
             let x = event.clientX - rect.left;
@@ -113,7 +119,8 @@ class Menu_Inventory extends Menu {
             if (this.selectedSlotIndex !== undefined) {
                 if (this.getSlotIndexByXY(x, y) !== undefined) {
                     const resultSlotIndex = this.getResultSlotIndex();
-                    if (!resultSlotIndex) return;
+                    //if (!resultSlotIndex) return;
+                    //if (getSlotIndexByXY(x, y) === resultSlotIndex) return; // commented out bc. the code broke something else, but not sure if it might be important
 
                     if (this.getSlotIndexByXY(x, y) !== resultSlotIndex && this.selectedSlotIndex !== resultSlotIndex) {
                         this.inventory.addItemFrom(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
@@ -128,8 +135,7 @@ class Menu_Inventory extends Menu {
                 }
             }
 
-            this.close();
-            this.open();
+            this.refresh();
         });
     }
 
@@ -159,17 +165,36 @@ class Menu_Inventory extends Menu {
         }
     }
 
-    close() {
-        super.close();
-        this.slotPosition = [];
+    refresh() {
+        this.close_basic();
+        this.open_basic();
+    }
 
-        //Move items from other menus back to inventory
-        for (let i = this.Menu_ComponentUI_1.minSlotIndex; i < this.Menu_ComponentUI_1.minSlotIndex + this.additionalSlots; i++) {
-
+    update() {
+        if (this.Menu_ComponentUI_1.update) {
+            this.Menu_ComponentUI_1.update();
         }
     }
 
+    close() {
+        this.close_basic();
+        this.slotPosition = [];
+
+        this.Menu_ComponentUI_1.close();
+    }
+
+    close_basic() {
+        super.close();
+
+        this.update();
+    }
+
     open() {
+        this.open_basic();
+        this.Menu_ComponentUI_1.open();
+    }
+
+    open_basic() {
         super.open();
 
         const drawBG = () => {
@@ -181,7 +206,7 @@ class Menu_Inventory extends Menu {
 
         const drawInventory = () => {
             const margin = 10;
-            const inv_real_height = this.real_height * 0.5;
+            const inv_real_height = this.real_height * 0.45;
             const inv_real_width = this.real_width - 2 * margin;
 
             const inv_x = this.x + margin;
@@ -227,7 +252,6 @@ class Menu_Inventory extends Menu {
 
             this.Menu_ComponentUI_1.open();
 
-            this.Menu_ComponentUI_1.minSlotIndex = rows * cols;
             this.additionalSlots = this.Menu_ComponentUI_1.getAllSlotPositions().length;
             this.slotPosition = this.slotPosition.concat(this.Menu_ComponentUI_1.getAllSlotPositions());
         };
@@ -243,6 +267,7 @@ class Menu_Inventory extends Menu {
 
                 const texture_location = this.item_directory.getTextureLocationByID(item.id);
                 const itemQuantity = item.quantity;
+                const itemDurability = item.durability;
 
                 if (texture_location) {
                     let image;
@@ -265,6 +290,12 @@ class Menu_Inventory extends Menu {
                     this.ctx.font = "bold 16px Arial";
                     this.ctx.fillStyle = "black";
                     this.ctx.fillText(itemQuantity, slot_x + this.slotPadding, slot_y + this.slot_height - this.slotPadding);
+                }
+
+                if (itemDurability) {
+                    this.ctx.font = "bold 12px Arial";
+                    this.ctx.fillStyle = "blue";
+                    this.ctx.fillText(itemDurability, slot_x + this.slotPadding, slot_y + this.slot_height - this.slotPadding);
                 }
             }
         };
@@ -338,8 +369,7 @@ class Menu_ComponentUI_Crafting {
             }
         }
 
-        this.main.close();
-        this.main.open();
+        this.main.refresh();
     }
 
     open() {
@@ -409,6 +439,20 @@ class Menu_ComponentUI_Crafting {
         this.ctx.fillText("Craft", button_x + 10, button_y + 14);
     }
 
+    close() {
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {
+            const item = this.main.inventory_data[i];
+            if (item) {
+                const itemQuant = item.quantity;
+                for (let j = 0; j < itemQuant; j++) {
+                    this.main.game.entity_handler.newEntity_Item(this.main.game.player.x, this.main.game.player.y, item.id, 2, 5, item.durability);
+                    this.main.inventory.subtract(i);
+                }
+            }
+
+        }
+    }
+
     getAllSlotPositions() {
         return this.slotPosition;
     }
@@ -443,6 +487,102 @@ class Menu_ComponentUI_Crafting {
         }
 
         return null;
+    }
+}
+
+class Menu_ComponentUI_Chest {
+    constructor(main, width, height, rows, cols) {
+        this.main = main;
+        this.width = width;
+        this.height = height;
+        this.rows = rows;
+        this.cols = cols;
+        this.minSlotIndex = null;
+
+        this.canvas_menu = main.canvas_menu;
+        this.canvas_width = this.canvas_menu.width;
+        this.canvas_height = this.canvas_menu.height;
+
+        this.ctx = main.ctx;
+
+        this.margin = 10;
+
+        this.real_width = main.real_width * this.width;
+        this.real_height = main.real_height * this.height;
+        this.x = main.x + main.real_width - this.real_width - this.margin;
+        this.y = main.y + this.margin;
+        
+        this.slotPosition = []; // Required for integration with main menu
+
+        this.item_directory = new Item_Directory();
+    }
+
+    open() {
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {
+            this.main.game.player.inventory.data[i] = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y).inventory.data[i - this.rows * this.cols];
+        }
+
+        // Draw slots (Aligned perfectly)
+        this.slotPosition = [];
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                const index = i * this.cols + j + this.minSlotIndex;
+
+                const slot_margin = 5;
+                const slot_width = this.main.slot_width;
+                const slot_height = this.main.slot_height;
+
+                const slot_x = this.x + j * (slot_width + slot_margin);
+                const slot_y = this.y + i * (slot_height + slot_margin);
+
+                this.slotPosition.push({
+                    slot_x: slot_x,
+                    slot_y: slot_y,
+                    isResult: false
+                });
+
+                this.ctx.fillStyle = 'lightgrey'; // slot BG
+                this.ctx.fillRect(slot_x, slot_y, slot_width, slot_height);
+
+                this.ctx.strokeStyle = "black"; // Slot border
+                this.ctx.lineWidth = index === this.main.selectedSlotIndex ? 4: 1;
+                this.ctx.strokeRect(slot_x, slot_y, slot_width, slot_height);
+            }
+        }
+    }
+
+    close() {
+        this.update();
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {        
+            const item = this.main.inventory_data[i];
+            const itemQuant = item.quantity;
+            for (let j = 0; j < itemQuant; j++) {
+                this.main.inventory.subtract(i);
+            }
+        }
+    }
+
+    update() { //Updates chest data
+        if (!this.main.game.player.selectedBlock.x || !this.main.game.player.selectedBlock.y) return;
+
+        const blockData = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y);
+        if (!blockData.inventory) return;
+
+        //Update chest inventory data
+        let chest_inventory_data = this.main.game.calculator.deepCloneObj(blockData.inventory.data);
+
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {
+            const equivalentChestInventoryIndex = i - this.rows * this.cols;
+            chest_inventory_data[equivalentChestInventoryIndex] = this.main.game.calculator.deepCloneObj(this.main.inventory_data[i]);
+        }
+
+        const chunkID = this.main.game.calculator.getChunkID(this.main.game.player.selectedBlock.x);
+        const relativeX = this.main.game.calculator.getRelativeX(this.main.game.player.selectedBlock.x);
+        this.main.game.level.data[chunkID].block_data[relativeX][this.main.game.player.selectedBlock.y].inventory.data = this.main.game.calculator.deepCloneObj(chest_inventory_data);
+    }
+
+    getAllSlotPositions() {
+        return this.slotPosition;
     }
 }
 
@@ -486,6 +626,7 @@ class Menu_Hotbar extends Menu {
             if (this.inventory_data[i]) {
                 const texture_location = this.item_directory.getTextureLocationByID(item.id);
                 const itemQuantity = item.quantity;
+                const itemDurability = item.durability;
 
                 if (texture_location) {
                     let image;
@@ -509,6 +650,12 @@ class Menu_Hotbar extends Menu {
                     this.ctx.fillStyle = "black";
                     this.ctx.fillText(itemQuantity, slot_x + this.slotPadding, slot_y + this.slotSize - this.slotPadding);
                 }
+
+                if (itemDurability) {
+                    this.ctx.font = "bold 12px Arial";
+                    this.ctx.fillStyle = "blue";
+                    this.ctx.fillText(itemDurability, slot_x + this.slotPadding, slot_y + this.slotSize - this.slotPadding);
+                }
             }
         }
     }
@@ -529,17 +676,9 @@ class MenuHandler {
 
         this.canvas_menu = this.game.canvas_menu;
         this.ctx_menu = this.game.ctx_menu;
-        
-        /*
-        this.menus = {
-            inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory'),
-            crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting')
-        }
 
-        this.closeAllMenus();
-
-        this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
-        */
+        this.mouseDown_right = false;
+        this.mouseDown_left = false;
 
         this.keyHold = {
             e: false,
@@ -550,8 +689,9 @@ class MenuHandler {
 
     init() {
         this.menus = {
-            inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory'),
-            crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting')
+            inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory', this.game),
+            crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting', this.game),
+            chest: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'chest', this.game)
         }
 
         this.closeAllMenus();
@@ -569,9 +709,23 @@ class MenuHandler {
 
     closeAllMenus() {
         Object.values(this.menus).forEach(menu => menu.close());
+
+        this.game.input.mouseDown_right = false;
+        this.game.input.mouseDown_left = false;
     }
 
     update(input) {
+        this.mouseDown_right = this.game.input.mouseDown_right;
+        this.mouseDown_left = this.game.input.mouseDown_left;
+
+        if (this.mouseDown_right) {
+            const blockData = this.game.calculator.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
+            if (blockData.id === 9 && !this.aMenuIsOpen()) {
+                this.hotbar.close();
+                this.menus.chest.open(blockData.inventory);
+            }
+        }
+
         if (this.hotbar.isOpen) { // Refreshes hotbar
             this.hotbar.close();
             this.hotbar.open();
@@ -609,6 +763,12 @@ class MenuHandler {
         } else {
             this.keyHold.c = false;
         }
+
+        //Update chest menu
+        if (this.menus.chest.isOpen) {
+            this.menus.chest.update();
+        }
+
 
         if (input.includes('1')) {
             this.hotbar.setSlot(0);

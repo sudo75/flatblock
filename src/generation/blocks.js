@@ -188,6 +188,31 @@ class Block_planks extends Block_Solid {
     }
 }
 
+import { Inventory } from '../entities/inventory.js';
+class Block_chest extends Block_Solid {
+    constructor(x, y) {
+        super('chest', x, y, 40, './assets/textures/chest.png');
+        this.id = 9;
+        this.itemDrop_id = 9;
+
+        this.inventory = new Inventory();
+        this.physics = false;
+        this.interact = true;
+    }
+}
+
+class Block_craftingTable extends Block_Solid {
+    constructor(x, y) {
+        super('chest', x, y, 40, './assets/textures/crafting_table.png');
+        this.id = 10;
+        this.itemDrop_id = 10;
+
+        this.inventory = new Inventory();
+        this.physics = false;
+        this.interact = true;
+    }
+}
+
 class Item_Directory {
     constructor() {
         this.item = {
@@ -196,10 +221,12 @@ class Item_Directory {
             '2': Block_grass,
             '3': Block_stone,
             '4': Block_treeLog,
-            '5': Block_treeLog,
+            '5': Block_log,
             '6': Block_treeleaves,
             '7': Block_leaves,
             '8': Block_planks,
+            '9': Block_chest,
+            '10': Block_craftingTable,
 
             '128': Item_stick,
             '129': Item_woodenPicaxe,
