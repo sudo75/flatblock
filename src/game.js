@@ -64,11 +64,16 @@ class Game {
         const { Menu_Renderer } = await import('https://sudo75.github.io/canvas-functions/menu_renderer.js');
 
         const btns_main = [
-            {txt: ['Start'], callback: () => {
+            {txt: ['START'], callback: () => {
                 console.log('loading start menu...');
 
                 this.menu_renderers.main.close();
                 this.menu_renderers.start.init();
+            }},
+            {txt: ['Clear local storage'], callback: () => {
+                if (confirm(`Clear all local storage data for '${window.location.href}'?`)) {
+                    localStorage.clear();
+                }
             }}
         ];
 
