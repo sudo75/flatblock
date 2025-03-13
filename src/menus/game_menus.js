@@ -471,11 +471,21 @@ class Menu_ComponentUI_Crafting {
             const currentRecipie = this.recipies[r];
             for (let a = 0; a < currentRecipie.recipie.length; a++) {
                 const currentRecipieVariation = currentRecipie.recipie[a];
+                const recipieRows = currentRecipieVariation.length;
+                const recipieCols = currentRecipieVariation[0].length;
+
                 //Compare recipie
                 let matches = true;
-                for (let i = 0; i < this.rows; i++) {
-                    for (let j = 0; j < this.cols; j++) {
-                        if (currentRecipieVariation[i][j] !== craftingGrid[i][j]) {
+                for (let i = 0; i < recipieRows; i++) {
+                    for (let j = 0; j < recipieCols; j++) {
+                        let currentGridSlot;
+                        if (i >= this.rows || j >= this.cols) { // if i or j are outside the bounds of the crafting grid
+                            currentGridSlot = null;
+                        } else {
+                            currentGridSlot = craftingGrid[i][j];
+                        }
+
+                        if (currentRecipieVariation[i][j] != currentGridSlot) {
                             matches = false;
                             break;
                         }
