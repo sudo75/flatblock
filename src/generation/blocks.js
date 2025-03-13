@@ -76,9 +76,9 @@ class Item_stick extends Item {
     }
 }
 
-class Item_woodenPicaxe extends Tool {
+class Item_woodenPickaxe extends Tool {
     constructor() {
-        super('wooden_picaxe', './assets/items/wooden_picaxe.png');
+        super('wooden_pickaxe', './assets/items/wooden_pickaxe.png');
         this.id = 129;
         this.durability = 5;
 
@@ -87,9 +87,9 @@ class Item_woodenPicaxe extends Tool {
     }
 }
 
-class Item_stonePicaxe extends Tool {
+class Item_stonePickaxe extends Tool {
     constructor() {
-        super('stone_picaxe', './assets/items/stone_picaxe.png');
+        super('stone_pickaxe', './assets/items/stone_pickaxe.png');
         this.id = 130;
         this.durability = 5;
 
@@ -100,7 +100,7 @@ class Item_stonePicaxe extends Tool {
 
 class Item_woodenAxe extends Tool {
     constructor() {
-        super('wooden_picaxe', './assets/items/wooden_axe.png');
+        super('wooden_axe', './assets/items/wooden_axe.png');
         this.id = 129;
         this.durability = 5;
 
@@ -111,7 +111,7 @@ class Item_woodenAxe extends Tool {
 
 class Item_stoneAxe extends Tool {
     constructor() {
-        super('stone_picaxe', './assets/items/stone_axe.png');
+        super('stone_axe', './assets/items/stone_axe.png');
         this.id = 130;
         this.durability = 5;
 
@@ -229,8 +229,8 @@ class Item_Directory {
             '10': Block_craftingTable,
 
             '128': Item_stick,
-            '129': Item_woodenPicaxe,
-            '130': Item_stonePicaxe,
+            '129': Item_woodenPickaxe,
+            '130': Item_stonePickaxe,
             '131': Item_woodenAxe,
             '132': Item_stoneAxe,
         }
