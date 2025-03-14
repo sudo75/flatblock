@@ -1,15 +1,16 @@
 import { Generator } from "./generator.js";
 
 class Level {
-    constructor(game) {
+    constructor(game, width_chunks, height_blocks) {
         this.game = game;
         this.ctx = this.game.ctx_world;
         this.data = {};
         this.loaded_chunks = [];
         this.properties = {
-            width_chunks: 5,
-            height_blocks: 100
-        }
+            width_chunks: null,
+            height_blocks: null
+        };
+        this.world_size = null;
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
@@ -41,8 +42,9 @@ class Level {
         console.log(this.data);
     }
 
-    copy(level_data, entity_data, seed) { //use saved data
+    copy(level_data, entity_data, seed, level_properties) { //use saved data
         this.data = level_data;
+        this.properties = level_properties
 
         //Update generator data
         this.generator.seed = seed;

@@ -73,11 +73,13 @@ class Game {
             {txt: ['Clear local storage'], callback: () => {
                 if (confirm(`Clear all local storage data for '${window.location.href}'?`)) {
                     localStorage.clear();
+                    this.menu_renderers.main.close();
+                    this.init_menu();
                 }
             }}
         ];
 
-        this.menu_renderers.main = new Menu_Renderer('Block Game', 'Good day sir!', 'v.0.2.0', btns_main, this.width, this.height, this.canvas_menu2);
+        this.menu_renderers.main = new Menu_Renderer('Block Game', 'Good day sir!', `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`, btns_main, this.width, this.height, this.canvas_menu2);
         this.menu_renderers.main.init();
 
         const btns_start = [
@@ -113,6 +115,7 @@ class Game {
                 console.log('returning to main menu...');
 
                 this.menu_renderers.start.close();
+                this.menu_renderers.main.version = `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`;
                 this.menu_renderers.main.init();
             }}
         ];
@@ -127,7 +130,6 @@ class Game {
                 }
             }
         }
-
         
         this.menu_renderers.slots = [];
         for (let i = 0; i < 5; i++) {
@@ -136,9 +138,9 @@ class Game {
                     console.log('loading game...');
     
                     closeSlotMenu();
-                    this.init(i);
+                    this.menu_renderers.new_game[i].init();
                 }},
-                {txt: ['Load game'], callback: () => {    
+                {txt: ['Load game'], callback: () => {
                     if (this.saveExists(i)) {
                         closeSlotMenu();
                         this.loadGame(i);
@@ -151,8 +153,19 @@ class Game {
                 {txt: ['Clear slot'], callback: () => {
                     if (confirm(`Clear slot ${i}?`)) {
                         localStorage.removeItem(`slot_${i}`);
+
+                        const world_size = this.getSlotData(i, 'world_size');
+                        const text = world_size ? `World size: ${world_size}`: `-Empty-`;
+                        
+                        const storage_data = this.getDiagnosticsBySlot_storage(i);
+                        const text2 = storage_data ? `Slot ${i} storage: ${storage_data.size.toLocaleString("en-US")} / ${storage_data.quota.toLocaleString("en-US")} bytes - ${storage_data.percentage}%`: null;
+
+                        this.menu_renderers.slots[i].subtitle = text;
+                        this.menu_renderers.slots[i].version = text2;
+
+                        this.menu_renderers.slots[i].close();
+                        this.menu_renderers.slots[i].init();
                     }
-                    console.log('clearing slot...');
                 }},
     
                 {txt: ['<= Back'], callback: () => {
@@ -162,12 +175,112 @@ class Game {
                 }}
             ];
 
-            this.menu_renderers.slots[i] = new Menu_Renderer(`Slot ${i}`, `Slot ${this.getSlotStatus()}`, null, btns_slot, this.width, this.height, this.canvas_menu2);
+            const world_size = this.getSlotData(i, 'world_size');
+            const text1 = world_size ? `World size: ${world_size}`: `-Empty-`;
+
+            const storage_data = this.getDiagnosticsBySlot_storage(i);
+            const text2 = storage_data ? `Slot ${i} storage: ${storage_data.size.toLocaleString("en-US")} / ${storage_data.quota.toLocaleString("en-US")} bytes - ${storage_data.percentage}%`: null;
+            this.menu_renderers.slots[i] = new Menu_Renderer(`Slot ${i}`, text1, text2, btns_slot, this.width, this.height, this.canvas_menu2);
+        }
+
+
+        //New game menus
+        const closeNewGameMenu = () => {
+            for (let i = 0; i < 5; i++) {
+                if (this.menu_renderers.new_game[i].isOpen) {
+                    this.menu_renderers.new_game[i].close();
+                }
+            }
+        }
+
+        this.menu_renderers.new_game = [];
+        for (let i = 0; i < 5; i++) {
+            const btns_slot = [
+                {txt: ['Tiny'], callback: () => {
+                    console.log('loading game...');
+    
+                    closeNewGameMenu();
+                    this.init(i, 'tiny');
+                }},
+                {txt: ['Small'], callback: () => {
+                    console.log('loading game...');
+    
+                    closeNewGameMenu();
+                    this.init(i, 'small');
+                }},
+                {txt: ['Medium'], callback: () => {
+                    console.log('loading game...');
+    
+                    closeNewGameMenu();
+                    this.init(i, 'medium');
+                }},
+                {txt: ['Large'], callback: () => {
+                    console.log('loading game...');
+    
+                    closeNewGameMenu();
+                    this.init(i, 'large');
+                }},
+                {txt: ['Huge'], callback: () => {
+                    console.log('loading game...');
+    
+                    closeNewGameMenu();
+                    this.init(i, 'huge');
+                }},
+                
+    
+                {txt: ['<= Back'], callback: () => {
+    
+                    closeNewGameMenu();
+                    this.menu_renderers.slots[i].init();
+                }}
+            ];
+
+            const world_size = this.getSlotData(i, 'world_size');
+            const text = world_size ? `World size: ${world_size}`: `-Empty-`;
+            this.menu_renderers.new_game[i] = new Menu_Renderer(`Slot ${i}`, `${text}`, null, btns_slot, this.width, this.height, this.canvas_menu2);
         }
     }
     
-    async init(slot) {
-        this.slotLoaded = slot;
+    async init(slot, level_size) {
+        this.slotLoaded = slot != undefined ? slot: 'default';
+
+        const getSize = (level_size) => {
+            let width_chunks;
+            let height_blocks;
+            switch(level_size) {
+                case 'tiny':
+                    width_chunks = 3;
+                    height_blocks = 120;
+                    break;
+                case 'small':
+                    width_chunks = 5;
+                    height_blocks = 120;
+                    break;
+                case 'medium':
+                    width_chunks = 9;
+                    height_blocks = 120;
+                    break;
+                case 'large':
+                    width_chunks = 15;
+                    height_blocks = 150;
+                    break;
+                case 'huge':
+                    width_chunks = 25;
+                    height_blocks = 180;
+                    break;
+                default:
+                    width_chunks = 9;
+                    height_blocks = 120;
+            }
+
+            return {
+                width_chunks: width_chunks,
+                height_blocks: height_blocks
+            };
+        };
+
+        const width_chunks = getSize(level_size).width_chunks;
+        const height_blocks = getSize(level_size).height_blocks;
 
         function logPerformance(taskName, startTime, style = "color: black; font-weight: normal;") {
             const elapsedTime = (performance.now() - startTime).toFixed(1);
@@ -181,6 +294,10 @@ class Game {
         logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const levelStart = performance.now();
+        this.level.properties.width_chunks = width_chunks;
+        this.level.properties.height_blocks = height_blocks;
+        this.level.world_size = level_size;
+
         this.level.generate();
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
@@ -203,6 +320,8 @@ class Game {
     }
 
     save_game() {
+        if (this.slotLoaded == null || this.slotLoaded == 'default') return;
+
         let data_world = {};
 
         for (let key in this.level.data) {
@@ -221,20 +340,16 @@ class Game {
             data_world: data_world,
             data_player: data_player,
             entity: this.entity_handler.entity_data,
-            seed: this.level.generator.seed
+            seed: this.level.generator.seed,
+            level_properties: this.level.properties,
+            world_size: this.level.world_size
         };
 
         localStorage.setItem(`slot_${this.slotLoaded}`, JSON.stringify(data));
     }
 
     saveExists(slot) {
-        const gameData = localStorage.getItem(`slot_${slot}`);
-
-        if (gameData) {
-            return true
-        } else {
-            return false;
-        }
+        return localStorage.getItem(`slot_${slot}`) !== null;
     }
 
     async loadGame(slot) {
@@ -253,7 +368,7 @@ class Game {
 
 
         //LOAD
-        this.slotLoaded = slot;
+        this.slotLoaded = slot != undefined ? slot: 'default';
 
         function logPerformance(taskName, startTime, style = "color: black; font-weight: normal;") {
             const elapsedTime = (performance.now() - startTime).toFixed(1);
@@ -267,7 +382,9 @@ class Game {
         logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const levelStart = performance.now();
-        this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed);
+        this.level.world_size = gameData_parsed.level_size;
+
+        this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const playerStart = performance.now();
@@ -282,8 +399,25 @@ class Game {
         logPerformance("Total init execution time", startTime, "color: orange; font-size: 16px; font-weight: bold;");
     }
 
-    getSlotStatus() {
-        return 'empty';
+    getSlotStatus(slot) {
+        if (this.saveExists(slot)) {
+            return 'filled';
+        } else {
+            return 'empty';
+        }
+    }
+
+    getSlotData(slot, data) {
+        const gameData = localStorage.getItem(`slot_${slot}`);
+
+        let gameData_parsed;
+        if (gameData) {
+            gameData_parsed = JSON.parse(gameData);
+        } else {
+            return null;
+        }
+
+        return gameData_parsed[data];
     }
 
     update_world() {
@@ -294,10 +428,52 @@ class Game {
         if (this.tick % 40 === 0) {
             this.save_game();
         }
+        
+        if (this.tick % 100 === 0) {
+            this.run_diagnostics();
+        }
     }
 
     menus() {
         this.menu_handler.update(this.input.keys);
+    }
+
+    getDiagnosticsBySlot_storage(slot) {
+        if (!this.saveExists(slot)) return;
+
+        const dataQuota = 10485760;
+
+        const key = `slot_${slot}`;
+        const gameData = localStorage.getItem(key);
+        const dataSize = (gameData.length + key.length) * 2;
+        
+        const percentage = (dataSize / dataQuota * 100).toFixed(2);
+
+        return {size: dataSize, quota: dataQuota, percentage: percentage};
+    }
+
+    getDiagnostics_storage() {
+        const dataQuota = 10485760;
+        let dataSize = 0;
+
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                dataSize += (localStorage[key].length + key.length) * 2;
+            }
+        }
+        
+        const percentage = (dataSize / dataQuota * 100).toFixed(2);
+
+        return {size: dataSize, quota: dataQuota, percentage: percentage};
+    }
+
+    run_diagnostics() {
+        const storage_data = this.getDiagnostics_storage();
+        const dataSize = storage_data.size;
+        const dataQuota = storage_data.quota;
+        const percentage = storage_data.percentage;
+
+        console.log(`FPS: ${this.fps}, Storage: ${dataSize.toLocaleString("en-US")} / ${dataQuota.toLocaleString("en-US")} bytes - ${percentage}%`);
     }
 
     startGameLoop() {
@@ -349,7 +525,7 @@ class Game {
         };
 
         const debug = () => {
-            console.log('FPS: ' + this.fps);
+            //console.log('FPS: ' + this.fps);
 
             setTimeout(() => {
                 debug();
