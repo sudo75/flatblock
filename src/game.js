@@ -183,7 +183,6 @@ class Game {
             this.menu_renderers.slots[i] = new Menu_Renderer(`Slot ${i}`, text1, text2, btns_slot, this.width, this.height, this.canvas_menu2);
         }
 
-
         //New game menus
         const closeNewGameMenu = () => {
             for (let i = 0; i < 5; i++) {
@@ -345,21 +344,35 @@ class Game {
             world_size: this.level.world_size
         };
 
-        localStorage.setItem(`slot_${this.slotLoaded}`, JSON.stringify(data));
+        const packagedData = this.compressString(JSON.stringify(data));
+
+        localStorage.setItem(`slot_${this.slotLoaded}`, packagedData);
     }
 
     saveExists(slot) {
         return localStorage.getItem(`slot_${slot}`) !== null;
     }
 
-    async loadGame(slot) {
+    compressString(string) {
+        if (!string) return;
+        //return btoa(string);
+        return string;
+    }
 
+    decompressString(string) {
+        if (!string) return;
+        //return atob(string);
+        return string;
+    }
+
+    async loadGame(slot) {
         //FETCH DATA
         const gameData = localStorage.getItem(`slot_${slot}`);
+        const unpackagedData = this.decompressString(gameData);
 
         let gameData_parsed;
-        if (gameData) {
-            gameData_parsed = JSON.parse(gameData);
+        if (unpackagedData) {
+            gameData_parsed = JSON.parse(unpackagedData);
             console.log(gameData_parsed);
         } else {
             console.log('No game data found.');
@@ -409,10 +422,11 @@ class Game {
 
     getSlotData(slot, data) {
         const gameData = localStorage.getItem(`slot_${slot}`);
+        const unpackagedData = this.decompressString(gameData);
 
         let gameData_parsed;
-        if (gameData) {
-            gameData_parsed = JSON.parse(gameData);
+        if (unpackagedData) {
+            gameData_parsed = JSON.parse(unpackagedData);
         } else {
             return null;
         }
@@ -441,11 +455,11 @@ class Game {
     getDiagnosticsBySlot_storage(slot) {
         if (!this.saveExists(slot)) return;
 
-        const dataQuota = 10485760;
+        const dataQuota = 5242880;
 
         const key = `slot_${slot}`;
         const gameData = localStorage.getItem(key);
-        const dataSize = (gameData.length + key.length) * 2;
+        const dataSize = (gameData.length + key.length);
         
         const percentage = (dataSize / dataQuota * 100).toFixed(2);
 
@@ -453,12 +467,12 @@ class Game {
     }
 
     getDiagnostics_storage() {
-        const dataQuota = 10485760;
+        const dataQuota = 5242880;
         let dataSize = 0;
 
         for (let key in localStorage) {
             if (localStorage.hasOwnProperty(key)) {
-                dataSize += (localStorage[key].length + key.length) * 2;
+                dataSize += (localStorage[key].length + key.length);
             }
         }
         
