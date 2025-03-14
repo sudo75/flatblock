@@ -1,7 +1,7 @@
 import { Generator } from "./generator.js";
 
 class Level {
-    constructor(game, width_chunks, height_blocks) {
+    constructor(game) {
         this.game = game;
         this.ctx = this.game.ctx_world;
         this.data = {};

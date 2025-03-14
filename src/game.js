@@ -538,18 +538,8 @@ class Game {
             requestAnimationFrame(game_loop);
         };
 
-        const debug = () => {
-            //console.log('FPS: ' + this.fps);
-
-            setTimeout(() => {
-                debug();
-            }, 1500);
-        };
-
-
         tick_handler();
         game_loop();
-        debug();
     }
 }
 
