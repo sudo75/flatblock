@@ -40,10 +40,6 @@ class Game {
         this.slotLoaded = null;
 
         window.addEventListener('beforeunload', (event) => {
-            //event.preventDefault();
-
-            //event.returnValue = '';
-
             if (this.status === 1) {
                 this.save_game();
             }
@@ -357,8 +353,6 @@ class Game {
             level_properties: this.level.properties,
             level_size: this.level.level_size
         };
-
-        console.log(this.level.level_size)
 
         const packagedData = this.compressString(JSON.stringify(data));
 
