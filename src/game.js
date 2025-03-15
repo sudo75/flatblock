@@ -1,3 +1,5 @@
+import { LZString } from './lib/lz-string-1.4.5/libs/lz-string.js';
+
 class Game {
     constructor(width, height) {
         this.canvas_world = document.querySelector('#game_canvas_back');
@@ -19,6 +21,7 @@ class Game {
         this.height = height;
         
         this.level = null;
+        this.status = 0;
 
         this.settings = {
             blockview_width: 15, //number of blocks viewable - default = 15
@@ -35,13 +38,22 @@ class Game {
 
         this.menu_renderers = {};
         this.slotLoaded = null;
+
+        window.addEventListener('beforeunload', (event) => {
+            //event.preventDefault();
+
+            //event.returnValue = '';
+
+            if (this.status === 1) {
+                this.save_game();
+            }
+        });
     }
 
     async loadModules() {
         // Dynamically import modules
         const { Item_Directory } = await import('./generation/blocks.js');
         const { Calc_World } = await import('./calculations/calc_world.js');
-        const { Entity } = await import('./entities/entity.js');
         const { Player } = await import('./entities/player.js');
         const { InputHandler } = await import('./inputs/input.js');
         const { Level } = await import('./generation/level.js');
@@ -61,7 +73,8 @@ class Game {
     }
 
     async init_menu() {
-        const { Menu_Renderer } = await import('https://sudo75.github.io/canvas-functions/menu_renderer.js');
+        this.status = 1;
+        const { Menu_Renderer } = await import('./lib/canvas-functions/menu_renderer.js');
 
         const btns_main = [
             {txt: ['START'], callback: () => {
@@ -154,8 +167,8 @@ class Game {
                     if (confirm(`Clear slot ${i}?`)) {
                         localStorage.removeItem(`slot_${i}`);
 
-                        const world_size = this.getSlotData(i, 'world_size');
-                        const text = world_size ? `World size: ${world_size}`: `-Empty-`;
+                        const level_size = this.getSlotData(i, 'level_size');
+                        const text = level_size ? `Level size: ${level_size}`: `-Empty-`;
                         
                         const storage_data = this.getDiagnosticsBySlot_storage(i);
                         const text2 = storage_data ? `Slot ${i} storage: ${storage_data.size.toLocaleString("en-US")} / ${storage_data.quota.toLocaleString("en-US")} bytes - ${storage_data.percentage}%`: null;
@@ -175,8 +188,8 @@ class Game {
                 }}
             ];
 
-            const world_size = this.getSlotData(i, 'world_size');
-            const text1 = world_size ? `World size: ${world_size}`: `-Empty-`;
+            const level_size = this.getSlotData(i, 'level_size');
+            const text1 = level_size ? `Level size: ${level_size}`: `-Empty-`;
 
             const storage_data = this.getDiagnosticsBySlot_storage(i);
             const text2 = storage_data ? `Slot ${i} storage: ${storage_data.size.toLocaleString("en-US")} / ${storage_data.quota.toLocaleString("en-US")} bytes - ${storage_data.percentage}%`: null;
@@ -234,14 +247,15 @@ class Game {
                 }}
             ];
 
-            const world_size = this.getSlotData(i, 'world_size');
-            const text = world_size ? `World size: ${world_size}`: `-Empty-`;
+            const level_size = this.getSlotData(i, 'level_size');
+            const text = level_size ? `Level size: ${level_size}`: `-Empty-`;
             this.menu_renderers.new_game[i] = new Menu_Renderer(`Slot ${i}`, `${text}`, null, btns_slot, this.width, this.height, this.canvas_menu2);
         }
     }
     
     async init(slot, level_size) {
         this.slotLoaded = slot != undefined ? slot: 'default';
+        this.status = 1;
 
         const getSize = (level_size) => {
             let width_chunks;
@@ -252,24 +266,24 @@ class Game {
                     height_blocks = 120;
                     break;
                 case 'small':
-                    width_chunks = 5;
+                    width_chunks = 7;
                     height_blocks = 120;
                     break;
                 case 'medium':
-                    width_chunks = 9;
-                    height_blocks = 120;
-                    break;
-                case 'large':
                     width_chunks = 15;
                     height_blocks = 150;
                     break;
+                case 'large':
+                    width_chunks = 27;
+                    height_blocks = 150;
+                    break;
                 case 'huge':
-                    width_chunks = 25;
+                    width_chunks = 53;
                     height_blocks = 180;
                     break;
                 default:
-                    width_chunks = 9;
-                    height_blocks = 120;
+                    width_chunks = 15;
+                    height_blocks = 150;
             }
 
             return {
@@ -295,7 +309,7 @@ class Game {
         const levelStart = performance.now();
         this.level.properties.width_chunks = width_chunks;
         this.level.properties.height_blocks = height_blocks;
-        this.level.world_size = level_size;
+        this.level.level_size = level_size;
 
         this.level.generate();
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
@@ -341,8 +355,10 @@ class Game {
             entity: this.entity_handler.entity_data,
             seed: this.level.generator.seed,
             level_properties: this.level.properties,
-            world_size: this.level.world_size
+            level_size: this.level.level_size
         };
+
+        console.log(this.level.level_size)
 
         const packagedData = this.compressString(JSON.stringify(data));
 
@@ -355,14 +371,14 @@ class Game {
 
     compressString(string) {
         if (!string) return;
-        //return btoa(string);
-        return string;
+        //return string;
+        return LZString.compress(string);
     }
 
     decompressString(string) {
         if (!string) return;
-        //return atob(string);
-        return string;
+        //return string;
+        return LZString.decompress(string);
     }
 
     async loadGame(slot) {
@@ -395,9 +411,10 @@ class Game {
         logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const levelStart = performance.now();
-        this.level.world_size = gameData_parsed.level_size;
 
         this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
+        this.level.level_size = gameData_parsed.level_size;
+
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const playerStart = performance.now();
@@ -439,7 +456,7 @@ class Game {
         this.level.world_interaction(); // for breaking and placing blocks
         this.entity_handler.run_gametick_logic(this.tick);
 
-        if (this.tick % 40 === 0) {
+        if (this.tick % 2400 === 0) { //Save every 2 minutes
             this.save_game();
         }
         

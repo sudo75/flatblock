@@ -10,7 +10,7 @@ class Level {
             width_chunks: null,
             height_blocks: null
         };
-        this.world_size = null;
+        this.level_size = null;
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;

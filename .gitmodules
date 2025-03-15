@@ -1,0 +1,3 @@
+[submodule "canvas-functions"]
+	path = canvas-functions
+	url = https://github.com/sudo75/canvas-functions.git
