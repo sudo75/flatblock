@@ -137,10 +137,10 @@ class Level {
                 const selectedItemType = this.item_directory.getProperty(seletedItemID, 'item_type');
 
                 let strength = this.game.player.strength;
-                if (selectedItemType === 'tool') {
+                if (this.item_directory.getProperty(seletedItemID, 'strength')) {
                     const purpose = this.item_directory.getProperty(seletedItemID, 'purpose');
 
-                    if (purpose.includes(blockID)) {
+                    if (purpose.includes(blockID) || purpose == 'all') {
                         strength = this.item_directory.getProperty(seletedItemID, 'strength');
                     }
                 }
