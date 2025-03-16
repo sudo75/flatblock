@@ -154,6 +154,22 @@ class EntityHandler {
         }
 
         this.mob_handler.run_gametick_logic(tick);
+
+        //Fix entity data
+        const chunk_min = this.calc.getWorldBounds()[0];
+        const chunk_max = this.calc.getWorldBounds()[1];
+        for (let i = chunk_min; i <= chunk_max; i++) {
+            for (let j = 0; j < this.game.level.data[i].entity_data.length; j++) {
+                const entity = this.game.level.data[i].entity_data[j];
+                
+                const entity_chunk = this.calc.getChunkID(entity.x);
+                if (i !== entity_chunk) {
+                    this.game.level.data[entity_chunk].entity_data.push(entity);
+                    this.game.level.data[i].entity_data.splice(j, 1);
+                }
+            }
+
+        }
     }
 }
 
