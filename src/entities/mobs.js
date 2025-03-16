@@ -1,10 +1,12 @@
 import { Entity_creature } from "./entity.js";
 
 class Mob extends Entity_creature {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobType) {
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, mobType) {
         super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth);
         
         this.entityType = 'mob';
+
+        this.mobID = mobID
         this.mobType = mobType; //Passive or hostile
     }
 
@@ -18,7 +20,20 @@ class Mob extends Entity_creature {
             this.h_vel = -4;
         }
         
-        
+
+        //Calculate damage
+        const selectedSlot = this.game.player.inventory.selectedSlot;
+        const seletedItemID = this.game.player.inventory.data[selectedSlot].id;
+
+        const damage = this.game.item_directory.getProperty(seletedItemID, 'damage') ? this.game.item_directory.getProperty(seletedItemID, 'damage'): this.game.player.damage;
+
+        this.applyDamage(damage);
+
+        //Decrement tool durability
+        const selectedItemType = this.game.item_directory.getProperty(seletedItemID, 'item_type');
+        if (selectedItemType === 'tool') {
+            this.game.player.inventory.decrementDurability(selectedSlot);
+        }
     }
 
     run_gametick_logic(tick) {
@@ -27,16 +42,39 @@ class Mob extends Entity_creature {
 }
 
 class Mob_passive extends Mob {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth) {
-        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, 'passive');
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID) {
+        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, 'passive');
         
     }
 }
 
-class Pig extends Mob_passive {
+class Mob_Pig extends Mob_passive {
     constructor(game, entityID, x, y) {
-        super(game, entityID, x, y, 0.8, 0.6, 10, 10);
+        super(game, entityID, x, y, 0.8, 0.6, 10, 10, 0);
+        
+        this.mob_name = 'pig';
+    }
+}
 
+class Mob_Directory {
+    constructor() {
+        this.mob = { //All mob classes via IDs
+            '0': Mob_Pig
+        }
+    }
+
+    getProperty(id, property) {
+        if (!this.mob[id]) return;
+
+        const mobClass = this.mob[id];
+        const mobInstance = new mobClass;
+
+        return mobInstance[property];
+    }
+
+    getTextureLocationByID(id) {
+
+        return this.getProperty(id, 'texture_location');
     }
 }
 
@@ -44,16 +82,7 @@ class MobHandler {
     constructor(entity_handler) {
         this.entity_handler = entity_handler;
 
-        this.mobs = {
-            passive: {
-                pig: Pig
-
-
-            },
-            hostile: {
-
-            }
-        }
+        this.mob_directory = new Mob_Directory();
 
     }
 
@@ -75,7 +104,7 @@ class MobHandler {
     }
 
     spawnRandomPassiveMob(x, y) {
-        this.entity_handler.newMob(this.mobs.passive.pig, x, y);
+        this.entity_handler.newMob(0, x, y);
     }
 }
 

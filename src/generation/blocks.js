@@ -7,6 +7,10 @@ class Meta {
         this.isBlock = true;
 
         this.maxStackSize = 16;
+
+        this.strength = 1;
+        this.damage = 1;
+        this.purpose = 'all';
     }
 }
 
@@ -80,9 +84,10 @@ class Item_woodenPickaxe extends Tool {
     constructor() {
         super('wooden_pickaxe', './assets/items/wooden_pickaxe.png');
         this.id = 129;
-        this.durability = 5;
+        this.durability = 32;
 
         this.strength = 2;
+        this.damage = 2;
         this.purpose = [3]; //list of block IDs the tool breaks
     }
 }
@@ -91,9 +96,10 @@ class Item_stonePickaxe extends Tool {
     constructor() {
         super('stone_pickaxe', './assets/items/stone_pickaxe.png');
         this.id = 130;
-        this.durability = 5;
+        this.durability = 64;
 
         this.strength = 3;
+        this.damage = 3;
         this.purpose = [3]; //list of block IDs the tool breaks
     }
 }
@@ -102,9 +108,10 @@ class Item_woodenAxe extends Tool {
     constructor() {
         super('wooden_axe', './assets/items/wooden_axe.png');
         this.id = 129;
-        this.durability = 5;
+        this.durability = 32;
 
         this.strength = 2;
+        this.damage = 3;
         this.purpose = [4, 5, 7, 8]; //list of block IDs the tool breaks
     }
 }
@@ -113,9 +120,10 @@ class Item_stoneAxe extends Tool {
     constructor() {
         super('stone_axe', './assets/items/stone_axe.png');
         this.id = 130;
-        this.durability = 5;
+        this.durability = 64;
 
         this.strength = 3;
+        this.damage = 4;
         this.purpose = [4, 5, 7, 8]; //list of block IDs the tool breaks
     }
 }
@@ -140,7 +148,7 @@ class Block_grass extends Block_Solid {
 
 class Block_stone extends Block_Solid {
     constructor(x, y) {
-        super('stone', x, y, 100, './assets/textures/stone.png');
+        super('stone', x, y, 150, './assets/textures/stone.png');
         this.id = 3;
         this.itemDrop_id = 3;
     }

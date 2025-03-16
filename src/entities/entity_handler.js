@@ -23,6 +23,8 @@ class EntityHandler {
             const entity = data[i];
             const entity_data = {
                 itemID: entity.itemID,
+                mobID: entity.mobID,
+                health: entity.health,
                 x: entity.x,
                 y: entity.y,
                 width: entity.width,
@@ -35,6 +37,10 @@ class EntityHandler {
 
             if (entity_data.entityType === 'item') {
                 this.newEntity_Item(entity_data.x, entity_data.y, entity_data.itemID, entity_data.h_vel, entity_data.v_vel, entity_data.durability);
+            }
+
+            if (entity_data.entityType === 'mob') {
+                this.newMob(entity_data.mobID, entity_data.x, entity_data.y, entity_data.health);
             }
         }
     }
@@ -50,8 +56,12 @@ class EntityHandler {
         this.level_data[this.calc.getChunkID(x)].entity_data.push(entity);
     }
 
-    newMob(Entity_mob, x, y) {
-        const entity = new Entity_mob(this.game, this.nextEntityID, x, y);
+    newMob(mobID, x, y, health) {
+        const MobClass = this.mob_handler.mob_directory.mob[mobID];
+        const entity = new MobClass(this.game, this.nextEntityID, x, y);
+        if (health) {
+            entity.health = health;
+        }
         
         this.nextEntityID++;
         this.level_data[this.calc.getChunkID(x)].entity_data.push(entity);
@@ -115,6 +125,8 @@ class EntityHandler {
                 
                 const entity_data = {
                     itemID: entity.itemID,
+                    mobID: entity.mobID,
+                    health: entity.health,
                     x: entity.x,
                     y: entity.y,
                     width: entity.width,

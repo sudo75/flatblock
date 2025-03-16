@@ -309,6 +309,14 @@ class Entity_creature extends Entity {
         this.health = health;
         this.maxHealth = maxHealth;
     }
+
+    applyDamage(damage) {
+        this.health -= damage;
+
+        if (this.health <= 0) {
+            this.active = false;
+        }
+    }
 }
 
 export { Entity_creature };
