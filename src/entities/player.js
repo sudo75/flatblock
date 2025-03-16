@@ -1,7 +1,7 @@
-import { Entity } from './entity.js';
+import { Entity_creature } from './entity.js';
 import { Inventory } from './inventory.js';
 
-class Player extends Entity {
+class Player extends Entity_creature {
     constructor(game) {
         super(game, 0);
         this.game = game;
@@ -20,6 +20,14 @@ class Player extends Entity {
         this.inventory = new Inventory();
 
         this.strength = 1; //block-breaking strength
+
+        this.health = 20;
+        this.maxHealth = 20;
+
+        this.maxHitCooldown = 15;
+        this.hitCooldown = 0; //in ticks
+
+        this.mouseDownOnPreviousTick = false;
     }
 
     spawn() {
@@ -56,6 +64,8 @@ class Player extends Entity {
 
         const itemID = this.inventory.data[inventory_slot].id;
         const durability = this.inventory.data[inventory_slot].durability;
+
+        if (!itemID) return;
 
         const h_vel = this.direction === 'right' ? 8: -8;
         const v_vel = 6;
@@ -137,8 +147,15 @@ class Player extends Entity {
             if (dist_right < this.game.settings.blockview_width / 2) {
                 this.real_x = this.game.settings.blockview_width * this.game.block_size - (dist_right * this.game.block_size);
             }
-        }        
+        }
+    }
 
+    run_gametick_logic(tick) {
+        if (this.hitCooldown > 0) {
+            this.hitCooldown--;
+        }
+        
+        this.mouseDownOnPreviousTick = this.game.input.mouseDown;
     }
 
     clear() {
@@ -155,6 +172,21 @@ class Player extends Entity {
 
         this.ctx.fillStyle = 'grey';
         this.ctx.fillRect(left, this.game.height - bottom - this.height, this.width, this.height);
+    }
+
+    canHitMob() {
+        if (this.hitCooldown === 0 || !this.mouseDownOnPreviousTick) {
+            return true;
+        }
+
+        return false;
+    }
+
+    hitMob(mob) {
+        if (!this.canHitMob()) return;
+
+        this.hitCooldown = this.maxHitCooldown;
+        mob.hit();
     }
 
     getBlockDistance(x, y) {

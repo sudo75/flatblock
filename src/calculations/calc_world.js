@@ -95,11 +95,17 @@ class Calc_World {
         return deepCopy;
     }
 
-    getBlockByRealXY(real_x, real_y) {
-        const x = Math.floor(real_x / this.game.block_size + this.game.renderer.leftmost_blockX);
-        const y = Math.floor((this.game.height - real_y) / this.game.block_size + this.game.renderer.bottommost_blockY);
+    getBlockByRealXY_unrounded(real_x, real_y) {
+        const x = real_x / this.game.block_size + this.game.renderer.leftmost_blockX;
+        const y = (this.game.height - real_y) / this.game.block_size + this.game.renderer.bottommost_blockY;
 
         return {x: x, y: y};
+    }
+
+    getBlockByRealXY(real_x, real_y) {
+        const blockXY = this.getBlockByRealXY_unrounded(real_x, real_y);
+
+        return {x: Math.floor(blockXY.x), y: Math.floor(blockXY.y)};
     }
 
     hasPhysics(x, y) {

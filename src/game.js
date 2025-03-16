@@ -55,7 +55,7 @@ class Game {
         const { Level } = await import('./generation/level.js');
         const { World_Renderer } = await import('./rendering/renderer.js');
         const { MenuHandler } = await import('./menus/game_menus.js');
-        const { EntityHandler } = await import('./entities/entity.js');
+        const { EntityHandler } = await import('./entities/entity_handler.js');
 
         // Initialize game components
         this.calculator = new Calc_World(this);
@@ -449,6 +449,7 @@ class Game {
         // Logic that requires game ticks and world update logic
         this.level.world_interaction(); // for breaking and placing blocks
         this.entity_handler.run_gametick_logic(this.tick);
+        this.player.run_gametick_logic(this.tick);
 
         if (this.tick % 2400 === 0) { //Save every 2 minutes
             this.save_game();
@@ -522,7 +523,7 @@ class Game {
 
             lastTick = time_current;
 
-            setTimeout(tick_handler, this.tickSpeed_target);
+            setTimeout(tick_handler, 1000 / this.tickSpeed_target);
         };
 
         let lastFrame;

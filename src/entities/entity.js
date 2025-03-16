@@ -1,11 +1,13 @@
 class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperately
-    constructor(game, entityID, x, y, width, height, width_blocks, height_blocks) {
+    constructor(game, entityID, x, y, width_blocks, height_blocks) {
         this.game = game;
         this.ctx = this.game.ctx_entities;
-        this.width = width;
-        this.height = height;
+        
         this.width_blocks = width_blocks;
         this.height_blocks = height_blocks;
+        this.width = this.game.block_size * this.width_blocks;
+        this.height = this.game.block_size * this.height_blocks;
+
         this.calc = this.game.calculator;
         this.id = entityID;
 
@@ -300,170 +302,13 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
 export { Entity };
 
-import { Item_Directory } from '../generation/blocks.js';
-class Entity_item extends Entity {
-    constructor(game, entityID, x, y, itemID, spawnTick, dimensions, durability) {
-        super(game, entityID, x, y, 0.5, 0.5);
-        this.width_blocks = dimensions.width; // in unit blocks
-        this.height_blocks = dimensions.height; // in unit blocks
-        this.durability = durability;
-
-        this.width = this.game.block_size * this.width_blocks;
-        this.height = this.game.block_size * this.height_blocks;
+class Entity_creature extends Entity {
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth) {
+        super(game, entityID, x, y, width_blocks, height_blocks);
         
-        this.itemID = itemID;
-
-        this.item_directory = this.game.item_directory;
-        this.texture_location = this.item_directory.getTextureLocationByID(this.itemID);
-
-        this.spawnTick = spawnTick;
-        this.pickup_grace = 40; //ticks
-        this.player_maxReach = 1.05;
-
-        this.entityType = 'item';
-    }
-
-    update(input, deltaTime) {
-        super.update(input, deltaTime);
-    }
-
-    run_gametick_logic(tick) {
-        // Calculate player pick-up
-        const playerPos_adjusted = {
-            x: this.game.player.x + this.game.player.width_blocks / 2,
-            y: this.game.player.y + this.game.player.height_blocks / 2
-        }
-
-        const entityPos_adjusted = {
-            x: this.x + this.width_blocks / 2,
-            y: this.y + this.height_blocks / 2,
-        }
-
-        //Pickup items
-        if (tick - this.spawnTick >= this.pickup_grace) { // Calculate pickup grace
-            if (this.calc.getBlockDistance(playerPos_adjusted.x, playerPos_adjusted.y, entityPos_adjusted.x, entityPos_adjusted.y) <= this.player_maxReach) {
-                
-                if (this.game.player.inventory.canAddItem(this.itemID)) { //If can be picked up
-                    this.game.player.inventory.addItems(this.itemID, this.durability);
-                    this.active = false;
-                }
-                
-            }
-        }
-        
+        this.health = health;
+        this.maxHealth = maxHealth;
     }
 }
 
-class EntityHandler {
-    constructor(game) {
-        this.game = game;
-        this.calc = this.game.calculator;
-
-        this.level_data = this.game.level.data;
-        this.entity_data = []; //formatted for local storage saving
-
-        this.nextEntityID = 1;
-        this.entity_item_dimensions = {
-            width: 0.5,
-            height: 0.5
-        };
-    }
-
-    copy(data) { //from saved data
-        for (let i = 0; i < data.length; i++) {
-            const entity = data[i];
-            const entity_data = {
-                itemID: entity.itemID,
-                x: entity.x,
-                y: entity.y,
-                width: entity.width,
-                height: entity.height,
-                h_vel: entity.h_vel,
-                v_vel: entity.v_vel,
-                entityType: entity.entityType,
-                durability: entity.durability
-            };
-
-            if (entity_data.entityType === 'item') {
-                this.newEntity_Item(entity_data.x, entity_data.y, entity_data.itemID, entity_data.h_vel, entity_data.v_vel, entity_data.durability);
-            }
-        }
-    }
-
-    newEntity_Item(x, y, itemID, h_vel, v_vel, durability) {
-        const spawnTick = this.game.tick;
-        const entity = new Entity_item(this.game, this.nextEntityID, x, y, itemID, spawnTick, this.entity_item_dimensions, durability);
-        entity.h_vel = h_vel;
-        entity.v_vel = v_vel;
-        
-        this.nextEntityID++;
-
-        this.level_data[this.calc.getChunkID(x)].entity_data.push(entity);
-    }
-
-    update(deltaTime) {
-        const loaded_chunks = this.calc.getLoadedChunks();
-
-        for (let i = 0; i < loaded_chunks.length; i++) {
-            const currentChunkID = loaded_chunks[i];
-
-            for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
-                const entity = this.game.level.data[currentChunkID].entity_data[j];
-                
-                entity.update([], deltaTime);
-            }
-
-        }
-    }
-
-    saveEntityData() {
-        let data = [];
-        const minChunk = this.calc.getChunkID(this.calc.getWorldBorders().minX);
-        const maxChunk = this.calc.getChunkID(this.calc.getWorldBorders().maxX);
-        for (let i = minChunk; i < maxChunk; i++) {
-            for (let j = 0; j < this.game.level.data[i].entity_data.length; j++) {
-                const entity = this.game.level.data[i].entity_data[j];
-                
-                const entity_data = {
-                    itemID: entity.itemID,
-                    x: entity.x,
-                    y: entity.y,
-                    width: entity.width,
-                    height: entity.height,
-                    h_vel: entity.h_vel,
-                    v_vel: entity.v_vel,
-                    entityType: entity.entityType,
-                    durability: entity.durability
-                };
-                data.push(entity_data);
-            }
-        }
-        
-        this.entity_data = data;
-    }
-
-    run_gametick_logic(tick) {
-        const loaded_chunks = this.calc.getLoadedChunks();
-
-        for (let i = 0; i < loaded_chunks.length; i++) {
-            const currentChunkID = loaded_chunks[i];
-
-            for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
-                const entity = this.game.level.data[currentChunkID].entity_data[j];                
-                entity.run_gametick_logic(tick);
-
-                //Delete item if 'unactive'
-                if (!entity.active) {
-                    this.game.level.data[currentChunkID].entity_data.splice(j, 1);
-                }
-            }
-        }
-
-        //Save
-        if (tick % 20 === 0) {
-            this.saveEntityData();
-        }
-    }
-}
-
-export { EntityHandler };
+export { Entity_creature };

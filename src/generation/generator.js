@@ -166,6 +166,7 @@ class Generator {
         }
         this.data[chunk_id] = { block_data: chunck, entity_data: [] };
         this.generate_embellishments(chunk_id);
+        this.generate_mobs(chunk_id);
     }
 
     generate_embellishments(chunk_id) {
@@ -173,8 +174,25 @@ class Generator {
             const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
 
             //Attempt to generate trees at 15% probability
-            if (this.calc.randomBoolByTwoSeeds(this.seed, absoluteX, 15)) {
+            const seed1 = this.seed;
+            const seed2 = absoluteX * 12.8 + 131.5;
+
+            if (this.calc.randomBoolByTwoSeeds(seed1, seed2, 15)) {
                 this.generateTree(absoluteX, this.getContour(absoluteX) + 1, chunk_id);
+            }
+        }
+    }
+
+    generate_mobs(chunk_id) {
+        for (let x = 0; x < this.game.level.chunk_size; x++) {
+            const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
+
+            //Attempt to generate trees at 15% probability
+            const seed1 = this.seed;
+            const seed2 = absoluteX * 12.8 + 131.5;
+
+            if (this.calc.randomBoolByTwoSeeds(seed1, seed2, 10)) {
+                this.game.entity_handler.spawnRandomPassiveMob(absoluteX, this.getContour(absoluteX) + 1);
             }
         }
     }

@@ -120,6 +120,12 @@ class World_Renderer {
                     const top = this.game.height - real_y - this.game.block_size * entity.height_blocks;
                     
                     this.ctx.drawImage(image, left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
+                } else {
+                    this.ctx.fillStyle = 'grey';
+
+                    const left = real_x;
+                    const top = this.game.height - real_y - this.game.block_size * entity.height_blocks;
+                    this.ctx.fillRect(left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
                 }
             }
         }

@@ -77,6 +77,10 @@ class Level {
             }
         }
 
+        if (this.game.entity_handler.isMobAt(x, y)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -115,7 +119,9 @@ class Level {
                 y: this.game.player.selectedBlock.y
             };
 
-            if (this.game.player.getBlockDistance(this.current_breaking.x + 0.5, this.current_breaking.y + 0.5) <= this.game.player.cursorDistLim) {
+            const playerCursorLocation = this.calc.getBlockByRealXY_unrounded(this.game.input.mouse_realXY.x, this.game.input.mouse_realXY.y); // in blocks (not rounded)
+
+            if (this.game.player.getBlockDistance(this.current_breaking.x + 0.5, this.current_breaking.y + 0.5) <= this.game.player.cursorDistLim && !this.game.entity_handler.isMobAt(playerCursorLocation.x, playerCursorLocation.y)) {
 
                 const blockData = this.calc.getBlockData(this.current_breaking.x, this.current_breaking.y);
                 const blockType = blockData.type;
