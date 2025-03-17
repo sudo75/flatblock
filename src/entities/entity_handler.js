@@ -109,7 +109,7 @@ class EntityHandler {
             for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
                 const entity = this.game.level.data[currentChunkID].entity_data[j];
                 
-                entity.update([], deltaTime);
+                entity.update(entity.key_input, deltaTime);
             }
 
         }
@@ -144,18 +144,17 @@ class EntityHandler {
     }
 
     run_gametick_logic(tick) {
-        const loaded_chunks = this.calc.getLoadedChunks();
 
-        for (let i = 0; i < loaded_chunks.length; i++) {
-            const currentChunkID = loaded_chunks[i];
-
-            for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
-                const entity = this.game.level.data[currentChunkID].entity_data[j];                
+        const chunk_min = this.calc.getWorldBounds()[0];
+        const chunk_max = this.calc.getWorldBounds()[1];        
+        for (let i = chunk_min; i <= chunk_max; i++) {
+            for (let j = 0; j < this.game.level.data[i].entity_data.length; j++) {                
+                const entity = this.game.level.data[i].entity_data[j];         
                 entity.run_gametick_logic(tick);
 
                 //Delete item if 'inactive'
                 if (!entity.active) {
-                    this.game.level.data[currentChunkID].entity_data.splice(j, 1);
+                    this.game.level.data[i].entity_data.splice(j, 1);
                 }
             }
         }
@@ -168,8 +167,6 @@ class EntityHandler {
         this.mob_handler.run_gametick_logic(tick);
 
         //Fix entity data
-        const chunk_min = this.calc.getWorldBounds()[0];
-        const chunk_max = this.calc.getWorldBounds()[1];
         for (let i = chunk_min; i <= chunk_max; i++) {
             for (let j = 0; j < this.game.level.data[i].entity_data.length; j++) {
                 const entity = this.game.level.data[i].entity_data[j];

@@ -11,6 +11,11 @@ class Player extends Entity_creature {
         this.width_blocks = 0.65; // in unit blocks
         this.height_blocks = 1.75; // in unit blocks
 
+        this.h_maxVel = 3; // blocks per second
+        this.h_minVel = -3;
+        this.v_maxVel = 10;
+        this.v_minVel = -20;
+
         this.width = this.game.block_size * this.width_blocks;
         this.height = this.game.block_size * this.height_blocks;
 

@@ -28,6 +28,8 @@ class Game {
             blockview_height: 15
         };
 
+        //this.simulation_distance = 5; //in chunks
+
         this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
 
         this.tickSpeed_target = 20; // number of ticks per second

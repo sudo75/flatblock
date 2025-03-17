@@ -8,6 +8,13 @@ class Mob extends Entity_creature {
 
         this.mobID = mobID
         this.mobType = mobType; //Passive or hostile
+
+        this.goal = {x: null, y: null};
+
+        this.h_maxVel = 1; // blocks per second
+        this.h_minVel = -1;
+        this.v_maxVel = 7.5;
+        this.v_minVel = -20;
     }
 
     hit() {
@@ -36,15 +43,46 @@ class Mob extends Entity_creature {
         }
     }
 
-    run_gametick_logic(tick) {
 
-    }
 }
 
 class Mob_passive extends Mob {
     constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID) {
         super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, 'passive');
         
+    }
+
+    setNewGoal() {
+        const goalX_offsetABS = Math.random() * 10 + 5; //Absolute value
+        const goalX_offset = this.game.calculator.randomBool(50) ? goalX_offsetABS: goalX_offsetABS * - 1;
+
+        this.goal = {
+            x: this.x + goalX_offset,
+            y: null
+        };
+    }
+
+    run_gametick_logic(tick) {
+        if (tick % 200 === 0) {
+            this.setNewGoal();
+        }
+
+        //Walk to goal
+        let keys = []; 
+
+        if (this.x < this.goal.x - 1) {
+            keys.push('ArrowRight');
+            if (this.game.calculator.isSolidBlock(Math.floor(this.x + 1), Math.floor(this.y))) {
+                keys.push('ArrowUp');
+            }
+        } else if (this.x > this.goal.x + 1) {
+            keys.push('ArrowLeft');
+            if (this.game.calculator.isSolidBlock(Math.floor(this.x - 1), Math.floor(this.y))) {
+                keys.push('ArrowUp');
+            }
+        }
+        
+        this.key_input = keys;
     }
 }
 

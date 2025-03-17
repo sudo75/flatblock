@@ -18,10 +18,11 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
         this.gravity_acceleration = -24; //earth = -9.8, default = 24
 
-        this.h_maxVel = 3; // blocks per second
-        this.h_minVel = -3;
-        this.v_maxVel = 10;
-        this.v_minVel = -20;
+        //These values should be set in child objects
+        // this.h_maxVel = 3;
+        // this.h_minVel = -3;
+        // this.v_maxVel = 10;
+        // this.v_minVel = -20;
 
         this.h_vel = 0; // horizontal velocity
         this.v_vel = 0; // vertical velocity
@@ -131,9 +132,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         if (input.includes('Shift')) {
             this.h_maxVel = 5;
             this.h_minVel = -5;
-        } else {
-            this.h_maxVel = 3;
-            this.h_minVel = -3;
         }
 
         //Hover Mode
