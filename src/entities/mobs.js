@@ -2,7 +2,20 @@ import { Entity_creature } from "./entity.js";
 
 class Mob extends Entity_creature {
     constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, mobType) {
-        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth);
+        const vel = {
+            h_maxVel: 1,
+            h_minVel: -1,
+
+            h_maxVel_default: 1,
+            h_minVel_default: -1,
+            h_maxVel_sprint: 1,
+            h_minVel_sprint: -1,
+
+            v_maxVel: 7.5,
+            v_minVel: -20
+        };
+        
+        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel);
         
         this.entityType = 'mob';
 
@@ -10,11 +23,6 @@ class Mob extends Entity_creature {
         this.mobType = mobType; //Passive or hostile
 
         this.goal = {x: null, y: null};
-
-        this.h_maxVel = 1; // blocks per second
-        this.h_minVel = -1;
-        this.v_maxVel = 7.5;
-        this.v_minVel = -20;
     }
 
     hit() {

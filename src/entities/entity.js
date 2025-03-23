@@ -1,5 +1,5 @@
 class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperately
-    constructor(game, entityID, x, y, width_blocks, height_blocks) {
+    constructor(game, entityID, x, y, width_blocks, height_blocks, vel_data) {
         this.game = game;
         this.ctx = this.game.ctx_entities;
         
@@ -18,11 +18,32 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
         this.gravity_acceleration = -24; //earth = -9.8, default = 24
 
-        //These values should be set in child objects
-        // this.h_maxVel = 3;
-        // this.h_minVel = -3;
-        // this.v_maxVel = 10;
-        // this.v_minVel = -20;
+        //These values should be assigned via argument
+        this.h_maxVel = 3;
+        this.h_minVel = -3;
+
+        this.h_maxVel_default = 3;
+        this.h_minVel_default = -3;
+        this.h_maxVel_sprint = 5;
+        this.h_minVel_sprint = -5;
+
+        this.v_maxVel = 10;
+        this.v_minVel = -20;
+
+
+        if (vel_data) {
+            this.h_maxVel = vel_data.h_maxVel ? vel_data.h_maxVel: 3;
+            this.h_minVel = vel_data.h_minVel ? vel_data.h_minVel: -3;
+    
+            this.h_maxVel_default = vel_data.h_maxVel_default ? vel_data.h_maxVel_default: 3;
+            this.h_minVel_default = vel_data.h_minVel_default ? vel_data.h_minVel_default: -3;
+            this.h_maxVel_sprint = vel_data.h_maxVel_sprint ? vel_data.h_maxVel_sprint: 5;
+            this.h_minVel_sprint = vel_data.h_minVel_sprint ? vel_data.h_minVel_sprint: -5;
+    
+            this.v_maxVel = vel_data.v_maxVel ? vel_data.v_maxVel: 10;
+            this.v_minVel = vel_data.v_minVel ? vel_data.v_minVel: -20;
+        }
+        
 
         this.h_vel = 0; // horizontal velocity
         this.v_vel = 0; // vertical velocity
@@ -130,9 +151,14 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         }
 
         if (input.includes('Shift')) {
-            this.h_maxVel = 5;
-            this.h_minVel = -5;
+            this.h_maxVel = this.h_maxVel_sprint;
+            this.h_minVel = this.h_minVel_sprint;
+        } else {
+            this.h_maxVel = this.h_maxVel_default;
+            this.h_minVel = this.h_minVel_default;
         }
+
+        
 
         //Hover Mode
         if (this.hover) {
@@ -301,8 +327,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 export { Entity };
 
 class Entity_creature extends Entity {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth) {
-        super(game, entityID, x, y, width_blocks, height_blocks);
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel_data) {
+        super(game, entityID, x, y, width_blocks, height_blocks, vel_data);
         
         this.health = health;
         this.maxHealth = maxHealth;

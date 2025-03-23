@@ -3,21 +3,30 @@ import { Inventory } from './inventory.js';
 
 class Player extends Entity_creature {
     constructor(game) {
-        super(game, 0);
+        const vel = {
+            h_maxVel: 3,
+            h_minVel: -3,
+
+            h_maxVel_default: 3,
+            h_minVel_default: -3,
+            h_maxVel_sprint: 5,
+            h_minVel_sprint: -5,
+
+            v_maxVel: 10,
+            v_minVel: -20
+        };
+
+        const width_blocks = 0.65; // in unit blocks
+        const height_blocks = 1.75; // in unit blocks
+
+        const health = 20;
+        const maxHealth = 20;
+
+        super(game, 0, null, null, width_blocks, height_blocks, health, maxHealth, vel);
+        
         this.game = game;
         this.ctx = this.game.ctx_player;
         this.calc = this.game.calculator;
-
-        this.width_blocks = 0.65; // in unit blocks
-        this.height_blocks = 1.75; // in unit blocks
-
-        this.h_maxVel = 3; // blocks per second
-        this.h_minVel = -3;
-        this.v_maxVel = 10;
-        this.v_minVel = -20;
-
-        this.width = this.game.block_size * this.width_blocks;
-        this.height = this.game.block_size * this.height_blocks;
 
         this.selectedBlock = {};
         this.cursorDistLim = 4;
@@ -25,9 +34,6 @@ class Player extends Entity_creature {
         this.inventory = new Inventory();
 
         this.strength = 1; //block-breaking strength
-
-        this.health = 20;
-        this.maxHealth = 20;
 
         this.maxHitCooldown = 15;
         this.hitCooldown = 0; //in ticks

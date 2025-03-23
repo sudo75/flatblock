@@ -20,6 +20,7 @@ class Entity_item extends Entity {
         this.player_maxReach = 1.05;
 
         this.entityType = 'item';
+        this.key_input = [];
     }
 
     update(input, deltaTime) {
