@@ -72,7 +72,7 @@ class Mob_passive extends Mob {
 
         if (this.x < this.goal.x - 1) {
             keys.push('ArrowRight');
-            if (this.game.calculator.isSolidBlock(Math.floor(this.x + 1), Math.floor(this.y))) {
+            if (this.game.calculator.isSolidBlock(Math.floor(this.x + this.width_blocks + 1), Math.floor(this.y))) {
                 keys.push('ArrowUp');
             }
         } else if (this.x > this.goal.x + 1) {
