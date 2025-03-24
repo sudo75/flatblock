@@ -88,7 +88,7 @@ class Item_woodenPickaxe extends Tool {
 
         this.strength = 2;
         this.damage = 2;
-        this.purpose = [3]; //list of block IDs the tool breaks
+        this.purpose = [3, 24]; //list of block IDs the tool breaks
     }
 }
 
@@ -100,7 +100,7 @@ class Item_stonePickaxe extends Tool {
 
         this.strength = 3;
         this.damage = 3;
-        this.purpose = [3]; //list of block IDs the tool breaks
+        this.purpose = [3, 24]; //list of block IDs the tool breaks
     }
 }
 
@@ -156,7 +156,7 @@ class Block_stone extends Block_Solid {
 
 class Block_treeLog extends Block_Solid {
     constructor(x, y) {
-        super('treeLog', x, y, 50, './assets/textures/log.png');
+        super('tree_log', x, y, 50, './assets/textures/log.png');
         this.id = 4;
         this.itemDrop_id = 5;
         this.physics = false;
@@ -171,9 +171,9 @@ class Block_log extends Block_Solid {
     }
 }
 
-class Block_treeleaves extends Block_Solid {
+class Block_treeLeaves extends Block_Solid {
     constructor(x, y) {
-        super('treeLeaves', x, y, 10, './assets/textures/leaves.png');
+        super('tree_leaves', x, y, 10, './assets/textures/leaves.png');
         this.id = 6;
         this.itemDrop_id = 7;
         this.physics = false;
@@ -193,6 +193,15 @@ class Block_planks extends Block_Solid {
         super('planks', x, y, 40, './assets/textures/planks.png');
         this.id = 8;
         this.itemDrop_id = 8;
+    }
+}
+
+
+class Block_coalOre extends Block_Solid {
+    constructor(x, y) {
+        super('coal_ore', x, y, 250, './assets/textures/coal_ore.png');
+        this.id = 24;
+        this.itemDrop_id = 24;
     }
 }
 
@@ -230,11 +239,13 @@ class Item_Directory {
             '3': Block_stone,
             '4': Block_treeLog,
             '5': Block_log,
-            '6': Block_treeleaves,
+            '6': Block_treeLeaves,
             '7': Block_leaves,
             '8': Block_planks,
             '9': Block_chest,
             '10': Block_craftingTable,
+
+            '24': Block_coalOre,
 
             '128': Item_stick,
             '129': Item_woodenPickaxe,
@@ -256,6 +267,16 @@ class Item_Directory {
     getTextureLocationByID(id) {
 
         return this.getProperty(id, 'texture_location');
+    }
+
+    getIDByName(name) {
+        for (let id in this.item) {
+            if (this.getProperty(id, 'name') === name) {
+                return id;
+            }
+        }
+
+        return undefined;
     }
 }
 

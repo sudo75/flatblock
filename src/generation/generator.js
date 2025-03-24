@@ -1,3 +1,5 @@
+import { OreTable } from './ores.js'
+
 class Generator {
     constructor(game, data, properties) {
         this.game = game;
@@ -8,7 +10,7 @@ class Generator {
 
         this.data = data;
 
-        this.seed = this.generateSeed();
+        this.seed = this.generateSeed();        
 
         this.settings = {
             maxAmp_aug: 0.2, // default = 0.2
@@ -18,7 +20,6 @@ class Generator {
 
     generateSeed() {
         //First 5 params = 10 digits
-
         let seed = '';
         
         if (seed === '') {
@@ -131,6 +132,8 @@ class Generator {
     }
 
     generate_chunk(chunk_id) { //GENERATES FROM TOP TO BOTTOM
+        this.ore_table = new OreTable(this.game, this.seed);
+
         // Logic to generate the game level
         let chunck = [];
 
@@ -149,7 +152,14 @@ class Generator {
 
 
                     if (y < dirtLevel) {
-                        blockClass = this.item_directory.item[3]; //Stone
+                        const possibleOreID = this.ore_table.isOreType_id(absolute_x, y);
+                        if (possibleOreID) {
+                            blockClass = this.item_directory.item[possibleOreID]; //Ores
+
+                        } else {
+                            blockClass = this.item_directory.item[3]; //Stone
+                        }
+
                     } else if (y < grassLevel) {
                         blockClass = this.item_directory.item[1]; //Dirt
                     } else if (y === grassLevel) {
