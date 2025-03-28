@@ -679,6 +679,60 @@ class Menu_Hotbar extends Menu {
     }
 }
 
+class Menu_Healthbar extends Menu {
+    constructor(canvas_menu, ctx, player) {
+        super(canvas_menu, ctx, 0.4, 0.1);
+
+        this.textureCache = {};
+
+        this.margin = 20;
+        this.y = this.canvas_height - this.real_height - this.margin;
+
+        this.player = player;
+        this.heartSize = this.real_width / 9;
+    }
+
+    open() {
+        super.open();
+        this.canvas_menu.style.pointerEvents = 'none'; //Override pointer events code in super
+
+        const health = this.player.health;
+        const hearts = health / 2;
+
+        const drawHeart = (x, y) => {
+            const heartImage_location = '/src/assets/ui/heart.png';
+
+            let heartImage;
+            if (heartImage_location) {
+                if (!this.textureCache[heartImage_location]) {
+                    heartImage = new Image();
+                    heartImage.src = heartImage_location;
+        
+                    this.textureCache[heartImage_location] = heartImage;
+                } else {
+                    heartImage = this.textureCache[heartImage_location];
+                }
+                
+                this.ctx.drawImage(heartImage, x, y, this.heartSize, this.heartSize);
+            }
+        }
+
+        for (let i = 0; i < hearts; i++) {
+            const heartSpacing = 5;
+            const startX = this.x - this.margin / 2;
+            const startY = this.y -40;
+
+            this.ctx.clearRect(startX, startY, this.real_width, this.heartSize); // Clear previous rendering
+
+            for (let i = 0; i < hearts; i++) {
+                const heartX = startX + i * (this.heartSize + heartSpacing);
+
+                drawHeart(heartX, startY);
+            }
+        }
+    }
+}
+
 
 class MenuHandler {
     constructor(game) {
@@ -707,9 +761,11 @@ class MenuHandler {
         this.closeAllMenus();
 
         this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
+        this.healthbar = new Menu_Healthbar(this.canvas_menu, this.ctx_menu, this.game.player);
 
         setTimeout(() => {
             this.hotbar.open();
+            this.healthbar.open();
         }, 100);
     }
 
@@ -732,17 +788,26 @@ class MenuHandler {
             const blockData = this.game.calculator.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
             if (blockData.id === 9 && !this.aMenuIsOpen()) { //chest
                 this.hotbar.close();
+                this.healthbar.close();
                 this.menus.chest.open(blockData.inventory);
             }
 
             if (blockData.id === 10 && !this.aMenuIsOpen()) { //crafting table
                 this.hotbar.close();
+                this.healthbar.close();
                 this.menus.crafting.open();
             }
         }
 
-        if (this.hotbar.isOpen) { // Refreshes hotbar
+
+        if (this.healthbar.isOpen || this.hotbar.isOpen) {
+            this.healthbar.close();
             this.hotbar.close();
+
+            // Refreshes healthbar
+            this.healthbar.open();
+
+            // Refreshes hotbar
             this.hotbar.open();
         }
 
@@ -753,10 +818,12 @@ class MenuHandler {
             }
             if (!this.aMenuIsOpen()) {
                 this.hotbar.close();
+                this.healthbar.close();
                 this.menus.inventory.open();
             } else {
                 this.closeAllMenus();
                 this.hotbar.open();
+                this.healthbar.open();
             }
             this.keyHold.e = true;
         } else {
