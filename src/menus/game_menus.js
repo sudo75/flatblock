@@ -673,8 +673,6 @@ class Menu_Hotbar extends Menu {
     setSlot(index) {
         if (index >= 0 && index < this.inventory.cols) {
             this.inventory.selectedSlot = index;
-            this.close();
-            this.open(); // Re-render hotbar
         }
     }
 }
