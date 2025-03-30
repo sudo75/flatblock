@@ -374,6 +374,8 @@ class Game {
     }
 
     save() {
+        if (this.slotLoaded == null || this.slotLoaded == 'default') return;
+        
         let data_world = {};
 
         for (let key in this.level.data) {
