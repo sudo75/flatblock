@@ -687,7 +687,7 @@ class Menu_Healthbar extends Menu {
         this.y = this.canvas_height - this.real_height - this.margin;
 
         this.player = player;
-        this.heartSize = this.real_width / 9;
+        this.heartSize = this.real_width / 10;
     }
 
     open() {
