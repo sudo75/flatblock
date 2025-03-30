@@ -21,7 +21,7 @@ class Game {
         this.height = height;
         
         this.level = null;
-        this.status = 0;
+        this.status = 0; // 0: unloaded, 1: playing, 2: paused, 3: dead
 
         this.settings = {
             blockview_width: 15, //number of blocks viewable - default = 15
@@ -42,8 +42,8 @@ class Game {
         this.slotLoaded = null;
 
         window.addEventListener('beforeunload', (event) => {
-            if (this.status === 1) {
-                this.save_game();
+            if (this.status !== 0) {
+                this.save();
             }
         });
     }
@@ -249,6 +249,33 @@ class Game {
             const text = level_size ? `Level size: ${level_size}`: `-Empty-`;
             this.menu_renderers.new_game[i] = new Menu_Renderer(`Slot ${i}`, `${text}`, null, btns_slot, this.width, this.height, this.canvas_menu2);
         }
+
+
+        //OTHER MENUS
+
+        const btns_death = [
+            {txt: ['Respawn'], callback: () => {
+                this.menu_renderers.death.close();
+
+                this.player.respawn(); // status is set via this function
+            }},
+            {txt: ['<= Main Menu'], callback: () => {
+                this.status = 0;
+                this.clearGameCanvases();
+
+                this.menu_renderers.death.close();
+                this.menu_renderers.main.init();
+            }}
+        ];
+
+        this.menu_renderers.death = new Menu_Renderer('Game Over', 'Good day sir!', null, btns_death, this.width, this.height, this.canvas_menu2);
+    }
+
+    clearGameCanvases() {
+        this.ctx_world.clearRect(0, 0, this.width, this.height);
+        this.ctx_entities.clearRect(0, 0, this.width, this.height);
+        this.ctx_player.clearRect(0, 0, this.width, this.height);
+        this.ctx_menu.clearRect(0, 0, this.width, this.height);
     }
     
     async init(slot, level_size) {
@@ -325,6 +352,7 @@ class Game {
     }
 
     update(deltaTime) {
+        if (this.status !== 1) return;
         // Update the game state
         this.player.update(this.input.keys, deltaTime);
         this.entity_handler.update(deltaTime);
@@ -333,6 +361,19 @@ class Game {
     save_game() {
         if (this.slotLoaded == null || this.slotLoaded == 'default') return;
 
+        this.status = 2;
+
+        this.save_animation();
+
+        setTimeout(() => {
+            this.save();
+            this.clear_save_animation();
+        }, 50);
+        
+        this.status = 1;
+    }
+
+    save() {
         let data_world = {};
 
         for (let key in this.level.data) {
@@ -352,6 +393,7 @@ class Game {
             data_player: data_player,
             entity: this.entity_handler.entity_data,
             seed: this.level.generator.seed,
+            tick: this.tick,
             level_properties: this.level.properties,
             level_size: this.level.level_size
         };
@@ -359,6 +401,28 @@ class Game {
         const packagedData = this.compressString(JSON.stringify(data));
 
         localStorage.setItem(`slot_${this.slotLoaded}`, packagedData);
+    }
+
+    clear_save_animation() {
+        this.ctx_menu2.clearRect(0, 0, this.width, this.height);
+    }
+
+    save_animation() {
+        const width = 0.6 * this.width;
+        const height = 0.6 * this.height;
+
+        const rectX = (this.width - width) / 2;
+        const rectY = (this.height - height) / 2;
+
+        this.ctx_menu2.fillStyle = "rgba(0, 0, 0, 0.7)";
+        this.ctx_menu2.fillRect(rectX, rectY, width, height);
+
+        this.ctx_menu2.fillStyle = "#ffffff"; // White text
+        this.ctx_menu2.font = "20px Arial"; // Set font size and style
+        this.ctx_menu2.textAlign="center"; 
+        this.ctx_menu2.textBaseline = "middle";
+        
+        this.ctx_menu2.fillText("Saving game...", rectX + (width / 2), rectY + (height / 2));
     }
 
     saveExists(slot) {
@@ -402,21 +466,27 @@ class Game {
 
         const startTime = performance.now();
     
+        //Load modules
         const loadModulesStart = performance.now();
+        
         await this.loadModules();
         logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
+        //Load level
         const levelStart = performance.now();
 
         this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
         this.level.level_size = gameData_parsed.level_size;
+        this.tick = gameData_parsed.tick;
 
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
+        //Load player
         const playerStart = performance.now();
         this.player.copy(gameData_parsed.data_player.position, gameData_parsed.data_player.inventory);
         logPerformance("Player spawned", playerStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
+        //Load gameloop
         const gameLoopStart = performance.now();
         this.menu_handler.init();
         this.startGameLoop();
@@ -453,7 +523,7 @@ class Game {
         this.entity_handler.run_gametick_logic(this.tick);
         this.player.run_gametick_logic(this.tick);
 
-        if (this.tick % 2400 === 0) { //Save every 2 minutes
+        if (this.tick % 6000 === 0) { //Save every 5 minutes (6000 ticks)
             this.save_game();
         }
         
@@ -462,8 +532,16 @@ class Game {
         }
     }
 
+    async externalMenus() {
+        if (this.status === 3 && !this.menu_renderers.death.isOpen) { //death
+            this.menu_renderers.death.init();
+        }
+    }
+
     menus() {
         this.menu_handler.update(this.input.keys);
+
+        this.externalMenus();
     }
 
     getDiagnosticsBySlot_storage(slot) {
@@ -505,31 +583,36 @@ class Game {
     }
 
     startGameLoop() {
-
         let lastTick;
         const tick_handler = () => {
-            const time_current = performance.now();
+            if (this.status === 0) return; //if unloaded
+            if (this.status === 1) {
+                const time_current = performance.now();
 
-            let tickTime;
-            if (lastTick) {
-                tickTime = time_current - lastTick; // In ms
-            } else {
-                tickTime = 0;
+                let tickTime;
+                if (lastTick) {
+                    tickTime = time_current - lastTick; // In ms
+                } else {
+                    tickTime = 0;
+                }
+                
+
+                this.update_world();
+
+                this.tick++;
+                this.tickSpeed = tickTime;
+
+                lastTick = time_current;
             }
-            
-
-            this.update_world();
-
-            this.tick++;
-            this.tickSpeed = tickTime;
-
-            lastTick = time_current;
 
             setTimeout(tick_handler, 1000 / this.tickSpeed_target);
         };
 
         let lastFrame;
         const game_loop = () => {
+            if (this.status === 0) return; //if unloaded
+
+
             const time_current = performance.now();
 
             let deltaTime;

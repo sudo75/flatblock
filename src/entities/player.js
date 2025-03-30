@@ -167,6 +167,33 @@ class Player extends Entity_creature {
         }
         
         this.mouseDownOnPreviousTick = this.game.input.mouseDown;
+
+        if (this.health <= 0) {
+            this.uponDeath();
+        }
+    }
+
+    uponDeath() {
+        this.game.status = 3;
+    }
+
+    respawn() {
+        this.health = this.maxHealth;
+
+        this.h_vel = 0;
+        this.v_vel = 0;
+
+
+        this.real_x = this.game.width / 2 - this.width / 2;
+        this.real_y = this.game.height / 2;
+
+        this.x = 5; // aligned to left of player
+        this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
+
+        this.draw();
+
+
+        this.game.status = 1;
     }
 
     clear() {
