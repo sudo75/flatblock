@@ -711,7 +711,11 @@ class Menu_Healthbar extends Menu {
                     heartImage = this.textureCache[heartImage_location];
                 }
                 
-                this.ctx.drawImage(heartImage, x, y, this.heartSize, this.heartSize);
+                if (heartImage) {
+                    this.ctx.drawImage(heartImage, x, y, this.heartSize, this.heartSize);
+                } else {
+                    this.ctx.fillRect(x, y, this.heartSize, this.heartSize);
+                }
             }
         }
 
