@@ -64,6 +64,9 @@ class Menu_Inventory extends Menu {
             case 'chest':
                 this.Menu_ComponentUI_1 = new Menu_ComponentUI_Chest(this, 0.95, 0.5, 4, 9);
                 break;
+            case 'furnace':
+                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Furnace(this, 0.6, 0.3);
+                break;
         }
 
         this.Menu_ComponentUI_1.minSlotIndex = this.inventory.rows * this.inventory.cols;
@@ -500,6 +503,163 @@ class Menu_ComponentUI_Crafting {
     }
 }
 
+class Menu_ComponentUI_Furnace {
+    constructor(main, width, height) {
+        this.main = main;
+        this.width = width;
+        this.height = height;
+        this.minSlotIndex = null;
+
+        this.canvas_menu = main.canvas_menu;
+        this.canvas_width = this.canvas_menu.width;
+        this.canvas_height = this.canvas_menu.height;
+
+        this.ctx = main.ctx;
+
+        this.margin = 10;
+
+        this.real_width = main.real_width * this.width;
+        this.real_height = main.real_height * this.height;
+        this.x = main.x + main.real_width - this.real_width - this.margin;
+        this.y = main.y + this.margin;
+        
+        this.slotPosition = []; // Required for integration with main menu
+
+        this.item_directory = new Item_Directory();
+
+        this.furnace_slots = 3; //totals slots in a furnace
+
+        this.og_fuelPoints = 0;
+        this.fuelPoints = 0; //in ticks;
+        this.processPoints = 0; //out of 10
+    }
+
+    open() {
+        //Set player's inventory to include furnace data
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.furnace_slots; i++) {
+            this.main.game.player.inventory.data[i] = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y).inventory.data[i - this.furnace_slots];
+        }
+
+        // Draw slots (Aligned perfectly)
+        this.slotPosition = [];
+
+        const slot_width = this.main.slot_width;
+        const slot_height = this.main.slot_height;
+
+        //Input
+        const input_x = this.x;
+        const input_y = this.y + this.margin;
+
+        this.slotPosition.push({
+            slot_x: input_x,
+            slot_y: input_y,
+            isResult: false
+        });
+
+
+        //Fuel
+        const fuel_x = input_x;
+        const fuel_y = input_y + this.margin * 2 + slot_height * 2;
+        
+        this.slotPosition.push({
+            slot_x: fuel_x,
+            slot_y: fuel_y,
+            isResult: false
+        });
+
+
+        const midY = input_y + (fuel_y - input_y) / 2; //Middle of input and fuel slots
+
+        //Result
+        const result_x = input_x + slot_width * 3 + this.margin * 2;
+        const result_y = midY;
+        
+        this.slotPosition.push({
+            slot_x: result_x,
+            slot_y: result_y,
+            isResult: false
+        });
+
+
+        //Arrow
+        const arrowWidth = slot_width * 2;
+        const arrowHeight = slot_width / 2;
+
+        const arrow_x = input_x + slot_width + this.margin;
+        const arrow_y = midY + arrowHeight / 2;
+
+        this.ctx.strokeRect(arrow_x, arrow_y, arrowWidth, arrowHeight);
+
+
+        //Fuel Indicator
+
+        const fiWidth = slot_width / 2;
+        const fiHeight = slot_width;
+
+        const fi_x = input_x + fiWidth / 2;
+        const fi_y = input_y + slot_width + this.margin;
+
+        this.ctx.strokeRect(fi_x, fi_y, fiWidth, fiHeight);
+
+        const fuelLevel = Math.ceil(this.fuelPoints / this.og_fuelPoints * 10); // Out of 10
+        this.ctx.fillStyle = 'orange';
+        this.ctx.fillRect(fi_x, fi_y, fiWidth * fuelLevel / 10, fiHeight);
+
+
+
+        //Render furnace menu
+        for (let i = 0; i < this.slotPosition.length ; i++) {
+            const slot_x = this.slotPosition[i].slot_x;
+            const slot_y = this.slotPosition[i].slot_y;
+
+            const index = i + this.minSlotIndex;
+
+            this.ctx.fillStyle = 'lightgrey'; // slot BG
+            this.ctx.fillRect(slot_x, slot_y, slot_width, slot_height);
+
+            this.ctx.strokeStyle = "black"; // Slot border
+            this.ctx.lineWidth = index === this.main.selectedSlotIndex ? 4: 1;
+            this.ctx.strokeRect(slot_x, slot_y, slot_width, slot_height);
+        }
+
+        
+    }
+
+    close() {
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {        
+            const item = this.main.inventory_data[i];
+            const itemQuant = item.quantity;
+            for (let j = 0; j < itemQuant; j++) {
+                this.main.inventory.subtract(i);
+            }
+        }
+    }
+
+    update() {
+        //Set funace data
+        if (!this.main.game.player.selectedBlock.x || !this.main.game.player.selectedBlock.y) return;
+
+        const blockData = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y);
+        if (!blockData.inventory) return;
+
+        //Update furnace inventory data
+        let furnace_inventory_data = this.main.game.calculator.deepCloneObj(blockData.inventory.data);
+
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.furnace_slots; i++) {
+            const equivalentFurnaceInventoryIndex = i - this.furnace_slots;
+            furnace_inventory_data[equivalentFurnaceInventoryIndex] = this.main.game.calculator.deepCloneObj(this.main.inventory_data[i]);
+        }
+
+        const chunkID = this.main.game.calculator.getChunkID(this.main.game.player.selectedBlock.x);
+        const relativeX = this.main.game.calculator.getRelativeX(this.main.game.player.selectedBlock.x);
+        this.main.game.level.data[chunkID].block_data[relativeX][this.main.game.player.selectedBlock.y].inventory.data = this.main.game.calculator.deepCloneObj(furnace_inventory_data);
+    }
+
+    getAllSlotPositions() {
+        return this.slotPosition;
+    }
+}
+
 class Menu_ComponentUI_Chest {
     constructor(main, width, height, rows, cols) {
         this.main = main;
@@ -528,6 +688,7 @@ class Menu_ComponentUI_Chest {
     }
 
     open() {
+        //Set player's inventory to include chest data
         for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {
             this.main.game.player.inventory.data[i] = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y).inventory.data[i - this.rows * this.cols];
         }
@@ -562,7 +723,6 @@ class Menu_ComponentUI_Chest {
     }
 
     close() {
-        this.update();
         for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {        
             const item = this.main.inventory_data[i];
             const itemQuant = item.quantity;
@@ -757,8 +917,11 @@ class MenuHandler {
         this.menus = {
             inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory', this.game),
             crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting', this.game),
-            chest: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'chest', this.game)
+            chest: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'chest', this.game),
+            furnace: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'furnace', this.game)
         }
+
+        console.log(this.menus)
 
         this.closeAllMenus();
 
@@ -776,7 +939,11 @@ class MenuHandler {
     }
 
     closeAllMenus() {
-        Object.values(this.menus).forEach(menu => menu.close());
+        Object.values(this.menus).forEach((menu) => {
+            if (menu.isOpen) {
+                menu.close();
+            }
+        });
 
         this.game.input.mouseDown_right = false;
         this.game.input.mouseDown_left = false;
@@ -791,13 +958,19 @@ class MenuHandler {
             if (blockData.id === 9 && !this.aMenuIsOpen()) { //chest
                 this.hotbar.close();
                 this.healthbar.close();
-                this.menus.chest.open(blockData.inventory);
+                this.menus.chest.open(blockData.inventory); //param doesn't do anything yet
             }
 
             if (blockData.id === 10 && !this.aMenuIsOpen()) { //crafting table
                 this.hotbar.close();
                 this.healthbar.close();
                 this.menus.crafting.open();
+            }
+
+            if (blockData.id === 11 && !this.aMenuIsOpen()) { //furnace
+                this.hotbar.close();
+                this.healthbar.close();
+                this.menus.furnace.open(blockData.inventory);
             }
         }
 
@@ -835,6 +1008,11 @@ class MenuHandler {
         //Update chest menu
         if (this.menus.chest.isOpen) {
             this.menus.chest.update();
+        }
+
+        //Update furnace menu
+        if (this.menus.furnace.isOpen) {
+            this.menus.furnace.update();
         }
 
 

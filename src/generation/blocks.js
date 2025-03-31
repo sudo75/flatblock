@@ -230,6 +230,18 @@ class Block_craftingTable extends Block_Solid {
     }
 }
 
+class Block_furnace extends Block_Solid {
+    constructor(x, y) {
+        super('furnace', x, y, 40, './assets/textures/furnace.png');
+        this.id = 11;
+        this.itemDrop_id = 11;
+
+        this.inventory = new Inventory();
+        this.physics = false;
+        this.interact = true;
+    }
+}
+
 class Item_Directory {
     constructor() {
         this.item = {
@@ -244,6 +256,7 @@ class Item_Directory {
             '8': Block_planks,
             '9': Block_chest,
             '10': Block_craftingTable,
+            '11': Block_furnace,
 
             '24': Block_coalOre,
 
