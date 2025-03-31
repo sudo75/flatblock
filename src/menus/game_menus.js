@@ -858,7 +858,7 @@ class Menu_Healthbar extends Menu {
         const hearts = health / 2;
 
         const drawHeart = (x, y) => {
-            const heartImage_location = '/src/assets/ui/heart.png';
+            const heartImage_location = '../ui/heart.png';
 
             let heartImage;
             if (heartImage_location) {
