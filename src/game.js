@@ -28,8 +28,6 @@ class Game {
             blockview_height: 15
         };
 
-        //this.simulation_distance = 5; //in chunks
-
         this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
 
         this.tickSpeed_target = 20; // number of ticks per second
@@ -334,6 +332,9 @@ class Game {
         const levelStart = performance.now();
         this.level.properties.width_chunks = width_chunks;
         this.level.properties.height_blocks = height_blocks;
+
+        this.level.simulation_distance = width_chunks;
+
         this.level.level_size = level_size;
 
         this.level.generate();
@@ -521,6 +522,8 @@ class Game {
 
     update_world() {
         // Logic that requires game ticks and world update logic
+        this.level.run_gametick_logic(this.tick);
+
         this.level.world_interaction(); // for breaking and placing blocks
         this.entity_handler.run_gametick_logic(this.tick);
         this.player.run_gametick_logic(this.tick);

@@ -12,6 +12,8 @@ class Level {
         };
         this.level_size = null;
 
+        this.simulation_distance = null; //in chunks
+
         this.chunk_size = 16;
         this.calc = this.game.calculator;
 
@@ -61,6 +63,33 @@ class Level {
     world_interaction() {
         this.computeBlockBreaking();
         this.computeBlockPlacing();
+    }
+
+    run_gametick_logic(tick) { //Can help run blocks with animations, update block states (ex. illuminated vs. dark, etc.)
+        const playerChunk = this.calc.getChunkID(this.game.player.x);
+        
+        let simulated_chunk_min = playerChunk - Math.ceil((this.simulation_distance - 1) / 2);
+        let simulated_chunk_max = playerChunk + Math.floor((this.simulation_distance - 1) / 2);
+
+        if (simulated_chunk_min < this.calc.getWorldBounds()[0]) {
+            simulated_chunk_min = 0;
+        }
+
+        if (simulated_chunk_max > this.calc.getWorldBounds()[1]) {
+            simulated_chunk_max = this.calc.getWorldBounds()[1];
+        }
+    
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    if (block.run_gametick_logic) {
+                        block.run_gametick_logic(tick);
+                    }
+                }
+            }
+        }
     }
 
     blockCanBePlaced(x, y) {

@@ -179,6 +179,12 @@ class Menu_Inventory extends Menu {
         }
     }
 
+    updateInventory() {
+        if (this.Menu_ComponentUI_1.updateInventory) {
+            this.Menu_ComponentUI_1.updateInventory();
+        }
+    }
+
     close() {
         this.close_basic();
         this.slotPosition = [];
@@ -528,16 +534,15 @@ class Menu_ComponentUI_Furnace {
         this.item_directory = new Item_Directory();
 
         this.furnace_slots = 3; //totals slots in a furnace
-
-        this.og_fuelPoints = 0;
-        this.fuelPoints = 0; //in ticks;
-        this.processPoints = 0; //out of 10
     }
 
     open() {
         //Set player's inventory to include furnace data
+        const selectedX = this.main.game.player.selectedBlock.x;
+        const selectedY = this.main.game.player.selectedBlock.y;
+        
         for (let i = this.minSlotIndex; i < this.minSlotIndex + this.furnace_slots; i++) {
-            this.main.game.player.inventory.data[i] = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y).inventory.data[i - this.furnace_slots];
+            this.main.game.player.inventory.data[i] = this.main.game.calculator.getBlockData(selectedX, selectedY).inventory.data[i - this.minSlotIndex];
         }
 
         // Draw slots (Aligned perfectly)
@@ -579,19 +584,13 @@ class Menu_ComponentUI_Furnace {
             slot_y: result_y,
             isResult: false
         });
+        
 
-
-        //Arrow
-        const arrowWidth = slot_width * 2;
-        const arrowHeight = slot_width / 2;
-
-        const arrow_x = input_x + slot_width + this.margin;
-        const arrow_y = midY + arrowHeight / 2;
-
-        this.ctx.strokeRect(arrow_x, arrow_y, arrowWidth, arrowHeight);
-
+        const furnaceData = this.main.game.calculator.getBlockData(selectedX, selectedY);
 
         //Fuel Indicator
+        const fuelPoints = furnaceData.fuelPoints;
+        const og_fuelPoints = furnaceData.og_fuelPoints;
 
         const fiWidth = slot_width / 2;
         const fiHeight = slot_width;
@@ -601,14 +600,28 @@ class Menu_ComponentUI_Furnace {
 
         this.ctx.strokeRect(fi_x, fi_y, fiWidth, fiHeight);
 
-        const fuelLevel = Math.ceil(this.fuelPoints / this.og_fuelPoints * 10); // Out of 10
+        const fuelLevel = Math.ceil(fuelPoints / og_fuelPoints * 10); // Out of 10
         this.ctx.fillStyle = 'orange';
-        this.ctx.fillRect(fi_x, fi_y, fiWidth * fuelLevel / 10, fiHeight);
+        this.ctx.fillRect(fi_x, fi_y + fiHeight * (1 - fuelLevel / 10), fiWidth, fiHeight * fuelLevel / 10);
 
+        //Progress Indicator
+        const processPoints = furnaceData.processPoints;
+        const efficiency = furnaceData.efficiency;
 
+        const prWidth = slot_width * 2;
+        const prHeight = slot_width / 2;
+
+        const pr_x = input_x + slot_width + this.margin;
+        const pr_y = midY + prHeight / 2;
+
+        this.ctx.strokeRect(pr_x, pr_y, prWidth, prHeight);
+
+        const processLevel = Math.ceil(processPoints / efficiency * 10); // Out of 10
+        this.ctx.fillStyle = 'orange';
+        this.ctx.fillRect(pr_x, pr_y, prWidth * processLevel / 10, prHeight);
 
         //Render furnace menu
-        for (let i = 0; i < this.slotPosition.length ; i++) {
+        for (let i = 0; i < this.slotPosition.length; i++) {
             const slot_x = this.slotPosition[i].slot_x;
             const slot_y = this.slotPosition[i].slot_y;
 
@@ -626,13 +639,30 @@ class Menu_ComponentUI_Furnace {
     }
 
     close() {
-        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {        
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.furnace_slots; i++) {        
             const item = this.main.inventory_data[i];
             const itemQuant = item.quantity;
             for (let j = 0; j < itemQuant; j++) {
                 this.main.inventory.subtract(i);
             }
         }
+    }
+
+    updateInventory() { //update after furnace processes
+        const blockData = this.main.game.calculator.getBlockData(this.main.game.player.selectedBlock.x, this.main.game.player.selectedBlock.y);
+        if (!blockData.inventory) return;
+
+        //Update player inventory data to furnace
+        let furnace_inventory_data = this.main.game.calculator.deepCloneObj(blockData.inventory.data);
+
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.furnace_slots; i++) {
+            const equivalentFurnaceInventoryIndex = i - this.minSlotIndex;
+            this.main.inventory_data[i] = this.main.game.calculator.deepCloneObj(furnace_inventory_data[equivalentFurnaceInventoryIndex]);
+        }
+
+        // const chunkID = this.main.game.calculator.getChunkID(this.main.game.player.selectedBlock.x);
+        // const relativeX = this.main.game.calculator.getRelativeX(this.main.game.player.selectedBlock.x);
+        // this.main.game.level.data[chunkID].block_data[relativeX][this.main.game.player.selectedBlock.y].inventory.data = this.main.game.calculator.deepCloneObj(furnace_inventory_data);
     }
 
     update() {
@@ -646,7 +676,7 @@ class Menu_ComponentUI_Furnace {
         let furnace_inventory_data = this.main.game.calculator.deepCloneObj(blockData.inventory.data);
 
         for (let i = this.minSlotIndex; i < this.minSlotIndex + this.furnace_slots; i++) {
-            const equivalentFurnaceInventoryIndex = i - this.furnace_slots;
+            const equivalentFurnaceInventoryIndex = i - this.minSlotIndex;
             furnace_inventory_data[equivalentFurnaceInventoryIndex] = this.main.game.calculator.deepCloneObj(this.main.inventory_data[i]);
         }
 
@@ -1007,12 +1037,14 @@ class MenuHandler {
 
         //Update chest menu
         if (this.menus.chest.isOpen) {
-            this.menus.chest.update();
+            //this.menus.chest.update();
         }
 
         //Update furnace menu
         if (this.menus.furnace.isOpen) {
-            this.menus.furnace.update();
+            this.menus.furnace.updateInventory();
+            this.menus.furnace.refresh();
+            //this.menus.furnace.update();
         }
 
 

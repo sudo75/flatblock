@@ -6,11 +6,15 @@ class Meta {
         this.item_type = item_type;
         this.isBlock = true;
 
+        this.item_directory = new Item_Directory();
+
         this.maxStackSize = 16;
 
         this.strength = 1;
         this.damage = 1;
         this.purpose = 'all';
+
+        this.fuel = 0;
     }
 }
 
@@ -151,6 +155,8 @@ class Block_stone extends Block_Solid {
         super('stone', x, y, 150, './assets/textures/stone.png');
         this.id = 3;
         this.itemDrop_id = 3;
+
+        this.furnace_result = 2; //ID of smelted item
     }
 }
 
@@ -160,6 +166,8 @@ class Block_treeLog extends Block_Solid {
         this.id = 4;
         this.itemDrop_id = 5;
         this.physics = false;
+
+        this.fuel_value = 20;
     }
 }
 
@@ -168,6 +176,9 @@ class Block_log extends Block_Solid {
         super('log', x, y, 50, './assets/textures/log.png');
         this.id = 5;
         this.itemDrop_id = 5;
+
+        this.fuel_value = 300;
+        this.furnace_result = 24;
     }
 }
 
@@ -177,6 +188,8 @@ class Block_treeLeaves extends Block_Solid {
         this.id = 6;
         this.itemDrop_id = 7;
         this.physics = false;
+
+        this.fuel_value = 40;
     }
 }
 
@@ -185,6 +198,8 @@ class Block_leaves extends Block_Solid {
         super('leaves', x, y, 10, './assets/textures/leaves.png');
         this.id = 7;
         this.itemDrop_id = 7;
+
+        this.fuel_value = 40;
     }
 }
 
@@ -193,6 +208,8 @@ class Block_planks extends Block_Solid {
         super('planks', x, y, 40, './assets/textures/planks.png');
         this.id = 8;
         this.itemDrop_id = 8;
+
+        this.fuel_value = 150;
     }
 }
 
@@ -239,6 +256,82 @@ class Block_furnace extends Block_Solid {
         this.inventory = new Inventory();
         this.physics = false;
         this.interact = true;
+
+        this.og_fuelPoints = 0;
+        this.fuelPoints = 0; //in ticks;
+
+        this.fuel_efficiency_percent = 100;
+        this.efficiency = 200; //required process points to smelt an item
+        
+        this.processPoints = 0; //in ticks
+    }
+
+    run_gametick_logic(tick) {
+        const input_slot = this.inventory.data[0];
+        const getInputSlotFillStatus = (input_slot) => {
+            if (input_slot.quantity > 0) {
+                if (this.item_directory.getProperty(input_slot.id, 'furnace_result')) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+        const isFilled_input_slot = getInputSlotFillStatus(input_slot);
+
+        const fuel_slot = this.inventory.data[1];
+        const getFuelSlotFillStatus = (fuel_slot) => {
+            if (fuel_slot.quantity > 0) {
+                if (this.item_directory.getProperty(fuel_slot.id, 'fuel_value') > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        const isFilled_fuel_slot = getFuelSlotFillStatus(fuel_slot);
+        
+        const result_slot = this.inventory.data[2];
+        const isFilled_result_slot = result_slot.quantity >= this.item_directory.getProperty(result_slot.id, 'maxStackSize');
+
+        const result = this.item_directory.getProperty(input_slot.id, 'furnace_result');
+        const canSmelt = () => {
+            return isFilled_input_slot && ((result === this.inventory.data[2].id && !isFilled_result_slot) || (this.inventory.data[2].quantity === 0 || this.inventory.data[2].quantity === null))
+        }
+
+        //Fill fuel
+        if (this.fuelPoints <= 0 && isFilled_fuel_slot && canSmelt()) { //fill fuel if fuel is empty, fuel slot is filled, and input is filled
+            const fuel_value = Math.round((this.item_directory.getProperty(fuel_slot.id, 'fuel_value')) * this.fuel_efficiency_percent / 100);
+            this.og_fuelPoints = fuel_value;
+            this.fuelPoints = fuel_value;
+
+            this.inventory.subtract(1); //Subtract from fuel slot
+
+            return; //Don't start smelting on the same tick as when the fuel is lit
+        }
+
+        //Smelt item
+        if (this.fuelPoints > 0 && canSmelt()) {
+            this.processPoints++;
+
+            if (this.processPoints >= this.efficiency) { //Finished smelting
+                this.inventory.subtract(0);
+
+                this.inventory.setSlot(result, 2, result_slot.quantity + 1, null);
+
+                this.processPoints = 0;
+            }
+        } else { //Reverse progress if there is no fuel
+            this.processPoints--;
+            if (this.processPoints < 0) {
+                this.processPoints = 0;
+            }
+        }
+
+        //Use fuel
+        if (this.fuelPoints > 0) {
+            this.fuelPoints--;
+        }
     }
 }
 
