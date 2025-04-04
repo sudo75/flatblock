@@ -23,8 +23,8 @@ class World_Renderer {
                 image = this.textureCache[texture_location];
             }
     
-            const left = real_x;
-            const top = this.game.height - real_y - this.game.block_size;
+            const left = Math.round(real_x); //Math.round to ensure blocks align
+            const top = this.game.height - Math.round(real_y) - this.game.block_size;
             
             this.ctx.drawImage(image, left, top, this.game.block_size, this.game.block_size);
         } else {
@@ -64,6 +64,9 @@ class World_Renderer {
         const leftmost_blockX_int = Math.floor(this.leftmost_blockX);
         const bottommost_blockY_int = Math.floor(this.bottommost_blockY);
 
+        //Draw background
+        this.ctx.fillStyle = '#afdbed';
+        this.ctx.fillRect(0, 0, this.game.width, this.game.height);
 
         // DRAW BLOCKS
         for (let x = leftmost_blockX_int; x <= leftmost_blockX_int + viewWidth; x++) {
