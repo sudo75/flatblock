@@ -16,8 +16,8 @@ class Player extends Entity_creature {
             v_minVel: -20
         };
 
-        const width_blocks = 0.65; // in unit blocks
-        const height_blocks = 1.75; // in unit blocks
+        const width_blocks = 14/16; // in unit blocks
+        const height_blocks = 30/16; // in unit blocks
 
         const health = 20;
         const maxHealth = 20;

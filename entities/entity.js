@@ -326,9 +326,11 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 export { Entity };
 
 class Entity_creature extends Entity {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel_data) {
-        super(game, entityID, x, y, width_blocks, height_blocks, vel_data);
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel_data, texture_location) {
+        super(game, entityID, x, y, width_blocks, height_blocks, vel_data, texture_location);
         
+        this.texture_location = texture_location;
+
         this.health = health;
         this.maxHealth = maxHealth;
     }

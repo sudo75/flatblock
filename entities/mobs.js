@@ -1,7 +1,7 @@
 import { Entity_creature } from "./entity.js";
 
 class Mob extends Entity_creature {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, mobType) {
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, mobType, texture_location) {
         const vel = {
             h_maxVel: 1,
             h_minVel: -1,
@@ -15,7 +15,7 @@ class Mob extends Entity_creature {
             v_minVel: -20
         };
         
-        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel);
+        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel, texture_location);
         
         this.entityType = 'mob';
 
@@ -55,8 +55,8 @@ class Mob extends Entity_creature {
 }
 
 class Mob_passive extends Mob {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID) {
-        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, 'passive');
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, texture_location) {
+        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, 'passive', texture_location);
         
     }
 
@@ -96,7 +96,7 @@ class Mob_passive extends Mob {
 
 class Mob_Pig extends Mob_passive {
     constructor(game, entityID, x, y) {
-        super(game, entityID, x, y, 1, 0.875, 10, 10, 0);
+        super(game, entityID, x, y, 24/16, 18/16, 10, 10, 0, './assets/mobs/pig/pig.png');
         
         this.mob_name = 'pig';
     }

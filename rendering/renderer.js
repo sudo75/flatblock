@@ -122,7 +122,25 @@ class World_Renderer {
                     const left = real_x;
                     const top = this.game.height - real_y - this.game.block_size * entity.height_blocks;
                     
-                    this.ctx.drawImage(image, left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
+                    if (entity.direction === 'left') {
+                        this.ctx.drawImage(image, left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
+                    } else if (entity.direction === 'right') {
+                        this.ctx.save();
+                        this.ctx.scale(-1, 1); // Flip horizontally
+                    
+                        // Shift the drawing origin because the canvas is mirrored
+                        const drawX = -left - (this.game.block_size * entity.width_blocks);
+                    
+                        this.ctx.drawImage(
+                            image,
+                            drawX,
+                            top,
+                            this.game.block_size * entity.width_blocks,
+                            this.game.block_size * entity.height_blocks
+                        );
+                    
+                        this.ctx.restore();
+                    }
                 } else {
                     this.ctx.fillStyle = 'grey';
 
