@@ -65,14 +65,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
                     return true;
                 }
             }
-            /*
-            if (
-                (this.calc.isSolidBlock(Math.floor(this.x), this.y - 1) && this.calc.hasPhysics(Math.floor(this.x), this.y - 1)) ||
-                (this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1) && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1))
-            ) {
-                return true;
-            }
-                */
             return false;
         }
         return false;
