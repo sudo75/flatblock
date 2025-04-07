@@ -249,7 +249,7 @@ class Block_craftingTable extends Block_Solid {
 
 class Block_furnace extends Block_Solid {
     constructor(x, y) {
-        super('furnace', x, y, 40, './assets/textures/furnace.png');
+        super('furnace', x, y, 40, './assets/textures/furnace_unlit.png');
         this.id = 11;
         this.itemDrop_id = 11;
 
@@ -264,6 +264,20 @@ class Block_furnace extends Block_Solid {
         this.efficiency = 200; //required process points to smelt an item
         
         this.processPoints = 0; //in ticks
+
+        this.status = 0; // 0 = unlit, 1 = lit
+    }
+
+    setStatus(status_value) {
+        switch (status_value) {
+            case 0:
+                this.status = 0;
+                this.texture_location = './assets/textures/furnace_unlit.png'
+                break;
+            case 1:
+                this.status = 1;
+                this.texture_location = './assets/textures/furnace_lit.png'
+        }
     }
 
     run_gametick_logic(tick) {
@@ -328,9 +342,12 @@ class Block_furnace extends Block_Solid {
             }
         }
 
-        //Use fuel
+        //Use fuel & update status accordingly
         if (this.fuelPoints > 0) {
             this.fuelPoints--;
+            this.setStatus(1); // On state
+        } else {
+            this.setStatus(0); // Off state
         }
     }
 }
