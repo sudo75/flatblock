@@ -60,12 +60,19 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
     isOnSolidBlock() {
         if (this.y % 1 == 0 && this.y - 1 >= 0) {
+            for (let x = Math.floor(this.x); x <= this.calc.hardRoundDown(this.x + this.width_blocks); x++) {
+                if ((this.calc.isSolidBlock(x, this.y - 1) && this.calc.hasPhysics(x, this.y - 1))) {
+                    return true;
+                }
+            }
+            /*
             if (
                 (this.calc.isSolidBlock(Math.floor(this.x), this.y - 1) && this.calc.hasPhysics(Math.floor(this.x), this.y - 1)) ||
                 (this.calc.isSolidBlock(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1) && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), this.y - 1))
             ) {
                 return true;
             }
+                */
             return false;
         }
         return false;
@@ -293,7 +300,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             if (crossedOverX_left) {
                 if (this.willCollide(possibleX, possibleY, Math.floor(possibleX + this.width_blocks), Math.floor(possibleY), Math.floor(possibleX + this.width_blocks), this.calc.hardRoundDown(possibleY + this.height_blocks))) {
                     this.h_vel = 0;
-                    this.x = Math.ceil(possibleX) - this.width_blocks;
+                    this.x = Math.floor(possibleX + this.width_blocks) - this.width_blocks;
                 }
                 
             } else if (crossedOverX_right) {
