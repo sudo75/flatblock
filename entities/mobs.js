@@ -96,7 +96,7 @@ class Mob_passive extends Mob {
 
 class Mob_Pig extends Mob_passive {
     constructor(game, entityID, x, y) {
-        super(game, entityID, x, y, 0.8, 0.6, 10, 10, 0);
+        super(game, entityID, x, y, 1, 0.875, 10, 10, 0);
         
         this.mob_name = 'pig';
     }
