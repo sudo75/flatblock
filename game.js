@@ -1,4 +1,5 @@
 import { LZString } from './lib/lz-string-1.4.5/libs/lz-string.js';
+import { Debugger } from './debug.js'
 
 class Game {
     constructor(width, height) {
@@ -39,6 +40,8 @@ class Game {
         this.menu_renderers = {};
         this.slotLoaded = null;
 
+        this.debugger = new Debugger(this);
+
         window.addEventListener('beforeunload', (event) => {
             if (this.status !== 0) {
                 this.save();
@@ -78,6 +81,9 @@ class Game {
 
                 this.menu_renderers.main.close();
                 this.menu_renderers.start.init();
+            }},
+            {txt: ['Open Debugger'], callback: () => {
+                this.debugger.commandInput();
             }},
             {txt: ['Clear local storage'], callback: () => {
                 if (confirm(`Clear all local storage data for '${window.location.href}'?`)) {
