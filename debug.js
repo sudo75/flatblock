@@ -24,7 +24,7 @@ class Debugger {
     }
 
     getSettings() {
-        const settings = localStorage.getItem(`settings`);
+        const settings = localStorage.getItem(`flatblock_settings`);
 
         let settings_parsed;
         if (settings) {
@@ -39,7 +39,7 @@ class Debugger {
     saveSettings() {
         const packagedData = JSON.stringify(this.settings);
 
-        localStorage.setItem(`settings`, packagedData);
+        localStorage.setItem(`flatblock_settings`, packagedData);
     }
 
     applySettings() {
