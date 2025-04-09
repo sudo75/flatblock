@@ -10,13 +10,48 @@
     <h1>Welcome to the debug command index.</h1>
     <button id="return">Return to the main menu.</button>
 
-    <p></p>
+    <p>
+        Submit commands with two arguments.
+        Arg1 shall be the 'key' outlined in the settings values information below.
+        Arg2 shall be the value, whether it is an integer, boolean, etc.
+
+        For example, 'blockview 40' will set the blockview property to 40.
+    </p>
+
+    <h2>Settings:</h2>
+    <div class="settings_values"></div>
 
     <script>
+        //Button
         const return_button = document.querySelector('#return');
         return_button.addEventListener('click', (event) => {
             window.location = './index.html';
         });
+    </script>
+
+
+    <script>
+        //Display elements
+        const display_box = document.querySelector('.settings_values');
+
+        const settings = localStorage.getItem(`settings`);
+
+        let settings_parsed;
+        if (settings) {
+            settings_parsed = JSON.parse(settings);
+        } else {
+            console.log('No settings data found.');
+        }
+
+        for (const key in settings_parsed) {
+            const p = document.createElement('p');
+            
+            let text = `${key}: ${settings_parsed[key]}`;
+            p.innerText = text;
+
+            display_box.append(p);
+        }
+        
     </script>
 
 </body>

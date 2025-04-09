@@ -40,13 +40,22 @@ class Game {
         this.menu_renderers = {};
         this.slotLoaded = null;
 
-        this.debugger = new Debugger(this);
+        this.loadModules();
 
         window.addEventListener('beforeunload', (event) => {
             if (this.status !== 0) {
                 this.save();
             }
         });
+    }
+
+    updateViewSize(width, height) {
+        this.settings = {
+            blockview_width: width, //number of blocks viewable - default = 15
+            blockview_height: height
+        };
+
+        this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
     }
 
     async loadModules() {
@@ -69,6 +78,8 @@ class Game {
         this.renderer = new World_Renderer(this);
         this.menu_handler = new MenuHandler(this);
         this.entity_handler = new EntityHandler(this);
+
+        this.debugger = new Debugger(this);
     }
 
     async init_menu() {
@@ -84,6 +95,11 @@ class Game {
             }},
             {txt: ['Open Debugger'], callback: () => {
                 this.debugger.commandInput();
+            }},
+            {txt: ['Clear Debug Settings'], callback: () => {
+                if (confirm(`Clear all settings data?`)) {
+                    this.debugger.clearSettings();   
+                }
             }},
             {txt: ['Clear local storage'], callback: () => {
                 if (confirm(`Clear all local storage data for '${window.location.href}'?`)) {
@@ -332,7 +348,7 @@ class Game {
         const startTime = performance.now();
     
         const loadModulesStart = performance.now();
-        await this.loadModules();
+        //await this.loadModules();
         logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const levelStart = performance.now();

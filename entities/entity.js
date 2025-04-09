@@ -48,6 +48,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         this.h_vel = 0; // horizontal velocity
         this.v_vel = 0; // vertical velocity
 
+        this.physics = true;
         this.hover = false;
         this.fast = false;
 
@@ -134,6 +135,10 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     }
 
     update(input, deltaTime) {
+        this.width = this.game.block_size * this.width_blocks;
+        this.height = this.game.block_size * this.height_blocks;
+
+        
         //set direction
         if (input.includes('ArrowLeft')) {
             this.direction = 'left';
@@ -178,9 +183,18 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             if (input.includes('ArrowDown')) {
                 this.v_vel = -speed;
             }
+            
+            if (this.physics) {
+                const possibleX = this.x + this.h_vel * deltaTime;
+                const possibleY = this.y + this.v_vel * deltaTime;
+    
+                this.ensureBlockCompliance(possibleX, possibleY);
+            } 
+            
             this.updatePos(deltaTime);
             return;
         }
+
 
         //Standard Mode
 
@@ -264,6 +278,15 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         }
 
         //Ensure block compliance - no phasing through blocks
+
+
+        this.ensureBlockCompliance(possibleX, possibleY);
+
+        //Set entity position
+        this.updatePos(deltaTime);
+    }
+
+    ensureBlockCompliance(possibleX, possibleY) {
         if (
             this.willCollide(possibleX, possibleY)
         ) {
@@ -303,9 +326,6 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
                 
             }   
         }
-
-        //Set entity position
-        this.updatePos(deltaTime);
     }
 
     updatePos(deltaTime) {
@@ -313,7 +333,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         this.y += this.v_vel * deltaTime;
 
 
-        if (this.isInSolidBlock()) {
+        if (this.isInSolidBlock() && this.physics) {
             this.punt();
         }
     }

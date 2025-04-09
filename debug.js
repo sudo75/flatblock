@@ -1,18 +1,126 @@
 class Debugger {
     constructor(game) {
         this.game = game;
+
+        
+        if (this.getSettings()) {
+            this.settings = this.getSettings();
+            this.applySettings();
+        } else {
+            this.clearSettings();
+        }
+    }
+
+    clearSettings() {
+        this.settings = { //if null, default.
+            blockview: null,
+            fly: null,
+            fast: null,
+            physics: null
+        };
+
+        this.applySettings();
+        this.saveSettings();
+    }
+
+    getSettings() {
+        const settings = localStorage.getItem(`settings`);
+
+        let settings_parsed;
+        if (settings) {
+            settings_parsed = JSON.parse(settings);
+            return settings_parsed;
+        } else {
+            console.log('No settings data found.');
+            return;
+        }
+    }
+
+    saveSettings() {
+        const packagedData = JSON.stringify(this.settings);
+
+        localStorage.setItem(`settings`, packagedData);
+    }
+
+    applySettings() {
+        //Blockview
+        const blockview = this.settings.blockview;
+        if (blockview !== null) {
+            this.game.updateViewSize(blockview, blockview);
+        }
+
+        //Fly
+        if (this.settings.fly !== null) {
+            this.game.player.hover = this.settings.fly;
+        }
+
+        //Fast
+        if (this.settings.fast !== null) {
+            this.game.player.fast = this.settings.fast;
+        }
+
+        //Physics
+        if (this.settings.physics !== null) {
+            this.game.player.physics = this.settings.physics;
+        }
     }
 
     commandInput() {
-        const command_input = prompt(`Type: "help" for a list of commands.`);
+        let command_input = prompt(`Type: "help" for a list of commands.`);
         
+        if (!command_input) return;
 
-        switch (command_input) {
+        command_input = command_input.split(' ', 2);        
+        const arg1 = command_input[0];
+        const arg2 = command_input[1];
+
+        switch (arg1) {
             case 'help':
                 window.location = './debug_help.html';
                 break;
+            case 'blockview':
+                if (arg2 >= 5 && arg2 <= 450) {
+                    this.settings.blockview = Number(arg2);
+                } else {
+                    alert('blockview_w - Input a value between 5 and 450, inclusive.');
+                }
+                break;
+            case 'fly':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.fly = arg2 === 'true';
+                } else {
+                    alert('fly - Input a boolean.');
+                }
+                break;
+            case 'fast':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    if (!this.settings.fly) {
+                        alert('fast true requires fly true.');
+                        break;
+                    }
+                    this.settings.fast = arg2 === 'true';
+                } else {
+                    alert('fast - Input a boolean.');
+                }
+                break;
+            case 'physics':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    if (!this.settings.fly) {
+                        alert('physics false requires fly true.');
+                        break;
+                    }
+                    this.settings.physics = arg2 === 'true';
+                } else {
+                    alert('physics - Input a boolean.');
+                }
+                break;
         }
+
+        this.saveSettings();
+        this.applySettings();
     }
+
+
 }
 
 
