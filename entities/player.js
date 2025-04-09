@@ -209,7 +209,6 @@ class Player extends Entity_creature {
         const left = this.real_x; //dist from x axis (left)
         const bottom = this.real_y; //dist from y axis (bottom)
 
-        console.log(this.width)
         this.ctx.fillStyle = 'grey';
         this.ctx.fillRect(left, this.game.height - bottom - this.height, this.width, this.height);
     }
