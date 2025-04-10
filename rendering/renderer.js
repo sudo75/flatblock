@@ -31,6 +31,32 @@ class World_Renderer {
             this.ctx.fillStyle = colour;
             this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
         }
+
+
+        const break_overlay_location = './assets/break/break.png';
+        const block_data = this.calc.getBlockData(x, y);
+        if (block_data.break_status > 0) {
+            const breakDecimal = block_data.break_status / block_data.hardness;
+
+            const breakStage = Math.ceil(breakDecimal * 10);
+            
+            const spriteSheetX = 16 * (breakStage - 1);
+
+            let overlay;
+            if (!this.textureCache[break_overlay_location]) {
+                overlay = new Image();
+                overlay.src = break_overlay_location;
+    
+                this.textureCache[break_overlay_location] = overlay;
+            } else {
+                overlay = this.textureCache[break_overlay_location];
+            }
+    
+            const left = Math.round(real_x); //Math.round to ensure blocks align
+            const top = this.game.height - Math.round(real_y) - this.game.block_size;
+            
+            this.ctx.drawImage(overlay, spriteSheetX, 0, 16, 16, left, top, this.game.block_size, this.game.block_size)
+        }
     }
 
     drawOutline(x, y, weight) {
