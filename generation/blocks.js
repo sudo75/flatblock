@@ -85,6 +85,8 @@ class Item_stick extends Item {
     constructor() {
         super('stick', './assets/items/stick.png');
         this.id = 128;
+
+        this.fuel_value = 100;
     }
 }
 
@@ -97,6 +99,8 @@ class Item_woodenPickaxe extends Tool {
         this.strength = 2;
         this.damage = 2;
         this.purpose = [3, 24]; //list of block IDs the tool breaks
+
+        this.fuel_value = 200;
     }
 }
 
@@ -121,6 +125,8 @@ class Item_woodenAxe extends Tool {
         this.strength = 2;
         this.damage = 3;
         this.purpose = [4, 5, 7, 8]; //list of block IDs the tool breaks
+
+        this.fuel_value = 200;
     }
 }
 
@@ -172,7 +178,7 @@ class Block_treeLog extends Block_Solid {
         this.physics = false;
         this.transparency = 1;
 
-        this.fuel_value = 20;
+        this.fuel_value = 400;
     }
 }
 
@@ -182,8 +188,8 @@ class Block_log extends Block_Solid {
         this.id = 5;
         this.itemDrop_id = 5;
 
-        this.fuel_value = 300;
-        this.furnace_result = 24;
+        this.fuel_value = 400;
+        this.furnace_result = 25;
     }
 }
 
@@ -195,7 +201,7 @@ class Block_treeLeaves extends Block_Solid {
         this.physics = false;
         this.transparency = 1;
 
-        this.fuel_value = 40;
+        this.fuel_value = 50;
     }
 }
 
@@ -205,7 +211,7 @@ class Block_leaves extends Block_Solid {
         this.id = 7;
         this.itemDrop_id = 7;
 
-        this.fuel_value = 40;
+        this.fuel_value = 50;
     }
 }
 
@@ -215,7 +221,7 @@ class Block_planks extends Block_Solid {
         this.id = 8;
         this.itemDrop_id = 8;
 
-        this.fuel_value = 150;
+        this.fuel_value = 300;
     }
 }
 
@@ -227,6 +233,8 @@ class Block_coalOre extends Block_Solid {
         super('coal_ore', x, y, 250, './assets/textures/coal_ore.png');
         this.id = 24;
         this.itemDrop_id = 25;
+
+        this.furnace_result = 25;
     }
 }
 
@@ -234,6 +242,8 @@ class Item_coal extends Item {
     constructor() {
         super('coal', './assets/items/coal.png');
         this.id = 25;
+
+        this.fuel_value = 1600;
     }
 }
 
@@ -242,6 +252,8 @@ class Block_ironOre extends Block_Solid {
         super('iron_ore', x, y, 400, './assets/textures/iron_ore.png');
         this.id = 26;
         this.itemDrop_id = 26;
+
+        this.furnace_result = 27;
     }
 }
 
@@ -257,6 +269,8 @@ class Block_copperOre extends Block_Solid {
         super('copper_ore', x, y, 400, './assets/textures/copper_ore.png');
         this.id = 28;
         this.itemDrop_id = 28;
+
+        this.furnace_result = 29;
     }
 }
 
@@ -272,6 +286,8 @@ class Block_goldOre extends Block_Solid {
         super('gold_ore', x, y, 250, './assets/textures/gold_ore.png');
         this.id = 30;
         this.itemDrop_id = 30;
+
+        this.furnace_result = 31;
     }
 }
 
@@ -287,6 +303,8 @@ class Block_diamondOre extends Block_Solid {
         super('diamond_ore', x, y, 250, './assets/textures/diamond_ore.png');
         this.id = 32;
         this.itemDrop_id = 33;
+
+        this.furnace_result = 33;
     }
 }
 
