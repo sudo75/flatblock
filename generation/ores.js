@@ -2,7 +2,13 @@ export class OreTable {
     constructor(game, seed) {
         this.game = game;
         this.seed = seed;
-        this.seed2 = 391.562;
+        this.seed2 = {
+            coal_ore: 45.1,
+            copper_ore: 999.76543,
+            iron_ore: 95353.4,
+            gold_ore: 0.976,
+            diamond_ore: 740
+        };
 
         this.calc = this.game.calculator;
 
@@ -16,19 +22,19 @@ export class OreTable {
         for (let y = 0; y < this.game.level.properties.height_blocks; y++) {
             table[y] = {
                 'coal_ore': {
-                    frequency: 8 - y / 10 //as a percent
+                    frequency: 6 - y / 10 //as a percent
                 },
                 'copper_ore': {
-                    frequency: 8 - y / 10
+                    frequency: 6 - y / 10
                 },
                 'iron_ore': {
-                    frequency: 4 - y / 10
+                    frequency: 5 - y / 10
                 },
                 'gold_ore': {
-                    frequency: 3 - y / 10
+                    frequency: 4 - y / 8
                 },
                 'diamond_ore': {
-                    frequency: 1 - y / 10
+                    frequency: 4 - y / 5
                 }
             }
         }
@@ -41,7 +47,8 @@ export class OreTable {
         for (let oreName of this.oreOrder) {
             const frequency = tableSegment[oreName].frequency;
             
-            const isOre = this.calc.randomBoolByTwoSeeds(this.seed, x * 0.5 + y * 8.1, frequency);
+            const seed2 = this.seed2[oreName];
+            const isOre = this.calc.randomBoolByTwoSeeds(this.seed, seed2 * (x * 0.5 + y * 8.1), frequency);
 
             if (isOre) {
                 return this.game.item_directory.getIDByName(oreName);

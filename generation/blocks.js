@@ -220,13 +220,85 @@ class Block_planks extends Block_Solid {
 }
 
 
+// Minerals -------------------------------------->
+
 class Block_coalOre extends Block_Solid {
     constructor(x, y) {
         super('coal_ore', x, y, 250, './assets/textures/coal_ore.png');
         this.id = 24;
-        this.itemDrop_id = 24;
+        this.itemDrop_id = 25;
     }
 }
+
+class Item_coal extends Item {
+    constructor() {
+        super('coal', './assets/items/coal.png');
+        this.id = 25;
+    }
+}
+
+class Block_ironOre extends Block_Solid {
+    constructor(x, y) {
+        super('iron_ore', x, y, 400, './assets/textures/iron_ore.png');
+        this.id = 26;
+        this.itemDrop_id = 26;
+    }
+}
+
+class Item_ironIngot extends Item {
+    constructor() {
+        super('iron_ingot', './assets/items/iron_ingot.png');
+        this.id = 27;
+    }
+}
+
+class Block_copperOre extends Block_Solid {
+    constructor(x, y) {
+        super('copper_ore', x, y, 400, './assets/textures/copper_ore.png');
+        this.id = 28;
+        this.itemDrop_id = 28;
+    }
+}
+
+class Item_copperIngot extends Item {
+    constructor() {
+        super('copper_ingot', './assets/items/copper_ingot.png');
+        this.id = 29;
+    }
+}
+
+class Block_goldOre extends Block_Solid {
+    constructor(x, y) {
+        super('gold_ore', x, y, 250, './assets/textures/gold_ore.png');
+        this.id = 30;
+        this.itemDrop_id = 30;
+    }
+}
+
+class Item_goldIngot extends Item {
+    constructor() {
+        super('gold_ingot', './assets/items/gold_ingot.png');
+        this.id = 31;
+    }
+}
+
+class Block_diamondOre extends Block_Solid {
+    constructor(x, y) {
+        super('diamond_ore', x, y, 250, './assets/textures/diamond_ore.png');
+        this.id = 32;
+        this.itemDrop_id = 33;
+    }
+}
+
+class Item_diamond extends Item {
+    constructor() {
+        super('diamond', './assets/items/diamond.png');
+        this.id = 33;
+    }
+}
+
+
+// INTERACTIVE BLOCKS ------------------------>
 
 import { Inventory } from '../entities/inventory.js';
 class Block_chest extends Block_Solid {
@@ -375,6 +447,15 @@ class Item_Directory {
             '11': Block_furnace,
 
             '24': Block_coalOre,
+            '25': Item_coal,
+            '26': Block_ironOre,
+            '27': Item_ironIngot,
+            '28': Block_copperOre,
+            '29': Item_copperIngot,
+            '30': Block_goldOre,
+            '31': Item_goldIngot,
+            '32': Block_diamondOre,
+            '33': Item_diamond,
 
             '128': Item_stick,
             '129': Item_woodenPickaxe,
