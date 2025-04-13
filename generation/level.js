@@ -13,6 +13,7 @@ class Level {
         this.level_size = null;
 
         this.simulation_distance = null; //in chunks
+        this.block_simulation_distance = null;
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
@@ -21,6 +22,17 @@ class Level {
 
         this.generator = new Generator(game, this.data, this.properties);
         this.item_directory = this.game.item_directory;
+
+        this.time = 0;
+        this.sun_strength = 15; //0 - 15
+    }
+
+    incrementTime() {
+        this.time++;
+
+        if (this.time > 24000) { //24000 ticks per day
+            this.time = 0;
+        }
     }
 
     unloadChunk(chunk_id) {
@@ -65,11 +77,11 @@ class Level {
         this.computeBlockPlacing();
     }
 
-    run_gametick_logic(tick) { //Can help run blocks with animations, update block states (ex. illuminated vs. dark, etc.)
+    getSimulatedChunkBounds(simulation_distance) {
         const playerChunk = this.calc.getChunkID(this.game.player.x);
-        
-        let simulated_chunk_min = playerChunk - Math.ceil((this.simulation_distance - 1) / 2);
-        let simulated_chunk_max = playerChunk + Math.floor((this.simulation_distance - 1) / 2);
+
+        let simulated_chunk_min = playerChunk - Math.ceil((simulation_distance - 1) / 2);
+        let simulated_chunk_max = playerChunk + Math.floor((simulation_distance - 1) / 2);
 
         if (simulated_chunk_min < this.calc.getWorldBounds()[0]) {
             simulated_chunk_min = 0;
@@ -78,7 +90,22 @@ class Level {
         if (simulated_chunk_max > this.calc.getWorldBounds()[1]) {
             simulated_chunk_max = this.calc.getWorldBounds()[1];
         }
+
+        return {
+            min: simulated_chunk_min,
+            max: simulated_chunk_max
+        };
+    }
+
+    run_gametick_logic(tick) { //Can help run blocks with animations, update block states (ex. illuminated vs. dark, etc.)
+        
+        const simulated_chunk_min = this.getSimulatedChunkBounds(this.simulation_distance).min;
+        const simulated_chunk_max = this.getSimulatedChunkBounds(this.simulation_distance).max;
+
+        const block_simulated_chunk_min = this.getSimulatedChunkBounds(this.block_simulation_distance).min;
+        const block_simulated_chunk_max = this.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
+        //Run gametick logic of blocks
         for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
             for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                 for (let y = 0; y < this.properties.height_blocks; y++) {
@@ -90,6 +117,114 @@ class Level {
                 }
             }
         }
+
+        //Run time logic
+        this.incrementTime();
+
+        if (this.time >= 100) {
+            this.sun_strength = 5;
+        }
+
+        if (tick % 1 === 0) {
+            this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
+
+        }
+
+    }
+
+    calculateLighting(simulated_chunk_min, simulated_chunk_max) {
+        /*
+            How the lighting system works - Breadth-First Search (BFS lighting)
+            
+            1. All sunlight values are reset
+            2. Sunlight values are recalculated
+            3. A base queue is made with all light sources
+            4. For each block in the queue, its four light spreading directions are iterated through
+            5. Each block iterated through is assigned a light value one less than the parent unless that value is less than or equal to the current value (in which case the original vlaue is kept)
+            6. All four light spreading directions are added to the queue unless the block is solid (to prevent light from transmitting through blocks)
+        */
+
+
+        //Reset sun lighting status
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = this.properties.height_blocks - 1; y >= 0; y--) {
+
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    block.light_source_sun = 0;
+                    block.light = 0;
+                }
+            }
+        }
+        
+        //Blocks in sun
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                for (let y = this.properties.height_blocks - 1; y >= 0; y--) {
+
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    if (this.calc.isSolidBlock(abs_x, y)) {
+                        break;
+                    }
+                    block.light_source_sun = 15;
+                    block.light = 15;
+                }
+            }
+        }
+
+
+        const directions = [
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 },
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 },
+        ];
+
+        //Initialise queue
+        let queue = [];
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                for (let y = this.properties.height_blocks - 1; y >= 0; y--) {
+
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    if (block.light_source_sun > 1 || block.light_source > 1) {
+                        queue.push({ x: abs_x, y: y, light: 15 });
+                    }
+                }
+            }
+        }
+
+
+        while (queue.length > 0) {
+            const { x, y, light } = queue.shift(); // Remove first element from queue
+            
+            for (const direction of directions) {
+                const new_x = x + direction.dx;
+                const new_y = y + direction.dy;
+    
+                if (!this.calc.isWithinWorldBounds(new_x, new_y)) continue;
+    
+                const chunkID = this.calc.getChunkID(new_x);
+                const rel_x = this.calc.getRelativeX(new_x);
+                const block = this.data[chunkID].block_data[rel_x][new_y];
+    
+                if (block.light >= light - 1) continue;
+    
+                block.light = light - 1;
+
+                if (this.calc.getBlockData(new_x, new_y).transparency === 0) continue;
+    
+                queue.push({ x: new_x, y: new_y, light: light - 1 });
+            }
+        }
+
     }
 
     blockCanBePlaced(x, y) {

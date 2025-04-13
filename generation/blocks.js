@@ -15,6 +15,10 @@ class Meta {
         this.purpose = 'all';
 
         this.fuel = 0;
+
+        this.light_source = 0;
+        this.light_source_sun = 0;
+        this.light = 0; // 0 - 15;
     }
 }
 
@@ -166,6 +170,7 @@ class Block_treeLog extends Block_Solid {
         this.id = 4;
         this.itemDrop_id = 5;
         this.physics = false;
+        this.transparency = 1;
 
         this.fuel_value = 20;
     }
@@ -188,6 +193,7 @@ class Block_treeLeaves extends Block_Solid {
         this.id = 6;
         this.itemDrop_id = 7;
         this.physics = false;
+        this.transparency = 1;
 
         this.fuel_value = 40;
     }

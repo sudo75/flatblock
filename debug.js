@@ -16,7 +16,8 @@ class Debugger {
             blockview: null,
             fly: null,
             fast: null,
-            physics: null
+            physics: null,
+            lighting: null
         };
 
         this.applySettings();
@@ -62,6 +63,11 @@ class Debugger {
         //Physics
         if (this.settings.physics !== null) {
             this.game.player.physics = this.settings.physics;
+        }
+
+        //Lighting
+        if (this.settings.lighting !== null) {
+            this.game.player.lighting = this.settings.lighting;
         }
     }
 
@@ -112,6 +118,13 @@ class Debugger {
                     this.settings.physics = arg2 === 'true';
                 } else {
                     alert('physics - Input a boolean.');
+                }
+                break;
+            case 'lighting':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.lighting = arg2 === 'true';
+                } else {
+                    alert('lighting - Input a boolean.');
                 }
                 break;
         }

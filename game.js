@@ -356,6 +356,7 @@ class Game {
         this.level.properties.height_blocks = height_blocks;
 
         this.level.simulation_distance = width_chunks;
+        this.level.block_simulation_distance = 3;
 
         this.level.level_size = level_size;
 
@@ -606,7 +607,7 @@ class Game {
         const dataQuota = storage_data.quota;
         const percentage = storage_data.percentage;
 
-        console.log(`FPS: ${this.fps}, Storage: ${dataSize.toLocaleString("en-US")} / ${dataQuota.toLocaleString("en-US")} bytes - ${percentage}%`);
+        console.log(`FPS: ${this.fps}, Tick Speed: ${this.tickSpeed} ms, Storage: ${dataSize.toLocaleString("en-US")} / ${dataQuota.toLocaleString("en-US")} bytes - ${percentage}%`);
     }
 
     startGameLoop() {
@@ -627,7 +628,7 @@ class Game {
                 this.update_world();
 
                 this.tick++;
-                this.tickSpeed = tickTime;
+                this.tickSpeed = Math.round(1000 / tickTime);
 
                 lastTick = time_current;
             }

@@ -7,10 +7,15 @@ class World_Renderer {
         this.textureCache = {};
     }
 
-    drawBlock(x, y, real_x, real_y, colour) {
+    drawBlock(x, y, real_x, real_y) {
         //The first block will be y = 0, this aligns with the canvas coordinate system, and thus no recaululation is needed
 
-        const texture_location = this.calc.getBlockData(x, y).texture_location;
+        const left = Math.round(real_x); //Math.round to ensure blocks align
+        const top = this.game.height - Math.round(real_y) - this.game.block_size;
+
+        const block_data = this.calc.getBlockData(x, y);
+        const texture_location = block_data.texture_location;
+
 
         if (texture_location) {
             let image;
@@ -22,19 +27,20 @@ class World_Renderer {
             } else {
                 image = this.textureCache[texture_location];
             }
-    
-            const left = Math.round(real_x); //Math.round to ensure blocks align
-            const top = this.game.height - Math.round(real_y) - this.game.block_size;
             
             this.ctx.drawImage(image, left, top, this.game.block_size, this.game.block_size);
-        } else {
-            this.ctx.fillStyle = colour;
-            this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
         }
 
+        //Lighting
 
+        const block_lighting = block_data.light; // 0 - 15
+        const lighting_decimal = 0.6 - block_lighting / 25;
+
+        this.ctx.fillStyle = `rgba(0, 0, 0, ${lighting_decimal})`;
+        this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+
+        //Block breaking
         const break_overlay_location = './assets/break/break.png';
-        const block_data = this.calc.getBlockData(x, y);
         if (block_data.break_status > 0) {
             const breakDecimal = block_data.break_status / block_data.hardness;
 
@@ -51,11 +57,14 @@ class World_Renderer {
             } else {
                 overlay = this.textureCache[break_overlay_location];
             }
-    
-            const left = Math.round(real_x); //Math.round to ensure blocks align
-            const top = this.game.height - Math.round(real_y) - this.game.block_size;
-            
+                
             this.ctx.drawImage(overlay, spriteSheetX, 0, 16, 16, left, top, this.game.block_size, this.game.block_size)
+        }
+
+
+        if (this.game.debugger.settings.lighting) {
+            this.ctx.fillStyle = 'blue';
+            this.ctx.fillText(block_lighting, left, top + this.game.block_size);
         }
     }
 
@@ -105,9 +114,7 @@ class World_Renderer {
                 const real_x = (x - this.leftmost_blockX) * this.game.block_size;
                 const real_y = (y - this.bottommost_blockY) * this.game.block_size;
                 
-                if (block_data.type === 'solid') {
-                    this.drawBlock(x, y, real_x, real_y, 'green');
-                }
+                this.drawBlock(x, y, real_x, real_y);
                 //this.drawOutline(real_x, real_y, 0.5);
 
                 //Draw cursor (block outline)
