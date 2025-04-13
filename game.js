@@ -110,11 +110,21 @@ class Game {
             }}
         ];
 
-        this.menu_renderers.main = new Menu_Renderer('Block Game', 'Good day sir!', `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`, btns_main, this.width, this.height, this.canvas_menu2);
+        const main_menu_messages = [
+            'Good day sir!',
+            '4000 lines of code',
+            'Spaghetti code!',
+            'Poorly programmed'
+        ];
+
+        const randIndex = Math.floor(Math.random() * main_menu_messages.length)
+        const message = main_menu_messages[randIndex]
+
+        this.menu_renderers.main = new Menu_Renderer('Block Game', message, `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`, btns_main, this.width, this.height, this.canvas_menu2);
         this.menu_renderers.main.init();
 
         const btns_start = [
-            {txt: ['New game'], callback: () => {
+            {txt: ['New game *will not save*'], callback: () => {
                 console.log('loading game...');
 
                 this.menu_renderers.start.close();
@@ -151,7 +161,7 @@ class Game {
             }}
         ];
 
-        this.menu_renderers.start = new Menu_Renderer('Block Game', 'New game!', null, btns_start, this.width, this.height, this.canvas_menu2);
+        this.menu_renderers.start = new Menu_Renderer('Block Game', 'Select a slot to create a new savable game', null, btns_start, this.width, this.height, this.canvas_menu2);
 
         //Slot menus
         const closeSlotMenu = () => {
