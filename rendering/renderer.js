@@ -32,12 +32,13 @@ class World_Renderer {
         }
 
         //Lighting
-
-        const block_lighting = block_data.light; // 0 - 15
-        const lighting_decimal = 0.6 - block_lighting / 25;
-
-        this.ctx.fillStyle = `rgba(0, 0, 0, ${lighting_decimal})`;
-        this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+        if (!this.game.debugger.settings.xray) {
+            const block_lighting = block_data.light; // 0 - 15
+            const lighting_decimal = 0.6 - block_lighting / 25;
+    
+            this.ctx.fillStyle = `rgba(0, 0, 0, ${lighting_decimal})`;
+            this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+        }
 
         //Block breaking
         const break_overlay_location = './assets/break/break.png';

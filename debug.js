@@ -17,7 +17,8 @@ class Debugger {
             fly: null,
             fast: null,
             physics: null,
-            lighting: null
+            lighting: null,
+            xray: null,
         };
 
         this.applySettings();
@@ -68,6 +69,11 @@ class Debugger {
         //Lighting
         if (this.settings.lighting !== null) {
             this.game.player.lighting = this.settings.lighting;
+        }
+
+        //X-ray
+        if (this.settings.xray !== null) {
+            this.game.player.xray = this.settings.xray;
         }
     }
 
@@ -125,6 +131,13 @@ class Debugger {
                     this.settings.lighting = arg2 === 'true';
                 } else {
                     alert('lighting - Input a boolean.');
+                }
+                break;
+            case 'xray':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.xray = arg2 === 'true';
+                } else {
+                    alert('xray - Input a boolean.');
                 }
                 break;
         }
