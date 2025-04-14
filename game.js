@@ -356,11 +356,8 @@ class Game {
         }
 
         const startTime = performance.now();
-    
-        const loadModulesStart = performance.now();
-        //await this.loadModules();
-        logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
-    
+        
+        
         const levelStart = performance.now();
         this.level.properties.width_chunks = width_chunks;
         this.level.properties.height_blocks = height_blocks;
@@ -500,13 +497,7 @@ class Game {
             console.log(`%c${taskName}: ${elapsedTime}ms`, style);
         }
 
-        const startTime = performance.now();
-    
-        //Load modules
-        const loadModulesStart = performance.now();
-        
-        await this.loadModules();
-        logPerformance("Modules loaded", loadModulesStart, "color: rgb(255, 220, 0); font-weight: bold;");
+        const startTime = performance.now();        
     
         //Load level
         const levelStart = performance.now();
@@ -514,6 +505,9 @@ class Game {
         this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
         this.level.level_size = gameData_parsed.level_size;
         this.tick = gameData_parsed.tick;
+
+        this.level.simulation_distance = gameData_parsed.level_properties.width_chunks;
+        this.level.block_simulation_distance = 3;
 
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
