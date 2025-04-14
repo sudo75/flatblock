@@ -110,7 +110,7 @@ class Item_stonePickaxe extends Tool {
         this.id = 130;
         this.durability = 64;
 
-        this.strength = 3;
+        this.strength = 4;
         this.damage = 3;
         this.purpose = [3, 24]; //list of block IDs the tool breaks
     }
@@ -119,7 +119,7 @@ class Item_stonePickaxe extends Tool {
 class Item_woodenAxe extends Tool {
     constructor() {
         super('wooden_axe', './assets/items/wooden_axe.png');
-        this.id = 129;
+        this.id = 131;
         this.durability = 32;
 
         this.strength = 2;
@@ -133,10 +133,10 @@ class Item_woodenAxe extends Tool {
 class Item_stoneAxe extends Tool {
     constructor() {
         super('stone_axe', './assets/items/stone_axe.png');
-        this.id = 130;
+        this.id = 132;
         this.durability = 64;
 
-        this.strength = 3;
+        this.strength = 4;
         this.damage = 4;
         this.purpose = [4, 5, 7, 8]; //list of block IDs the tool breaks
     }
@@ -146,7 +146,7 @@ class Item_stoneAxe extends Tool {
 
 class Block_dirt extends Block_Solid {
     constructor(x, y) {
-        super('dirt', x, y, 20, './assets/textures/dirt.png');
+        super('dirt', x, y, 40, './assets/textures/dirt.png');
         this.id = 1;
         this.itemDrop_id = 1;
     }
@@ -154,7 +154,7 @@ class Block_dirt extends Block_Solid {
 
 class Block_grass extends Block_Solid {
     constructor(x, y) {
-        super('grass', x, y, 30, './assets/textures/grass.png');
+        super('grass', x, y, 60, './assets/textures/grass.png');
         this.id = 2;
         this.itemDrop_id = 2;
     }
@@ -162,7 +162,7 @@ class Block_grass extends Block_Solid {
 
 class Block_stone extends Block_Solid {
     constructor(x, y) {
-        super('stone', x, y, 150, './assets/textures/stone.png');
+        super('stone', x, y, 120, './assets/textures/stone.png');
         this.id = 3;
         this.itemDrop_id = 3;
 
@@ -172,7 +172,7 @@ class Block_stone extends Block_Solid {
 
 class Block_treeLog extends Block_Solid {
     constructor(x, y) {
-        super('tree_log', x, y, 50, './assets/textures/log.png');
+        super('tree_log', x, y, 100, './assets/textures/log.png');
         this.id = 4;
         this.itemDrop_id = 5;
         this.physics = false;
@@ -184,7 +184,7 @@ class Block_treeLog extends Block_Solid {
 
 class Block_log extends Block_Solid {
     constructor(x, y) {
-        super('log', x, y, 50, './assets/textures/log.png');
+        super('log', x, y, 100, './assets/textures/log.png');
         this.id = 5;
         this.itemDrop_id = 5;
 
@@ -195,7 +195,7 @@ class Block_log extends Block_Solid {
 
 class Block_treeLeaves extends Block_Solid {
     constructor(x, y) {
-        super('tree_leaves', x, y, 10, './assets/textures/leaves.png');
+        super('tree_leaves', x, y, 15, './assets/textures/leaves.png');
         this.id = 6;
         this.itemDrop_id = 7;
         this.physics = false;
@@ -207,7 +207,7 @@ class Block_treeLeaves extends Block_Solid {
 
 class Block_leaves extends Block_Solid {
     constructor(x, y) {
-        super('leaves', x, y, 10, './assets/textures/leaves.png');
+        super('leaves', x, y, 15, './assets/textures/leaves.png');
         this.id = 7;
         this.itemDrop_id = 7;
 
@@ -217,7 +217,7 @@ class Block_leaves extends Block_Solid {
 
 class Block_planks extends Block_Solid {
     constructor(x, y) {
-        super('planks', x, y, 40, './assets/textures/planks.png');
+        super('planks', x, y, 60, './assets/textures/planks.png');
         this.id = 8;
         this.itemDrop_id = 8;
 
@@ -230,7 +230,7 @@ class Block_planks extends Block_Solid {
 
 class Block_coalOre extends Block_Solid {
     constructor(x, y) {
-        super('coal_ore', x, y, 250, './assets/textures/coal_ore.png');
+        super('coal_ore', x, y, 140, './assets/textures/coal_ore.png');
         this.id = 24;
         this.itemDrop_id = 25;
 
@@ -249,7 +249,7 @@ class Item_coal extends Item {
 
 class Block_ironOre extends Block_Solid {
     constructor(x, y) {
-        super('iron_ore', x, y, 400, './assets/textures/iron_ore.png');
+        super('iron_ore', x, y, 140, './assets/textures/iron_ore.png');
         this.id = 26;
         this.itemDrop_id = 26;
 
@@ -266,7 +266,7 @@ class Item_ironIngot extends Item {
 
 class Block_copperOre extends Block_Solid {
     constructor(x, y) {
-        super('copper_ore', x, y, 400, './assets/textures/copper_ore.png');
+        super('copper_ore', x, y, 140, './assets/textures/copper_ore.png');
         this.id = 28;
         this.itemDrop_id = 28;
 
@@ -283,7 +283,7 @@ class Item_copperIngot extends Item {
 
 class Block_goldOre extends Block_Solid {
     constructor(x, y) {
-        super('gold_ore', x, y, 250, './assets/textures/gold_ore.png');
+        super('gold_ore', x, y, 140, './assets/textures/gold_ore.png');
         this.id = 30;
         this.itemDrop_id = 30;
 
@@ -300,7 +300,7 @@ class Item_goldIngot extends Item {
 
 class Block_diamondOre extends Block_Solid {
     constructor(x, y) {
-        super('diamond_ore', x, y, 250, './assets/textures/diamond_ore.png');
+        super('diamond_ore', x, y, 150, './assets/textures/diamond_ore.png');
         this.id = 32;
         this.itemDrop_id = 33;
 
