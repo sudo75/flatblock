@@ -30,7 +30,7 @@ class Level {
     incrementTime() {
         this.time++;
 
-        if (this.time > 24000) { //24000 ticks per day
+        if (this.time >= 24000) { //24000 ticks per day
             this.time = 0;
         }
     }
@@ -121,8 +121,26 @@ class Level {
         //Run time logic
         this.incrementTime();
 
-        if (this.time >= 100) {
-            this.sun_strength = 5;
+        //Day
+        if (this.time >= 0 && this.time < 12000) {
+            this.sun_strength = 15;
+        }
+
+        //Evening
+        if (this.time >= 12000 && this.time < 14000) {
+            const lighting_decimal = 1 - (this.time - 12000) / 2000;
+            this.sun_strength = Math.floor(15 * (lighting_decimal));
+        }
+
+        //Night
+        if (this.time >= 14000 && this.time < 22000) {
+            this.sun_strength = 0;
+        }
+
+        //Morning
+        if (this.time >= 22000 && this.time < 24000) {
+            const lighting_decimal = (this.time - 22000) / 2000;
+            this.sun_strength = Math.floor(15 * (lighting_decimal));
         }
 
         if (tick % 1 === 0) {
@@ -170,8 +188,8 @@ class Level {
                     if (this.calc.isSolidBlock(abs_x, y)) {
                         break;
                     }
-                    block.light_source_sun = 15;
-                    block.light = 15;
+                    block.light_source_sun = this.sun_strength;
+                    block.light = block.light_source_sun;
                 }
             }
         }
@@ -195,7 +213,7 @@ class Level {
                     const block = this.data[i].block_data[rel_x][y];
 
                     if (block.light_source_sun > 1 || block.light_source > 1) {
-                        queue.push({ x: abs_x, y: y, light: 15 });
+                        queue.push({ x: abs_x, y: y, light: this.sun_strength });
                     }
                 }
             }
