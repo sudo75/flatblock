@@ -49,7 +49,7 @@ class Player extends Entity_creature {
         this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
 
         this.inventory.init();
-        this.inventory_debug();
+        //this.inventory_debug();
 
         this.draw();
     }
@@ -92,6 +92,13 @@ class Player extends Entity_creature {
         this.inventory.setSlot(10, 2, 2);
         this.inventory.setSlot(11, 3, 2);
         this.inventory.setSlot(129, 4, 1);
+        this.inventory.setSlot(3, 5, 16);
+
+        this.inventory.setSlot(27, 9, 16);
+        this.inventory.setSlot(29, 10, 16);
+        this.inventory.setSlot(31, 11, 16);
+        this.inventory.setSlot(33, 12, 16);
+
 
         console.log(this.inventory.data)
     }
