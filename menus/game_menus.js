@@ -188,6 +188,7 @@ class Menu_Inventory extends Menu {
     close() {
         this.close_basic();
         this.slotPosition = [];
+        this.selectedSlotIndex = undefined;
 
         this.Menu_ComponentUI_1.close();
     }
@@ -595,6 +596,9 @@ class Menu_ComponentUI_Furnace {
         
 
         const furnaceData = this.main.game.calculator.getBlockData(selectedX, selectedY);
+
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 1;
 
         //Fuel Indicator
         const fuelPoints = furnaceData.fuelPoints;
