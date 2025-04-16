@@ -206,6 +206,43 @@ const recipies = [
         ]
     },
 
+    { // 1 stick + 1 coal => 4 torches
+        result: 12,
+        quantity: 4,
+        recipie: [
+            [
+                [25, null, null],
+                [128, null, null],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [25, null, null],
+                [128, null, null]
+            ],
+            [
+                [null, 25, null],
+                [null, 128, null],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [null, 25, null],
+                [null, 128, null]
+            ],
+            [
+                [null, null, 25],
+                [null, null, 128],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [null, null, 25],
+                [null, null, 128]
+            ]
+        ]
+    },
+
 
     // PICKAXES --------------------------->
 

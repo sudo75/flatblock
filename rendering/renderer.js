@@ -16,6 +16,7 @@ class World_Renderer {
         const block_data = this.calc.getBlockData(x, y);
         const texture_location = block_data.texture_location;
 
+        const spriteSheetX = block_data.spriteSheetX;
 
         if (texture_location) {
             let image;
@@ -28,7 +29,7 @@ class World_Renderer {
                 image = this.textureCache[texture_location];
             }
             
-            this.ctx.drawImage(image, left, top, this.game.block_size, this.game.block_size);
+            this.ctx.drawImage(image, spriteSheetX, 0, 16, 16, left, top, this.game.block_size, this.game.block_size);
         }
 
         //Lighting
@@ -59,7 +60,7 @@ class World_Renderer {
                 overlay = this.textureCache[break_overlay_location];
             }
                 
-            this.ctx.drawImage(overlay, spriteSheetX, 0, 16, 16, left, top, this.game.block_size, this.game.block_size)
+            this.ctx.drawImage(overlay, spriteSheetX, 0, 16, 16, left, top, this.game.block_size, this.game.block_size);
         }
 
 
@@ -142,6 +143,8 @@ class World_Renderer {
                 const real_x = (entity.x - this.leftmost_blockX) * this.game.block_size;
                 const real_y = (entity.y - this.bottommost_blockY) * this.game.block_size;
 
+                const spriteSheetX = 0;
+
                 if (texture_location) {
                     let image;
                     if (!this.textureCache[texture_location]) {
@@ -156,7 +159,9 @@ class World_Renderer {
                     const left = real_x;
                     const top = this.game.height - real_y - this.game.block_size * entity.height_blocks;
                     
-                    if (entity.direction === 'left') {
+                    if (entity.entityType === 'item') {
+                        this.ctx.drawImage(image, spriteSheetX, 0, 16, 16, left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
+                    } else if (entity.direction === 'left') {
                         this.ctx.drawImage(image, left, top, this.game.block_size * entity.width_blocks, this.game.block_size * entity.height_blocks);
                     } else if (entity.direction === 'right') {
                         this.ctx.save();

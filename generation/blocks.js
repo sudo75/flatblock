@@ -1,5 +1,5 @@
 class Meta {
-    constructor(name, texture_location, item_type) {
+    constructor(name, texture_location, item_type, calc) {
         this.name = name;
         this.texture_location = texture_location;
 
@@ -14,11 +14,17 @@ class Meta {
         this.damage = 1;
         this.purpose = 'all';
 
+        this.spriteSheetX = 0;
+
         this.fuel = 0;
 
         this.light_source = 0;
         this.light_source_sun = 0;
         this.light = 0; // 0 - 15;
+
+        this.calc = calc;
+
+        this.status = 0;
     }
 }
 
@@ -492,6 +498,39 @@ class Block_planks extends Block_Solid {
     }
 }
 
+class Block_torch extends Block_Solid {
+    constructor(x, y) {
+        super('torch', x, y, 1, './assets/textures/torch.png');
+        this.id = 12;
+        this.itemDrop_id = 12;
+        this.physics = false;
+        this.transparency = 1;
+
+        this.light_source = 15;
+        this.spriteSheetX = 0;
+    }
+
+    run_gametick_logic(tick) {
+        console.log('fghj')
+
+        this.spriteSheetX = 0;
+
+        console.log(this.calc.getBlockData(this.x + 1, this.y))
+
+        if (this.calc.isSolidBlock(this.x, this.y - 1)) {
+            this.status = 0;
+            this.spriteSheetX = 0;
+        } else if (this.calc.getBlockData(this.x - 1, this.y)) {
+            this.status = 1;
+            this.spriteSheetX = 16;
+        } else if (this.calc.getBlockData(this.x + 1, this.y)) {
+            this.status = 2;
+            this.spriteSheetX = 32;
+        }
+        
+    }
+}
+
 
 // Minerals -------------------------------------->
 
@@ -627,8 +666,6 @@ class Block_furnace extends Block_Solid {
         this.efficiency = 200; //required process points to smelt an item
         
         this.processPoints = 0; //in ticks
-
-        this.status = 0; // 0 = unlit, 1 = lit
     }
 
     setStatus(status_value) {
@@ -730,6 +767,7 @@ class Item_Directory {
             '9': Block_chest,
             '10': Block_craftingTable,
             '11': Block_furnace,
+            '12': Block_torch,
 
             '24': Block_coalOre,
             '25': Item_coal,

@@ -274,9 +274,16 @@ class Menu_Inventory extends Menu {
                 const slot_x = this.slotPosition[index].slot_x;
                 const slot_y = this.slotPosition[index].slot_y;
 
+                const left = slot_x + this.slotPadding;
+                const top = slot_y + this.slotPadding;
+                const imageWidth = this.slot_width - this.slotPadding * 2;
+                const imageHeight = this.slot_height - this.slotPadding * 2;
+
                 const texture_location = this.item_directory.getTextureLocationByID(item.id);
                 const itemQuantity = item.quantity;
                 const itemDurability = item.durability;
+
+                const spriteSheetX = this.item_directory.getProperty(item.id, 'spriteSheetX');
 
                 if (texture_location) {
                     let image;
@@ -289,10 +296,11 @@ class Menu_Inventory extends Menu {
                         image = this.textureCache[texture_location];
                     }
                     
-                    this.ctx.drawImage(image, slot_x + this.slotPadding, slot_y + this.slotPadding, this.slot_width - this.slotPadding * 2, this.slot_height - this.slotPadding * 2);
+                    this.ctx.drawImage(image, spriteSheetX, 0, 16, 16, left, top, imageWidth, imageHeight);
+
                 } else if (item.id != null) {
                     this.ctx.fillStyle = 'purple';
-                    this.ctx.fillRect(slot_x + this.slotPadding, slot_y + this.slotPadding, this.slot_width - this.slotPadding * 2, this.slot_height - this.slotPadding * 2);
+                    this.ctx.fillRect(left, top, imageWidth, imageHeight);
                 }
 
                 if (itemQuantity > 1) {
@@ -824,26 +832,35 @@ class Menu_Hotbar extends Menu {
 
             // Render item in the slot
             if (this.inventory_data[i]) {
-                const texture_location = this.item_directory.getTextureLocationByID(item.id);
-                const itemQuantity = item.quantity;
-                const itemDurability = item.durability;
 
-                if (texture_location) {
-                    let image;
-                    if (!this.textureCache[texture_location]) {
-                        image = new Image();
-                        image.src = texture_location;
-            
-                        this.textureCache[texture_location] = image;
-                    } else {
-                        image = this.textureCache[texture_location];
+                    const left = slot_x + this.slotPadding;
+                    const top = slot_y + this.slotPadding;
+                    const imageWidth = this.slotSize - this.slotPadding * 2;
+                    const imageHeight = this.slotSize - this.slotPadding * 2;
+
+                    const texture_location = this.item_directory.getTextureLocationByID(item.id);
+                    const itemQuantity = item.quantity;
+                    const itemDurability = item.durability;
+
+                    const spriteSheetX = this.item_directory.getProperty(item.id, 'spriteSheetX');
+
+                    if (texture_location) {
+                        let image;
+                        if (!this.textureCache[texture_location]) {
+                            image = new Image();
+                            image.src = texture_location;
+                
+                            this.textureCache[texture_location] = image;
+                        } else {
+                            image = this.textureCache[texture_location];
+                        }
+                        
+                        this.ctx.drawImage(image, spriteSheetX, 0, 16, 16, left, top, imageWidth, imageHeight);
+
+                    } else if (item.id != null) {
+                        this.ctx.fillStyle = 'purple';
+                        this.ctx.fillRect(left, top, imageWidth, imageHeight);
                     }
-                    
-                    this.ctx.drawImage(image, slot_x + this.slotPadding, slot_y + this.slotPadding, this.slotSize - this.slotPadding * 2, this.slotSize - this.slotPadding * 2);
-                } else if (item.id != null) {
-                    this.ctx.fillStyle = 'purple';
-                    this.ctx.fillRect(slot_x + this.slotPadding, slot_y + this.slotPadding, this.slotSize - this.slotPadding * 2, this.slotSize - this.slotPadding * 2);
-                }
 
                 if (itemQuantity > 1) {
                     this.ctx.font = "bold 16px Arial";

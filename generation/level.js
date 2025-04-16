@@ -194,6 +194,21 @@ class Level {
             }
         }
 
+        //Light source blocks
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+
+                for (let y = this.properties.height_blocks - 1; y >= 0; y--) {
+
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    if (block.light_source >= 1) {
+                        block.light = block.light_source;
+                    }
+                }
+            }
+        }
+
 
         const directions = [
             { dx: 0, dy: 1 },
@@ -212,8 +227,11 @@ class Level {
 
                     const block = this.data[i].block_data[rel_x][y];
 
-                    if (block.light_source_sun > 1 || block.light_source > 1) {
+
+                    if (block.light_source_sun > 1 && block.light_source_sun >= block.light_source) {
                         queue.push({ x: abs_x, y: y, light: this.sun_strength });
+                    } else if (block.light_source > 1) {
+                        queue.push({ x: abs_x, y: y, light: block.light_source });
                     }
                 }
             }
