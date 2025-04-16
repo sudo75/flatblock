@@ -58,6 +58,44 @@ class Level {
 
     copy(level_data, entity_data, seed, level_properties) { //use saved data
         this.data = level_data;
+
+        //Manually place all blocks to preserve 'run_gametick_logic' method
+
+        for (const chunkID in level_data) {
+            let chunk = [];
+            
+            const chunk_block_data = level_data[chunkID].block_data;
+
+            for (let x = 0; x < chunk_block_data.length; x++) {
+
+                let col = [];
+                for (let y = 0; y < chunk_block_data[x].length; y++) {
+                    const block_data = chunk_block_data[x][y];
+
+                    const blockClass = this.item_directory.item[block_data.id];
+                    const block = new blockClass(block_data.x, y);
+
+                    for (const key in block_data) {
+                        if (key === 'inventory') {
+                            const inventory_data = block_data[key].data;
+
+
+                            block.inventory.data = inventory_data;
+                            
+                        }
+                        
+                    }
+
+                    col.push(block);
+                }
+
+                chunk.push(col);
+            }
+
+            this.data[chunkID].block_data = chunk;
+        }
+
+
         this.properties = level_properties
 
         //Update generator data
