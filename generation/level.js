@@ -186,6 +186,47 @@ class Level {
 
         }
 
+
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                    const getBlockProperties = (x, y) => {
+                        if (this.calc.isWithinWorldBounds(x, y)) {
+                            return this.calc.getBlockData(x, y);
+                        } else {
+                            return null;
+                        }
+                    };
+
+                    //Left
+                    const block_left = getBlockProperties(abs_x - 1, y);
+                    
+                    //Right
+                    const block_right = getBlockProperties(abs_x + 1, y);
+
+                    //Up
+                    const block_up = getBlockProperties(abs_x, y + 1);
+
+                    //Down
+                    const block_down = getBlockProperties(abs_x, y - 1);
+
+                    const neighbour_data = {
+                        'left': block_left,
+                        'right': block_right,
+                        'up': block_up,
+                        'down': block_down,
+                    };
+
+                    this.data[i].block_data[rel_x][y].neighbour_data = neighbour_data;
+                }
+            }
+        }
+
+
     }
 
     calculateLighting(simulated_chunk_min, simulated_chunk_max) {

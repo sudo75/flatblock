@@ -271,7 +271,7 @@ class Generator {
 
         if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
 
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y, this.game.calculator);
+        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
 
         const selectedSlot = this.game.player.inventory.selectedSlot;
         this.game.player.inventory.subtract(selectedSlot);

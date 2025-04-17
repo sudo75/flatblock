@@ -1,5 +1,5 @@
 class Meta {
-    constructor(name, texture_location, item_type, calc) {
+    constructor(name, texture_location, item_type) {
         this.name = name;
         this.texture_location = texture_location;
 
@@ -21,8 +21,6 @@ class Meta {
         this.light_source = 0;
         this.light_source_sun = 0;
         this.light = 0; // 0 - 15;
-
-        this.calc = calc;
 
         this.status = 0;
     }
@@ -511,21 +509,28 @@ class Block_torch extends Block_Solid {
     }
 
     run_gametick_logic(tick) {
-        console.log('fghj')
-
         this.spriteSheetX = 0;
 
-        console.log(this.calc.getBlockData(this.x + 1, this.y))
+        if (!this.neighbour_data) return;
 
-        if (this.calc.isSolidBlock(this.x, this.y - 1)) {
-            this.status = 0;
-            this.spriteSheetX = 0;
-        } else if (this.calc.getBlockData(this.x - 1, this.y)) {
-            this.status = 1;
-            this.spriteSheetX = 16;
-        } else if (this.calc.getBlockData(this.x + 1, this.y)) {
-            this.status = 2;
-            this.spriteSheetX = 32;
+        if (this.neighbour_data.left) {
+            if (this.neighbour_data.left.type === 'solid') {
+                this.status = 1;
+                this.spriteSheetX = 16;
+            }
+        }
+        if (this.neighbour_data.right) {
+            if (this.neighbour_data.right.type === 'solid') {
+                this.status = 2;
+                this.spriteSheetX = 32;
+            }
+        }
+
+        if (this.neighbour_data.down) {
+            if (this.neighbour_data.down.type === 'solid') {
+                this.status = 0;
+                this.spriteSheetX = 0;
+            }
         }
         
     }

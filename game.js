@@ -368,6 +368,7 @@ class Game {
         this.level.level_size = level_size;
 
         this.level.generate();
+        
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const playerStart = performance.now();
