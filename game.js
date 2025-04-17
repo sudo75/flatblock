@@ -357,7 +357,7 @@ class Game {
 
         const startTime = performance.now();
         
-        
+
         const levelStart = performance.now();
         this.level.properties.width_chunks = width_chunks;
         this.level.properties.height_blocks = height_blocks;
@@ -427,6 +427,7 @@ class Game {
             entity: this.entity_handler.entity_data,
             seed: this.level.generator.seed,
             tick: this.tick,
+            time: this.level.time,
             level_properties: this.level.properties,
             level_size: this.level.level_size
         };
@@ -505,6 +506,7 @@ class Game {
         this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
         this.level.level_size = gameData_parsed.level_size;
         this.tick = gameData_parsed.tick;
+        this.level.time = gameData_parsed.time;
 
         this.level.simulation_distance = gameData_parsed.level_properties.width_chunks;
         this.level.block_simulation_distance = 3;
