@@ -410,6 +410,7 @@ class Game {
         
         let data_world = {};
 
+        this.level.clearNeighbourData();
         for (let key in this.level.data) {
             data_world[key] = {'block_data': this.level.data[key].block_data, entity_data: [] };
         }
