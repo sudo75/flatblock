@@ -31,10 +31,10 @@ class Game {
 
         this.block_size = this.width / this.settings.blockview_width; //number of pixels per block
 
-        this.tickSpeed_target = 20; // number of ticks per second
+        this.tps_target = 20; // number of ticks per second
         this.tick = 0; // resets to 0 at 9999
 
-        this.tickSpeed = null;
+        this.tps = null;
         this.fps = null;
 
         this.menu_renderers = {};
@@ -615,7 +615,7 @@ class Game {
         const dataQuota = storage_data.quota;
         const percentage = storage_data.percentage;
 
-        console.log(`FPS: ${this.fps}, Tick Speed: ${this.tickSpeed} ms, Storage: ${dataSize.toLocaleString("en-US")} / ${dataQuota.toLocaleString("en-US")} bytes - ${percentage}%`);
+        console.log(`FPS: ${this.fps}, TPS: ${this.tps}, Storage: ${dataSize.toLocaleString("en-US")} / ${dataQuota.toLocaleString("en-US")} bytes - ${percentage}%`);
     }
 
     startGameLoop() {
@@ -636,12 +636,12 @@ class Game {
                 this.update_world();
 
                 this.tick++;
-                this.tickSpeed = Math.round(1000 / tickTime);
+                this.tps = Math.round(1000 / tickTime);
 
                 lastTick = time_current;
             }
 
-            setTimeout(tick_handler, 1000 / this.tickSpeed_target);
+            setTimeout(tick_handler, 1000 / this.tps_target);
         };
 
         let lastFrame;
