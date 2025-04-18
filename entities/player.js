@@ -34,6 +34,7 @@ class Player extends Entity_creature {
         this.inventory = new Inventory();
 
         this.strength = 1; //block-breaking strength
+        this.damage = 1;
 
         this.maxHitCooldown = 15;
         this.hitCooldown = 0; //in ticks
