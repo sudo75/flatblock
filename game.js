@@ -18,6 +18,8 @@ class Game {
         this.canvas_menu2 = document.querySelector('#game_canvas_fore3');
         this.ctx_menu2 = this.canvas_menu2.getContext('2d');
 
+        this.setImgSmoothing(false);
+
         this.width = width;
         this.height = height;
         
@@ -50,6 +52,18 @@ class Game {
 
         this.keysHeld = [];
         this.newKeys = [];
+    }
+
+    setImgSmoothing(smoothing) {
+        if (typeof(smoothing) !== 'boolean') {
+            return;
+        }
+
+        this.ctx_world.imageSmoothingEnabled = smoothing;
+        this.ctx_entities.imageSmoothingEnabled = smoothing;
+        this.ctx_player.imageSmoothingEnabled = smoothing;
+        this.ctx_menu.imageSmoothingEnabled = smoothing;
+        this.ctx_menu2.imageSmoothingEnabled = smoothing;
     }
 
     updateViewSize(width, height) {

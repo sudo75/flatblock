@@ -19,6 +19,7 @@ class Debugger {
             physics: null,
             lighting: null,
             xray: null,
+            img_smoothing: null
         };
 
         this.applySettings();
@@ -74,6 +75,11 @@ class Debugger {
         //X-ray
         if (this.settings.xray !== null) {
             this.game.player.xray = this.settings.xray;
+        }
+
+        //Image smoothing (anti-aliasing)
+        if (this.settings.img_smoothing !== null) {
+            this.game.setImgSmoothing(this.settings.img_smoothing);
         }
     }
 
@@ -138,6 +144,13 @@ class Debugger {
                     this.settings.xray = arg2 === 'true';
                 } else {
                     alert('xray - Input a boolean.');
+                }
+                break;
+            case 'img_smoothing':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.img_smoothing = arg2 === 'true';
+                } else {
+                    alert('img_smoothing - Input a boolean.');
                 }
                 break;
         }
