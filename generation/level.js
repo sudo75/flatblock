@@ -187,7 +187,9 @@ class Level {
         }
 
 
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+        //Set neighbour properties
+        
+        for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
             for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                 for (let y = 0; y < this.properties.height_blocks; y++) {
                     const block = this.data[i].block_data[rel_x][y];
