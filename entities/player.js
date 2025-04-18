@@ -135,6 +135,16 @@ class Player extends Entity_creature {
         }
     }
 
+    update(input, deltaTime) {
+        if (this.game.menu_handler.aMenuIsOpen()) {
+            if (input.length !== 0) {
+                input = [];
+            }
+        }
+        
+        super.update(input, deltaTime);
+    }
+
     update_real_pos() {
         const leftmost_blockX = this.calc.getRenderingCornerstones().leftmost_blockX;
         const rightmost_blockX = this.calc.getRenderingCornerstones().rightmost_blockX;
