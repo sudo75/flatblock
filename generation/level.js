@@ -122,7 +122,7 @@ class Level {
         let simulated_chunk_max = playerChunk + Math.floor((simulation_distance - 1) / 2);
 
         if (simulated_chunk_min < this.calc.getWorldBounds()[0]) {
-            simulated_chunk_min = 0;
+            simulated_chunk_min = this.calc.getWorldBounds()[0];
         }
 
         if (simulated_chunk_max > this.calc.getWorldBounds()[1]) {
