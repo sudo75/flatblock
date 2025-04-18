@@ -6,7 +6,7 @@ class InputHandler {
         this.mouseDown = false;
         this.mouseDown_right = false;
 
-        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'e', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'e', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4'];
 
         window.addEventListener('keydown', (event) => {
             const key = event.key;

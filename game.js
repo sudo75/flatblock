@@ -47,6 +47,9 @@ class Game {
                 this.save();
             }
         });
+
+        this.keysHeld = [];
+        this.newKeys = [];
     }
 
     updateViewSize(width, height) {
@@ -385,9 +388,76 @@ class Game {
 
     update(deltaTime) {
         if (this.status !== 1) return;
+
+        // Update keys held
+        this.newKeys = [];
+
+        for (const key of this.input.keys) {
+            if (!this.keysHeld.includes(key)) {
+                this.newKeys.push(key);
+                this.keysHeld.push(key);
+            }
+        }
+
+        // Remove released keys from keysHeld
+        this.keysHeld = this.keysHeld.filter(key => this.input.keys.includes(key));
+
+
         // Update the game state
         this.player.update(this.input.keys, deltaTime);
         this.entity_handler.update(deltaTime);
+
+        this.debug_keys();
+    }
+
+    debug_keys() {
+
+        //Screenshot
+        if (this.newKeys.includes('F4')) {
+
+            const canvasList = [this.canvas_world, this.canvas_entities, this.canvas_player];
+
+            // Off-screen combined canvas
+            const combinedCanvas = document.createElement('canvas');
+            combinedCanvas.width = this.width;
+            combinedCanvas.height = this.height;
+            const ctx = combinedCanvas.getContext('2d');
+
+            // Draw each canvas onto the combined canvas (in order: world → entities → player)
+            for (const canvas of canvasList) {
+                ctx.drawImage(canvas, 0, 0);
+            }
+
+
+            const fullQuality_URL = combinedCanvas.toDataURL("image/jpeg", 1.0);
+
+            const link = document.createElement('a');
+            link.href = fullQuality_URL;
+
+            const getDownloadName = () => {
+                const pad = (text) => {
+                    const string = JSON.stringify(text);
+                    return string.padStart(2,'0');
+                }
+
+                const now = new Date();
+
+                const yyyy = now.getFullYear();
+                const mm = pad(now.getMonth() + 1); // +1 due to 0 indexing
+                const dd = pad(now.getDate());
+
+                const hh = pad(now.getHours());
+                const mm_ = pad(now.getMinutes());
+                const ss = pad(now.getSeconds());
+
+                return `fs_${yyyy}-${mm}-${dd}_${hh}-${mm_}_${ss}`;
+            }
+
+            link.download = getDownloadName();
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
 
     save_game() {
