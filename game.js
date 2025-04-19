@@ -379,8 +379,8 @@ class Game {
         this.level.properties.width_chunks = width_chunks;
         this.level.properties.height_blocks = height_blocks;
 
-        this.level.simulation_distance = width_chunks;
-        this.level.block_simulation_distance = 3;
+        this.level.simulation_distance = 7;
+        this.level.block_simulation_distance = 7;
 
         this.level.level_size = level_size;
 
