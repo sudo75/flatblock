@@ -12,8 +12,9 @@ class Level {
         };
         this.level_size = null;
 
-        this.simulation_distance = null; //in chunks
-        this.block_simulation_distance = null;
+        // Simulation distances in chunks
+        this.simulation_distance = null; // For general block updates
+        this.block_simulation_distance = null; // For light calculations
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
@@ -53,6 +54,9 @@ class Level {
             this.generator.generate_chunk(i);
         }
 
+        //Once render light
+        //this.calculateLighting(this.calc.getWorldBounds()[0], this.calc.getWorldBounds()[1]);
+        
         console.log(this.data);
     }
 
@@ -105,6 +109,9 @@ class Level {
         //Update entity handler data
         this.game.entity_handler.level_data = level_data;
         this.game.entity_handler.copy(entity_data);
+
+        //Once render light
+        this.calculateLighting(this.calc.getWorldBounds()[0], this.calc.getWorldBounds()[1]);
     }
 
     world_interaction() {
@@ -112,33 +119,13 @@ class Level {
         this.computeBlockPlacing();
     }
 
-    getSimulatedChunkBounds(simulation_distance) {
-        const playerChunk = this.calc.getChunkID(this.game.player.x);
-
-        let simulated_chunk_min = playerChunk - Math.ceil((simulation_distance - 1) / 2);
-        let simulated_chunk_max = playerChunk + Math.floor((simulation_distance - 1) / 2);
-
-        if (simulated_chunk_min < this.calc.getWorldBounds()[0]) {
-            simulated_chunk_min = this.calc.getWorldBounds()[0];
-        }
-
-        if (simulated_chunk_max > this.calc.getWorldBounds()[1]) {
-            simulated_chunk_max = this.calc.getWorldBounds()[1];
-        }
-
-        return {
-            min: simulated_chunk_min,
-            max: simulated_chunk_max
-        };
-    }
-
     run_gametick_logic(tick) { //Can help run blocks with animations, update block states (ex. illuminated vs. dark, etc.)
         
-        const simulated_chunk_min = this.getSimulatedChunkBounds(this.simulation_distance).min;
-        const simulated_chunk_max = this.getSimulatedChunkBounds(this.simulation_distance).max;
+        const simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.simulation_distance).min;
+        const simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.simulation_distance).max;
 
-        const block_simulated_chunk_min = this.getSimulatedChunkBounds(this.block_simulation_distance).min;
-        const block_simulated_chunk_max = this.getSimulatedChunkBounds(this.block_simulation_distance).max;
+        const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
+        const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
         //Run gametick logic of blocks
         for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {

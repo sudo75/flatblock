@@ -274,6 +274,27 @@ class Calc_World {
         return dist;
     }
 
+
+    getSimulatedChunkBounds(simulation_distance) {
+        const playerChunk = this.getChunkID(this.game.player.x);
+
+        let simulated_chunk_min = playerChunk - Math.ceil((simulation_distance - 1) / 2);
+        let simulated_chunk_max = playerChunk + Math.floor((simulation_distance - 1) / 2);
+
+        if (simulated_chunk_min < this.getWorldBounds()[0]) {
+            simulated_chunk_min = this.getWorldBounds()[0];
+        }
+
+        if (simulated_chunk_max > this.getWorldBounds()[1]) {
+            simulated_chunk_max = this.getWorldBounds()[1];
+        }
+
+        return {
+            min: simulated_chunk_min,
+            max: simulated_chunk_max
+        };
+    }
+
 }
 
 export { Calc_World };
