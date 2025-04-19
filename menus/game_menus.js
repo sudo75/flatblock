@@ -830,7 +830,7 @@ class Menu_Hotbar extends Menu {
             this.ctx.fillRect(slot_x, slot_y, this.slotSize, this.slotSize);
 
             //Outline slots
-            this.ctx.strokeStyle = "black";
+            this.ctx.strokeStyle = "white";
             this.ctx.lineWidth = i === this.inventory.selectedSlot ? 4: 1;
             this.ctx.strokeRect(slot_x, slot_y, this.slotSize, this.slotSize);
 
