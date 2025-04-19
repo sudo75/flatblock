@@ -102,6 +102,7 @@ class Item_pork extends Item {
         this.id = 64;
 
         this.nutrition = 3;
+        this.consumption_cooldown = 20;
 
         this.furnace_result = 65;
     }
@@ -113,6 +114,7 @@ class Item_porkCooked extends Item {
         this.id = 65;
 
         this.nutrition = 6;
+        this.consumption_cooldown = 30;
     }
 }
 

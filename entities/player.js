@@ -42,6 +42,8 @@ class Player extends Entity_creature {
         this.mouseDownOnPreviousTick = false;
 
         this.skinCache = [];
+
+        this.consumption_cooldown = 0;
     }
 
     spawn() {
@@ -138,10 +140,28 @@ class Player extends Entity_creature {
         }
     }
 
-    update(input, deltaTime) {
+    update(input, mouseDown, mouseDown_right, deltaTime) {
         if (this.game.menu_handler.aMenuIsOpen()) {
             if (input.length !== 0) {
                 input = [];
+                mouseDown = false;
+                mouseDown_right = false;
+            }
+        }
+
+        //For using food / other items
+        if (mouseDown_right && this.consumption_cooldown === 0) {
+            const selectedSlot = this.inventory.selectedSlot;
+            const selectedItem = this.inventory.data[selectedSlot];
+
+            const nutrition = this.game.item_directory.getProperty(selectedItem.id, 'nutrition');
+            const consumption_cooldown = this.game.item_directory.getProperty(selectedItem.id, 'consumption_cooldown');
+
+            if (nutrition && this.health < this.maxHealth) {
+                this.applyHealth(nutrition);
+                this.consumption_cooldown = consumption_cooldown;
+
+                this.inventory.subtract(selectedSlot);
             }
         }
         
@@ -188,6 +208,10 @@ class Player extends Entity_creature {
         super.run_gametick_logic();
         if (this.hitCooldown > 0) {
             this.hitCooldown--;
+        }
+
+        if (this.consumption_cooldown > 0) {
+            this.consumption_cooldown--;
         }
         
         this.mouseDownOnPreviousTick = this.game.input.mouseDown;

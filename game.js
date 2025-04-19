@@ -418,7 +418,7 @@ class Game {
 
 
         // Update the game state
-        this.player.update(this.input.keys, deltaTime);
+        this.player.update(this.input.keys, this.input.mouseDown, this.input.mouseDown_right, deltaTime);
         this.entity_handler.update(deltaTime);
 
         this.debug_keys();

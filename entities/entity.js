@@ -375,6 +375,14 @@ class Entity_creature extends Entity {
         }
     }
 
+    applyHealth(health) {
+        this.health += health;
+
+        if (this.health > this.maxHealth) {
+            this.health = this.maxHealth;
+        }
+    }
+
     dropItem(x, y, itemID, h_vel, v_vel, durability) {
         this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel, durability);
     }
