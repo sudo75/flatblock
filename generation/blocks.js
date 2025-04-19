@@ -96,7 +96,15 @@ class Item_stick extends Item {
 
 // FOOD ------------------------------------------>
 
-class Item_pork extends Item {
+class Item_food extends Item {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+
+        this.maxStackSize = 1;
+    }
+}
+
+class Item_pork extends Item_food {
     constructor() {
         super('pork', './assets/items/pork.png');
         this.id = 64;
@@ -108,7 +116,7 @@ class Item_pork extends Item {
     }
 }
 
-class Item_porkCooked extends Item {
+class Item_porkCooked extends Item_food {
     constructor() {
         super('pork_cooked', './assets/items/pork_cooked.png');
         this.id = 65;
