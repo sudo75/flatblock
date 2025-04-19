@@ -87,7 +87,7 @@ class Mob_hostile extends Mob {
         this.view_distance = 8; //Distance from which a mob can see the player - in both directions
         this.reach = 1; // Distance from which a mob can hit the player
 
-        this.damage = 2;
+        this.damage = 3;
 
         this.maxHitCooldown = 15;
         this.hitCooldown = 0;
@@ -176,7 +176,7 @@ class Mob_hostile extends Mob {
 
 class Mob_Zombie extends Mob_hostile {
     constructor(game, entityID, x, y) {
-        super(game, entityID, x, y, 14/16, 30/16, 10, 10, 32, '');
+        super(game, entityID, x, y, 14/16, 30/16, 10, 10, 32, './assets/mobs/zombie/zombie.png');
         
         this.mob_name = 'zombie';
     }
