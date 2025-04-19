@@ -70,10 +70,6 @@ class Player extends Entity_creature {
         this.draw();
     }
 
-    dropItem(x, y, itemID, h_vel, v_vel, durability) {
-        this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel, durability);
-    }
-
     throwItem(inventory_slot) {
         const itemDropPoint = {
             x: this.x + this.width_blocks / 2 - this.game.entity_handler.entity_item_dimensions.width / 2, // subtract half the item width width to centre

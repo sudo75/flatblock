@@ -94,6 +94,28 @@ class Item_stick extends Item {
     }
 }
 
+// FOOD ------------------------------------------>
+
+class Item_pork extends Item {
+    constructor() {
+        super('pork', './assets/items/pork.png');
+        this.id = 64;
+
+        this.nutrition = 3;
+
+        this.furnace_result = 65;
+    }
+}
+
+class Item_porkCooked extends Item {
+    constructor() {
+        super('pork_cooked', './assets/items/pork_cooked.png');
+        this.id = 65;
+
+        this.nutrition = 6;
+    }
+}
+
 // Pickaxes ---------------------------->
 
 class Item_pickaxe extends Tool {
@@ -784,6 +806,9 @@ class Item_Directory {
             '31': Item_ironIngot,
             '32': Block_diamondOre,
             '33': Item_diamond,
+
+            '64': Item_pork,
+            '65': Item_porkCooked,
 
             '128': Item_stick,
 

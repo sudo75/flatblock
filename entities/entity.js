@@ -371,8 +371,26 @@ class Entity_creature extends Entity {
         this.health -= damage;
 
         if (this.health <= 0) {
-            this.active = false;
+            this.kill();
         }
+    }
+
+    dropItem(x, y, itemID, h_vel, v_vel, durability) {
+        this.game.entity_handler.newEntity_Item(x, y, itemID, h_vel, v_vel, durability);
+    }
+
+    kill() {
+        if (this.drops) {
+            for (let i = 0; i < this.drops.length; i++) {
+                    
+                for (let quant = 0; quant < this.drops[i].quantity; quant++) {
+                    this.dropItem(this.x, this.y, this.drops[i].itemID, 0, 1, null);
+                }   
+            }
+            
+        }
+
+        this.active = false;
     }
 }
 

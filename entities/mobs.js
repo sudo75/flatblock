@@ -216,6 +216,10 @@ class Mob_Pig extends Mob_passive {
         super(game, entityID, x, y, 24/16, 18/16, 10, 10, 0, './assets/mobs/pig/pig.png');
         
         this.mob_name = 'pig';
+
+        this.drops = [
+            {itemID: 64, quantity: 2}
+        ];
     }
 }
 
