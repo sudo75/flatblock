@@ -39,6 +39,15 @@ class Calc_World {
         return false;
     }
 
+    randomBool_precise(chance) {
+        const rand = Math.random() * 100;
+
+        if (rand <= chance) {
+            return true;
+        }
+        return false;
+    }
+
     randomBoolBySeed(seed, chance) { //in percent
         const a = 1664525;
         const c = 1013904223;

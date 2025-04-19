@@ -43,6 +43,8 @@ class Player extends Entity_creature {
     }
 
     spawn() {
+        this.health = this.maxHealth;
+
         this.real_x = this.game.width / 2 - this.width / 2;
         this.real_y = this.game.height / 2;
 
@@ -51,6 +53,8 @@ class Player extends Entity_creature {
 
         this.inventory.init();
         //this.inventory_debug();
+
+        this.effects.invincible = 20;
 
         this.draw();
     }
@@ -183,6 +187,7 @@ class Player extends Entity_creature {
     }
 
     run_gametick_logic(tick) {
+        super.run_gametick_logic();
         if (this.hitCooldown > 0) {
             this.hitCooldown--;
         }
@@ -200,6 +205,7 @@ class Player extends Entity_creature {
 
     respawn() {
         this.health = this.maxHealth;
+        this.effects.invincible = 20;
 
         this.h_vel = 0;
         this.v_vel = 0;
@@ -229,7 +235,7 @@ class Player extends Entity_creature {
         const left = this.real_x; //dist from x axis (left)
         const bottom = this.real_y; //dist from y axis (bottom)
 
-        this.ctx.fillStyle = 'grey';
+        this.ctx.fillStyle = 'lightgrey';
         this.ctx.fillRect(left, this.game.height - bottom - this.height, this.width, this.height);
     }
 

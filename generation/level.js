@@ -80,10 +80,8 @@ class Level {
                             const inventory_data = block_data[key].data;
 
 
-                            block.inventory.data = inventory_data;
-                            
+                            block.inventory.data = inventory_data;    
                         }
-                        
                     }
 
                     col.push(block);
@@ -94,7 +92,6 @@ class Level {
 
             this.data[chunkID].block_data = chunk;
         }
-
 
         this.properties = level_properties
 
@@ -148,9 +145,20 @@ class Level {
             for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                 for (let y = 0; y < this.properties.height_blocks; y++) {
                     const block = this.data[i].block_data[rel_x][y];
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
                     if (block.run_gametick_logic) {
                         block.run_gametick_logic(tick);
+                    }
+
+                    if (
+                        block.light <= this.game.entity_handler.mob_handler.minHostileMobLightLevel &&
+                        !this.calc.isSolidBlock(abs_x, y) &&
+                        this.calc.isSolidBlock(abs_x, y - 1)
+                    ) {
+                        if (this.calc.randomBool_precise(this.game.entity_handler.mob_handler.hostileMobSpawnChance)) {
+                            this.game.entity_handler.spawnRandomHostileMob(abs_x, y);
+                        }
                     }
                 }
             }

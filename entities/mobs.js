@@ -23,6 +23,33 @@ class Mob extends Entity_creature {
         this.mobType = mobType; //Passive or hostile
 
         this.goal = {x: null, y: null};
+
+        this.nextSetGoal = null; // Next time a goal is set (in ticks)
+    }
+
+    run_gametick_logic(tick) {
+        super.run_gametick_logic(tick);
+
+        if (this.nextSetGoal == null) {
+            this.nextSetGoal = tick + Math.round(Math.random() * 120);
+        }
+
+        //Walk to goal
+        let keys = []; 
+
+        if (this.x < this.goal.x - 1) {
+            keys.push('ArrowRight');
+            if (this.game.calculator.isSolidBlock(Math.floor(this.x + this.width_blocks + 1), Math.floor(this.y))) {
+                keys.push('ArrowUp');
+            }
+        } else if (this.x > this.goal.x + 1) {
+            keys.push('ArrowLeft');
+            if (this.game.calculator.isSolidBlock(Math.floor(this.x - 1), Math.floor(this.y))) {
+                keys.push('ArrowUp');
+            }
+        }
+        
+        this.key_input = keys;
     }
 
     hit() {
@@ -51,7 +78,108 @@ class Mob extends Entity_creature {
         }
     }
 
+}
 
+class Mob_hostile extends Mob {
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, texture_location) {
+        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, mobID, 'hostile', texture_location);
+        
+        this.view_distance = 8; //Distance from which a mob can see the player - in both directions
+        this.reach = 1; // Distance from which a mob can hit the player
+
+        this.damage = 2;
+
+        this.maxHitCooldown = 15;
+        this.hitCooldown = 0;
+    }
+
+    getPlayerDistance() { //Manhattan distance 
+        const playerX = this.game.player.x;
+        const playerY = this.game.player.y;
+
+        const distance = Math.abs(playerX - this.x) + Math.abs(playerY - this.y);
+
+        return distance;
+    }
+
+    setNewGoal() {
+        if (this.getPlayerDistance() <= this.view_distance) {
+            this.goal = {
+                x: this.game.player.x,
+                y: this.game.player.y
+            };
+
+        } else {
+            const goalX_offsetABS = Math.random() * 10 + 5; //Absolute value
+            const goalX_offset = this.game.calculator.randomBool(50) ? goalX_offsetABS: goalX_offsetABS * - 1;
+    
+            this.goal = {
+                x: this.x + goalX_offset,
+                y: null
+            };
+        }
+        
+    }
+
+    canHitPlayer() {
+        if (this.hitCooldown === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    attempt_hitPlayer() {
+        if (!this.canHitPlayer()) return;
+
+        this.hitCooldown = this.maxHitCooldown;
+        this.hitPlayer();
+    }
+
+    hitPlayer() {
+        const playerX_mid = this.game.player.x + this.game.player.width_blocks / 2;
+        
+        this.game.player.v_vel = 2;
+        if (this.x <= playerX_mid) { //if mob hits player from left
+            this.game.player.h_vel = 4;
+        } else {
+            this.game.player.h_vel = -4;
+        }
+        
+        this.game.player.applyDamage(this.damage);
+    }
+
+
+    run_gametick_logic(tick) {
+        super.run_gametick_logic(tick);
+        
+        if (this.hitCooldown > 0) {
+            this.hitCooldown--;
+        }
+
+        if (tick === this.nextSetGoal) {
+            this.setNewGoal();
+
+            if (this.getPlayerDistance() <= this.view_distance) {
+                this.nextSetGoal = tick + 5 + Math.round(Math.random() * 40);
+            } else {
+                this.nextSetGoal = tick + 40 + Math.round(Math.random() * 160);
+            }
+        }
+
+        if (this.getPlayerDistance() <= this.reach) {
+            this.attempt_hitPlayer();
+        }
+    }
+
+}
+
+class Mob_Zombie extends Mob_hostile {
+    constructor(game, entityID, x, y) {
+        super(game, entityID, x, y, 14/16, 30/16, 10, 10, 32, '');
+        
+        this.mob_name = 'zombie';
+    }
 }
 
 class Mob_passive extends Mob {
@@ -71,26 +199,13 @@ class Mob_passive extends Mob {
     }
 
     run_gametick_logic(tick) {
-        if (tick % 200 === 0) {
+        super.run_gametick_logic(tick);
+
+        if (tick === this.nextSetGoal) {
             this.setNewGoal();
-        }
 
-        //Walk to goal
-        let keys = []; 
-
-        if (this.x < this.goal.x - 1) {
-            keys.push('ArrowRight');
-            if (this.game.calculator.isSolidBlock(Math.floor(this.x + this.width_blocks + 1), Math.floor(this.y))) {
-                keys.push('ArrowUp');
-            }
-        } else if (this.x > this.goal.x + 1) {
-            keys.push('ArrowLeft');
-            if (this.game.calculator.isSolidBlock(Math.floor(this.x - 1), Math.floor(this.y))) {
-                keys.push('ArrowUp');
-            }
+            this.nextSetGoal = tick + 40 + Math.round(Math.random() * 160);
         }
-        
-        this.key_input = keys;
     }
 }
 
@@ -105,7 +220,9 @@ class Mob_Pig extends Mob_passive {
 class Mob_Directory {
     constructor() {
         this.mob = { //All mob classes via IDs
-            '0': Mob_Pig
+            '0': Mob_Pig,
+
+            '32': Mob_Zombie
         }
     }
 
@@ -127,6 +244,9 @@ class Mob_Directory {
 class MobHandler {
     constructor(entity_handler) {
         this.entity_handler = entity_handler;
+
+        this.minHostileMobLightLevel = 5;
+        this.hostileMobSpawnChance = 0.008; // percent chance per tick
 
         this.mob_directory = new Mob_Directory();
 
@@ -151,6 +271,10 @@ class MobHandler {
 
     spawnRandomPassiveMob(x, y) {
         this.entity_handler.newMob(0, x, y);
+    }
+
+    spawnRandomHostileMob(x, y) {
+        this.entity_handler.newMob(32, x, y);
     }
 }
 

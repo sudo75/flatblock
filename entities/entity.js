@@ -353,9 +353,21 @@ class Entity_creature extends Entity {
 
         this.health = health;
         this.maxHealth = maxHealth;
+
+        this.effects = {
+            invincible: 0
+        };
+    }
+
+    run_gametick_logic(tick) {
+        for (let effect in this.effects) {
+            this.effects[effect]--;
+        }
     }
 
     applyDamage(damage) {
+        if (this.effects.invincible > 0) return;
+
         this.health -= damage;
 
         if (this.health <= 0) {

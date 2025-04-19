@@ -15,6 +15,8 @@ class EntityHandler {
             height: 0.5
         };
 
+        this.chunkMobLimit = 5;
+
         this.mob_handler = new MobHandler(this);
     }
 
@@ -98,6 +100,29 @@ class EntityHandler {
 
     spawnRandomPassiveMob(x, y) {
         this.mob_handler.spawnRandomPassiveMob(x, y);
+    }
+
+    spawnRandomHostileMob(x, y) {
+        const chunkID = this.calc.getChunkID(x);
+        if (!this.isWithinChunkMobLimit(chunkID)) return;
+
+        this.mob_handler.spawnRandomHostileMob(x, y);
+    }
+
+    isWithinChunkMobLimit(chunckID) {
+        let mobCount = 0;
+
+        this.game.level.data[chunckID].entity_data.forEach(entity => {
+            if (entity.entityType === 'mob') {
+                mobCount++;
+            }    
+        });
+
+        if (mobCount >= this.chunkMobLimit) {
+            return false;
+        }
+
+        return true;
     }
 
     update(deltaTime) {
