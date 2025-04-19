@@ -25,6 +25,8 @@ class Mob extends Entity_creature {
         this.goal = {x: null, y: null};
 
         this.nextSetGoal = null; // Next time a goal is set (in ticks)
+
+        this.key_input = [];
     }
 
     run_gametick_logic(tick) {

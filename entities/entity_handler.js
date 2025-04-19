@@ -127,9 +127,12 @@ class EntityHandler {
 
     update(deltaTime) {
         const loaded_chunks = this.calc.getLoadedChunks();
+        const simulated_chunks = this.calc.getSimulatedChunkBounds(this.game.level.simulation_distance);
 
         for (let i = 0; i < loaded_chunks.length; i++) {
             const currentChunkID = loaded_chunks[i];
+
+            if (currentChunkID < simulated_chunks.min || currentChunkID > simulated_chunks.max) break;
 
             for (let j = 0; j < this.game.level.data[currentChunkID].entity_data.length; j++) {
                 const entity = this.game.level.data[currentChunkID].entity_data[j];
@@ -170,8 +173,8 @@ class EntityHandler {
 
     run_gametick_logic(tick) {
 
-        const chunk_min = this.calc.getWorldBounds()[0];
-        const chunk_max = this.calc.getWorldBounds()[1];        
+        const chunk_min = this.calc.getSimulatedChunkBounds(this.game.level.simulation_distance).min;
+        const chunk_max = this.calc.getSimulatedChunkBounds(this.game.level.simulation_distance).max;
         for (let i = chunk_min; i <= chunk_max; i++) {
             for (let j = 0; j < this.game.level.data[i].entity_data.length; j++) {                
                 const entity = this.game.level.data[i].entity_data[j];         
