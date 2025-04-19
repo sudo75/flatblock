@@ -906,10 +906,26 @@ class Menu_Healthbar extends Menu {
         this.canvas_menu.style.pointerEvents = 'none'; //Override pointer events code in super
 
         const health = this.player.health;
-        const hearts = health / 2;
+        const maxHearts = this.player.maxHealth / 2;
+        
+        const hearts_full = Math.floor(health / 2);
+        const hearts_half = health % 2;
+        const hearts_empty = maxHearts - hearts_full - hearts_half;
 
-        const drawHeart = (x, y) => {
-            const heartImage_location = './assets/ui/heart.png';
+        const drawHeart = (x, y, type) => {
+
+            const getHeartLocation = (type) => {
+                switch (type) {
+                    case 'full':
+                        return './assets/ui/heart_full.png';
+                    case 'half':
+                        return './assets/ui/heart_half.png';
+                    case 'empty':
+                        return './assets/ui/heart_empty.png';
+                }
+            };
+            
+            const heartImage_location = getHeartLocation(type);
 
             let heartImage;
             if (heartImage_location) {
@@ -930,18 +946,30 @@ class Menu_Healthbar extends Menu {
             }
         }
 
-        for (let i = 0; i < hearts; i++) {
+        let count_hearts_full = 0;
+        let count_hearts_half = 0;
+        let count_hearts_empty = 0;
+
+        for (let i = 0; i < maxHearts; i++) {
             const heartSpacing = 5;
             const startX = this.x - this.margin / 2;
             const startY = this.y -40;
 
-            this.ctx.clearRect(startX, startY, this.real_width, this.heartSize); // Clear previous rendering
-
-            for (let i = 0; i < hearts; i++) {
-                const heartX = startX + i * (this.heartSize + heartSpacing);
-
-                drawHeart(heartX, startY);
+            let type;
+            if (count_hearts_full < hearts_full) {
+                count_hearts_full++;
+                type = 'full';
+            } else if (count_hearts_half < hearts_half) {
+                count_hearts_half++;
+                type = 'half';
+            } else if (count_hearts_empty < hearts_empty) {
+                count_hearts_empty++;
+                type = 'empty';
             }
+
+
+            const heartX = startX + i * (this.heartSize + heartSpacing);
+            drawHeart(heartX, startY, type);
         }
     }
 }
