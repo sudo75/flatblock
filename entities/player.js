@@ -40,6 +40,8 @@ class Player extends Entity_creature {
         this.hitCooldown = 0; //in ticks
 
         this.mouseDownOnPreviousTick = false;
+
+        this.skinCache = [];
     }
 
     spawn() {
@@ -233,10 +235,27 @@ class Player extends Entity_creature {
         this.update_real_pos();
 
         const left = this.real_x; //dist from x axis (left)
-        const bottom = this.real_y; //dist from y axis (bottom)
+        const top = this.game.height - this.real_y - this.height; //dist from y axis (bottom)
 
-        this.ctx.fillStyle = 'lightgrey';
-        this.ctx.fillRect(left, this.game.height - bottom - this.height, this.width, this.height);
+
+        const player_image = './assets/player/player1.png';
+
+        if (player_image) {
+            let image;
+            if (!this.skinCache[player_image]) {
+                image = new Image();
+                image.src = player_image;
+    
+                this.skinCache[player_image] = image;
+            } else {
+                image = this.skinCache[player_image];
+            }
+            
+            this.ctx.drawImage(image, left, top, this.width, this.height);
+        } else {
+            this.ctx.fillStyle = 'lightgrey';
+            this.ctx.fillRect(left, top, this.width, this.height);
+        }
     }
 
     canHitMob() {
