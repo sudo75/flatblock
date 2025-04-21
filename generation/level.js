@@ -80,6 +80,7 @@ class Level {
                     const block = new blockClass(block_data.x, y);
 
                     for (const key in block_data) {
+                        block[key] = block_data[key];
                         if (key === 'inventory') {
                             const inventory_data = block_data[key].data;
 
