@@ -44,6 +44,8 @@ class Player extends Entity_creature {
         this.skinCache = [];
 
         this.consumption_cooldown = 0;
+
+        this.debug_inventory = false;
     }
 
     spawn() {
@@ -56,7 +58,10 @@ class Player extends Entity_creature {
         this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
 
         this.inventory.init();
-        //this.inventory_debug();
+
+        if (this.game.debugger.settings.debug_inventory) {
+            this.init_debug_inventory();
+        }
 
         this.effects.invincible = 20;
 
@@ -91,13 +96,14 @@ class Player extends Entity_creature {
         this.inventory.subtract(inventory_slot);
     }
 
-    inventory_debug() { // inventory test
+    init_debug_inventory() { // inventory test
         this.inventory.setSlot(5, 0, 16);
         this.inventory.setSlot(9, 1, 3);
         this.inventory.setSlot(10, 2, 2);
         this.inventory.setSlot(11, 3, 2);
         this.inventory.setSlot(129, 4, 1);
         this.inventory.setSlot(3, 5, 16);
+        this.inventory.setSlot(13, 7, 16);
         this.inventory.setSlot(12, 8, 16);
 
         this.inventory.setSlot(27, 9, 16);

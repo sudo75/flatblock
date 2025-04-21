@@ -19,7 +19,8 @@ class Debugger {
             physics: null,
             lighting: null,
             xray: null,
-            img_smoothing: null
+            img_smoothing: null,
+            debug_inventory: null
         };
 
         this.applySettings();
@@ -80,6 +81,11 @@ class Debugger {
         //Image smoothing (anti-aliasing)
         if (this.settings.img_smoothing !== null) {
             this.game.setImgSmoothing(this.settings.img_smoothing);
+        }
+
+        //Debug Inventory
+        if (this.settings.debug_inventory !== null) {
+            this.game.player.debug_inventory = this.settings.debug_inventory;
         }
     }
 
@@ -151,6 +157,13 @@ class Debugger {
                     this.settings.img_smoothing = arg2 === 'true';
                 } else {
                     alert('img_smoothing - Input a boolean.');
+                }
+                break;
+            case 'debug_inventory':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.debug_inventory = arg2 === 'true';
+                } else {
+                    alert('debug_inventory - Input a boolean.');
                 }
                 break;
         }
