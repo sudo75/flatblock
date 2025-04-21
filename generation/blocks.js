@@ -61,7 +61,8 @@ class Block_Liquid extends Block {
     constructor(name, x, y, texture_location) {
         super(name, x, y, texture_location);
         this.type = 'liquid';
-        this.viscosity = 0;
+        this.viscosity = 0.5;
+        this.sinkFactor = 0.3;
         this.transparency = 0.8;
         this.physics = true;
 

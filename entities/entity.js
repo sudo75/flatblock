@@ -30,6 +30,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         this.v_maxVel = 10;
         this.v_minVel = -20;
 
+        this.swimStrength = 0.25; // the factor v_maxVel will be multiplied by to get the swimming vertical value
+
 
         if (vel_data) {
             this.h_maxVel = vel_data.h_maxVel ? vel_data.h_maxVel: 3;
@@ -82,6 +84,24 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             return false;
         }
         return false;
+    }
+
+    inViscosity_highest() {
+        if (this.y >= 0) {
+            const va = this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y)) ? this.calc.getBlockData(Math.floor(this.x), Math.floor(this.y)).viscosity: null;
+            const vb = this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)) ? this.calc.getBlockData(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)).viscosity: null;
+            
+            return Math.max(va, vb);
+        }
+    }
+
+    inSinkFactor_lowest() {
+        if (this.y >= 0) {
+            const va = this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y)) ? this.calc.getBlockData(Math.floor(this.x), Math.floor(this.y)).sinkFactor: null;
+            const vb = this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)) ? this.calc.getBlockData(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)).sinkFactor: null;
+            
+            return Math.min(va, vb);
+        }
     }
 
     isSolidBlockAdjacent(direction) {
@@ -197,12 +217,14 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
 
         //Standard Mode
+        const viscosity = this.inViscosity_highest();
+        const sinkFactor = this.inSinkFactor_lowest();
 
         //Physics
         if (!this.isOnSolidBlock()) {
             this.v_vel += this.gravity_acceleration * deltaTime;
         }
-
+        
         //Set velocities
         if (input.includes('ArrowLeft') && !this.isSolidBlockAdjacent('left')) {
             if (this.isOnSolidBlock()) {
@@ -226,6 +248,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         if (input.includes('ArrowUp')) {
             if (this.isOnSolidBlock() && !this.isSolidBlockAbove()) {
                 this.jump();
+            } else if (viscosity) {
+                this.v_vel = this.v_maxVel * this.swimStrength;
             }
         }
         if (input.includes('ArrowDown')) {
@@ -250,20 +274,29 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             }
         }
         
+        this.h_vel *= (1 - viscosity);
 
         //Ensure velocity limits
-        if (this.h_vel > this.h_maxVel) {
-            this.h_vel = this.h_maxVel;
+        if (this.h_vel > this.h_maxVel * (1 - viscosity)) {
+            this.h_vel = this.h_maxVel * (1 - viscosity);
         }
-        if (this.v_vel > this.v_maxVel) {
-            this.v_vel = this.v_maxVel;
+        if (this.v_vel > this.v_maxVel * (1 - viscosity)) {
+            this.v_vel = this.v_maxVel * (1 - viscosity);
         }
-        if (this.h_vel < this.h_minVel) {
-            this.h_vel = this.h_minVel;
+        if (this.h_vel < this.h_minVel * (1 - viscosity)) {
+            this.h_vel = this.h_minVel * (1 - viscosity);
         }
-        if (this.v_vel < this.v_minVel) {
-            this.v_vel = this.v_minVel;
-        }        
+        if (this.v_vel < this.v_minVel * (1 - viscosity)) {
+            this.v_vel = this.v_minVel * (1 - viscosity);
+        }
+
+        //Ensure sink value
+        if (sinkFactor) {
+            if (this.v_vel < this.v_minVel * (1 - viscosity) * sinkFactor) {
+                this.v_vel = this.v_minVel * (1 - viscosity) * sinkFactor;
+            }
+        }
+        
 
         //Calculate possible position
         const possibleX = this.x + this.h_vel * deltaTime;
