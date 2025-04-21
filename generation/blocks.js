@@ -24,6 +24,11 @@ class Meta {
 
         this.status = 0;
     }
+
+    setStatus(status_value) {
+        this.status = status_value;
+        this.spriteSheetX = 16 * status_value;
+    }
 }
 
 class Block extends Meta {
@@ -48,6 +53,8 @@ class Block_Solid extends Block {
     }
 }
 
+// Fluids --------------------------------------->
+
 class Block_Liquid extends Block {
     constructor(name, x, y, texture_location) {
         super(name, x, y, texture_location);
@@ -55,8 +62,21 @@ class Block_Liquid extends Block {
         this.viscosity = 0;
         this.transparency = 0.8;
         this.physics = true;
+
+        this.liquid_spread = 8;
+        this.source = true;
     }
 }
+
+class Block_water extends Block_Liquid {
+    constructor(x, y) {
+        super('water', x, y, './assets/textures/water.png');
+        this.id = 13;
+
+    }
+}
+
+
 
 class Block_Air extends Block {
     constructor(x, y) {
@@ -68,6 +88,8 @@ class Block_Air extends Block {
         this.id = 0;
     }
 }
+
+// ITEMS ------------------------------------------>
 
 class Item extends Meta {
     constructor(name, texture_location) {
@@ -83,7 +105,6 @@ class Tool extends Item {
     }
 }
 
-// ITEMS ------------------------------------------>
 
 class Item_stick extends Item {
     constructor() {
@@ -805,6 +826,7 @@ class Item_Directory {
             '10': Block_craftingTable,
             '11': Block_furnace,
             '12': Block_torch,
+            '13': Block_water,
 
             '24': Block_coalOre,
             '25': Item_coal,

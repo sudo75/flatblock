@@ -277,6 +277,18 @@ class Generator {
         this.game.player.inventory.subtract(selectedSlot);
     }
 
+    placeBlockOnly(blockID, x, y) {
+        let block = this.item_directory.item[blockID];
+
+        if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
+
+        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
+    }
+
+    editProperty(x, y, property, data) {
+        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y][property] = data;
+    }
+
     breakBlock(x, y) {
         const itemID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
 

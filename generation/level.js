@@ -177,6 +177,8 @@ class Level {
         }
 
         if (tick % 1 === 0) {
+            this.calculateLiquids(block_simulated_chunk_min, block_simulated_chunk_max);
+
             this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
 
         }
@@ -234,6 +236,99 @@ class Level {
 
                     block.neighbour_data = null;
                 }
+            }
+        }
+    }
+
+    calculateLiquids(simulated_chunk_min, simulated_chunk_max) {
+        const liquidID = 13;
+
+        const directions = [
+            { dx: 0, dy: -1 },
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 },
+        ];
+
+        //Initialise queue for water
+        let queue = [];
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                for (let y = this.properties.height_blocks - 1; y >= 0; y--) {
+
+                    const block = this.data[i].block_data[rel_x][y];
+
+
+                    if (block.id === liquidID) {
+                        queue.push({ x: abs_x, y: y, status: block.status });
+                    }
+                }
+            }
+        }
+
+
+        while (queue.length > 0) {
+
+            const { x, y, status } = queue.shift(); // Remove first element from queue
+            
+
+            for (const direction of directions) {
+                const new_x = x + direction.dx;
+                const new_y = y + direction.dy;
+
+                const liquid_spread = this.item_directory.getProperty(liquidID, 'liquid_spread');
+    
+                if (!this.calc.isWithinWorldBounds(new_x, new_y)) continue;
+
+                //if (this.calc.getBlockData(new_x, new_y).id === liquidID) continue; // Don't spread water to other liquid blocks
+                if (this.calc.getBlockData(new_x, new_y).id !== 0 && this.calc.getBlockData(new_x, new_y).id !== liquidID) continue; // Don't spread water to blocks not air and not the liquid
+    
+                const chunkID = this.calc.getChunkID(new_x);
+                const rel_x = this.calc.getRelativeX(new_x);
+
+                if (this.calc.getBlockData(new_x, new_y).id !== liquidID) { // If air, turn to water
+                    this.generator.placeBlockOnly(13, new_x, new_y);
+                    this.data[chunkID].block_data[rel_x][new_y].setStatus(liquid_spread);
+                    this.data[chunkID].block_data[rel_x][new_y].source = false;
+                }
+
+                const block = this.data[chunkID].block_data[rel_x][new_y];
+    
+                console.log(block.status)
+    
+                if (direction.dy !== 0) {
+                    block.setStatus(0);
+                    continue;
+                }
+
+                if (status >= liquid_spread) {
+                    this.generator.placeBlockOnly(0, new_x, new_y); // Place air
+                    continue;
+                }
+                
+                if (direction.dx !== 0) {
+                    if (block.status <= status + 1) {
+                        continue;
+                    };
+
+                    if (!block.source && block.status === 0 && !this.calc.isSolidBlock(new_x, new_y - 1)) continue;
+
+                    if (
+                        !this.calc.isSolidBlock(new_x, new_y - 1) &&
+                        !this.calc.isSolidBlock(x, y - 1)
+                        
+                    ) {
+                        this.generator.placeBlockOnly(0, new_x, new_y); // Place air
+                        continue;
+                    }
+
+                    block.setStatus(status + 1);
+                }
+    
+                //if (!block.status) continue;
+
+                //queue.push({ x: new_x, y: new_y, status: block.status });
             }
         }
     }
