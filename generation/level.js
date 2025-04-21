@@ -281,7 +281,6 @@ class Level {
     
                 if (!this.calc.isWithinWorldBounds(new_x, new_y)) continue;
 
-                //if (this.calc.getBlockData(new_x, new_y).id === liquidID) continue; // Don't spread water to other liquid blocks
                 if (this.calc.getBlockData(new_x, new_y).id !== 0 && this.calc.getBlockData(new_x, new_y).id !== liquidID) continue; // Don't spread water to blocks not air and not the liquid
     
                 const chunkID = this.calc.getChunkID(new_x);
@@ -294,9 +293,7 @@ class Level {
                 }
 
                 const block = this.data[chunkID].block_data[rel_x][new_y];
-    
-                console.log(block.status)
-    
+        
                 if (direction.dy !== 0) {
                     block.setStatus(0);
                     continue;
@@ -326,9 +323,6 @@ class Level {
                     block.setStatus(status + 1);
                 }
     
-                //if (!block.status) continue;
-
-                //queue.push({ x: new_x, y: new_y, status: block.status });
             }
         }
     }
