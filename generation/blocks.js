@@ -23,6 +23,8 @@ class Meta {
         this.light = 0; // 0 - 15;
 
         this.status = 0;
+
+        this.placedAt = 0; //Tick when placed
     }
 
     setStatus(status_value) {
@@ -72,6 +74,8 @@ class Block_water extends Block_Liquid {
     constructor(x, y) {
         super('water', x, y, './assets/textures/water.png');
         this.id = 13;
+
+        this.spread_speed = 10;
 
     }
 }

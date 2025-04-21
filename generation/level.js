@@ -176,11 +176,12 @@ class Level {
             this.sun_strength = Math.floor(15 * (lighting_decimal));
         }
 
+        if (tick % this.item_directory.getProperty(13, 'spread_speed') === 0) {
+            this.calculateLiquids(tick, block_simulated_chunk_min, block_simulated_chunk_max);
+        }
+
         if (tick % 1 === 0) {
-            this.calculateLiquids(block_simulated_chunk_min, block_simulated_chunk_max);
-
             this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
-
         }
 
 
@@ -240,14 +241,38 @@ class Level {
         }
     }
 
-    calculateLiquids(simulated_chunk_min, simulated_chunk_max) {
+    calculateLiquids(tick, simulated_chunk_min, simulated_chunk_max) {
         const liquidID = 13;
+        const liquid_spread = this.item_directory.getProperty(liquidID, 'liquid_spread');
 
         const directions = [
             { dx: 0, dy: -1 },
             { dx: -1, dy: 0 },
             { dx: 1, dy: 0 },
         ];
+
+        // Clear water
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                for (let y = this.properties.height_blocks - 1; y >= 0; y--) {
+
+                    const block = this.data[i].block_data[rel_x][y];
+
+                    if (block.id === liquidID && !block.source) {
+                        const status_current = block.status;
+
+                        if (status_current === liquid_spread - 1) {
+                            this.generator.placeBlockOnly(0, abs_x, y);
+                        } else {
+                            block.setStatus(block.status + 1);
+                        }
+                        
+                    }
+                }
+            }
+        }
 
         //Initialise queue for water
         let queue = [];
@@ -259,25 +284,20 @@ class Level {
 
                     const block = this.data[i].block_data[rel_x][y];
 
-
-                    if (block.id === liquidID) {
-                        queue.push({ x: abs_x, y: y, status: block.status });
+                    if (block.id === liquidID && block.source) {
+                        queue.push({ x: abs_x, y: y, status: block.status, max_spread: Math.floor((tick - block.placedAt) / block.spread_speed) }); // max_spread is based on source age
                     }
                 }
             }
         }
 
-
         while (queue.length > 0) {
 
-            const { x, y, status } = queue.shift(); // Remove first element from queue
-            
+            const { x, y, status, max_spread } = queue.shift(); // Remove first element from queue
 
             for (const direction of directions) {
                 const new_x = x + direction.dx;
                 const new_y = y + direction.dy;
-
-                const liquid_spread = this.item_directory.getProperty(liquidID, 'liquid_spread');
     
                 if (!this.calc.isWithinWorldBounds(new_x, new_y)) continue;
 
@@ -286,28 +306,32 @@ class Level {
                 const chunkID = this.calc.getChunkID(new_x);
                 const rel_x = this.calc.getRelativeX(new_x);
 
+                if (max_spread <= 0) {
+                    continue;
+                }
+
                 if (this.calc.getBlockData(new_x, new_y).id !== liquidID) { // If air, turn to water
-                    this.generator.placeBlockOnly(13, new_x, new_y);
+                    this.generator.placeBlockOnly(liquidID, new_x, new_y);
                     this.data[chunkID].block_data[rel_x][new_y].setStatus(liquid_spread);
                     this.data[chunkID].block_data[rel_x][new_y].source = false;
                 }
 
                 const block = this.data[chunkID].block_data[rel_x][new_y];
-        
+
                 if (direction.dy !== 0) {
                     block.setStatus(0);
-                    continue;
-                }
-
-                if (status >= liquid_spread) {
-                    this.generator.placeBlockOnly(0, new_x, new_y); // Place air
-                    continue;
                 }
                 
+                
                 if (direction.dx !== 0) {
-                    if (block.status <= status + 1) {
+                    if (block.status < status + 1) { // Don't overwrite with values less than current liquid level
                         continue;
                     };
+
+                    if (status >= liquid_spread - 1) {
+                        this.generator.placeBlockOnly(0, new_x, new_y); // Place air
+                        continue;
+                    }
 
                     if (!block.source && block.status === 0 && !this.calc.isSolidBlock(new_x, new_y - 1)) continue;
 
@@ -321,8 +345,15 @@ class Level {
                     }
 
                     block.setStatus(status + 1);
+
+
+                    console.log(block.status)
+
                 }
     
+                
+                queue.push({ x: new_x, y: new_y, status: block.status, max_spread: Math.floor((tick - block.placedAt) / block.spread_speed) });
+
             }
         }
     }

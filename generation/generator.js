@@ -267,11 +267,7 @@ class Generator {
     }
 
     placeBlock(blockID, x, y) {
-        let block = this.item_directory.item[blockID];
-
-        if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
-
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
+        this.placeBlockOnly(blockID, x, y);
 
         const selectedSlot = this.game.player.inventory.selectedSlot;
         this.game.player.inventory.subtract(selectedSlot);
@@ -283,6 +279,10 @@ class Generator {
         if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
 
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
+
+        if (block && this.game.tick) {
+            this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].placedAt = this.game.tick;
+        }
     }
 
     editProperty(x, y, property, data) {
