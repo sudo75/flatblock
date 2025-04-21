@@ -55,9 +55,7 @@ class Level {
         }
 
         //Once render light
-        //this.calculateLighting(this.calc.getWorldBounds()[0], this.calc.getWorldBounds()[1]);
-        
-        console.log(this.data);
+        this.calculateLighting(this.calc.getWorldBounds()[0], this.calc.getWorldBounds()[1]);
     }
 
     copy(level_data, entity_data, seed, level_properties) { //use saved data
@@ -345,10 +343,6 @@ class Level {
                     }
 
                     block.setStatus(status + 1);
-
-
-                    console.log(block.status)
-
                 }
     
                 
