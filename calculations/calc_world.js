@@ -290,6 +290,8 @@ class Calc_World {
                 const new_y = y + direction.dy;
                 const new_dist = dist + 1;
 
+                if (!this.isWithinWorldBounds(new_x, new_y)) continue;
+
                 if (new_dist > maxDist) {
                     return null;
                 }
