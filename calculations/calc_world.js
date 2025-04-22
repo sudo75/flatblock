@@ -268,6 +268,41 @@ class Calc_World {
         return false;
     }
 
+    distanceFromFluid(x, y, maxDist) {
+
+        if (!this.isSolidBlock(x, y)) return 0;
+
+        const queue = [{x: x, y: y, dist: 0}];
+
+        const directions = [
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 },
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 },
+        ];
+
+        while (queue.length > 0) {
+
+            const { x, y, dist } = queue.shift(); // Remove first element from queue
+
+            for (const direction of directions) {
+                const new_x = x + direction.dx;
+                const new_y = y + direction.dy;
+                const new_dist = dist + 1;
+
+                if (new_dist > maxDist) {
+                    return null;
+                }
+
+                if (!this.isSolidBlock(new_x, new_y)) {
+                    return new_dist;
+                }
+    
+                queue.push({x: new_x, y: new_y, dist: new_dist});
+            }
+        }
+    }
+
     getBlockDistance(x1, y1, x2, y2) {
         const dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5;
 
