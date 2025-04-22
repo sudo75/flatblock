@@ -199,9 +199,9 @@ class Generator {
 
             //Attempt to generate trees at 15% probability
             const seed1 = this.seed;
-            const seed2 = absoluteX * 12.8 + 131.5;
+            const seed2 = this.seed / absoluteX * 12.8 + 131.5;
 
-            if (this.calc.randomBoolByTwoSeeds(seed1, seed2, 10)) {
+            if (this.calc.randomBoolByTwoSeeds(seed1, seed2, 5)) {
                 this.game.entity_handler.spawnRandomPassiveMob(absoluteX, this.getContour(absoluteX) + 1);
             }
         }
