@@ -490,17 +490,23 @@ class Level {
     }
 
     computeBlockPlacing() {
-        if (this.game.player.selectedBlock.x == null || this.game.player.selectedBlock.y == null) return;
+        const selectedX = this.game.player.selectedBlock.x;
+        const selectedY = this.game.player.selectedBlock.y;
 
-        if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)) {
+        if (selectedX == null || selectedY == null) return;
+
+        const selectedSlot = this.game.player.inventory.selectedSlot;
+        const slotItemID = this.game.player.inventory.data[selectedSlot].id;
+
+        if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(selectedX, selectedY)) {
             if (
-                this.calc.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y).type !== 'solid' &&
-                this.game.player.getBlockDistance(this.game.player.selectedBlock.x + 0.5, this.game.player.selectedBlock.y + 0.5) <= this.game.player.cursorDistLim &&
-                this.calc.solidBlockAdjacent(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y) &&
-                this.blockCanBePlaced(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y)
+                this.calc.getBlockData(selectedX, selectedY).type !== 'solid' &&
+                this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim &&
+                this.calc.solidBlockAdjacent(selectedX, selectedY) &&
+                this.blockCanBePlaced(selectedX, selectedY) &&
+                this.item_directory.getProperty(slotItemID, 'isBlock')
             ) {
-                const selectedSlot = this.game.player.inventory.selectedSlot;
-                this.generator.placeBlock(this.game.player.inventory.data[selectedSlot].id, this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
+                this.generator.placeBlock(slotItemID, selectedX, selectedY);
             }
         }
     }
