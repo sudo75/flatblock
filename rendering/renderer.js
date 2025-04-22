@@ -36,7 +36,23 @@ class World_Renderer {
         const block_lighting = block_data.light; // 0 - 15
 
         if (!this.game.debugger.settings.xray) {
-            const lighting_decimal = 0.6 - block_lighting / 25;
+            let lighting_decimal = 0.6 - block_lighting / 25;
+
+            const fullLightLimit = 2; //Dist from fluid in which no additional dark mask is added
+            const gradientSpan = 4; //From darkness to almost no darkness added
+            const distFromFluid_ = this.calc.distanceFromFluid(block_data.x, block_data.y, gradientSpan);
+            const distFromFluid = distFromFluid_ !== null ? distFromFluid_: gradientSpan;
+
+            let additionalDarknessValue = 0;
+
+            if (distFromFluid > fullLightLimit) {
+                const gradientDist = Math.min(distFromFluid, gradientSpan + fullLightLimit) - (fullLightLimit);
+
+                additionalDarknessValue = gradientDist / gradientSpan;
+            }
+            
+            lighting_decimal += additionalDarknessValue;
+
     
             this.ctx.fillStyle = `rgba(0, 0, 0, ${lighting_decimal})`;
             this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
