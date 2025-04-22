@@ -550,6 +550,10 @@ class Level {
                     }
                 }
 
+                if (this.game.debugger.settings.fast_break) {
+                    strength = 500;
+                }
+
                 if (blockType === 'solid' && hardness) {
                     this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status += strength;
                 }

@@ -20,7 +20,8 @@ class Debugger {
             lighting: null,
             xray: null,
             img_smoothing: null,
-            debug_inventory: null
+            debug_inventory: null,
+            fast_break: null
         };
 
         this.applySettings();
@@ -87,6 +88,8 @@ class Debugger {
         if (this.settings.debug_inventory !== null) {
             this.game.player.debug_inventory = this.settings.debug_inventory;
         }
+
+        //Fast break - no exterior settings to edit
     }
 
     commandInput() {
@@ -164,6 +167,13 @@ class Debugger {
                     this.settings.debug_inventory = arg2 === 'true';
                 } else {
                     alert('debug_inventory - Input a boolean.');
+                }
+                break;
+            case 'fast_break':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.fast_break = arg2 === 'true';
+                } else {
+                    alert('fast_break - Input a boolean.');
                 }
                 break;
         }
