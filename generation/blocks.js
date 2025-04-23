@@ -25,6 +25,17 @@ class Meta {
         this.status = 0;
 
         this.placedAt = 0; //Tick when placed
+
+        this.onNextTick = null;
+
+        this.placeRequirements = {
+            adjacent: [],
+
+            left: [],
+            right: [],
+            top: [],
+            bottom: []
+        };
     }
 
     setStatus(status_value) {
@@ -151,6 +162,83 @@ class Item_porkCooked extends Item_food {
         this.consumption_cooldown = 30;
     }
 }
+
+
+// Farming ----------------------------->
+
+class Block_farmlandDry extends Block_Solid {
+    constructor(x, y) {
+        super('farmland_dry', x, y, 40, './assets/textures/farmland_dry.png');
+        this.id = 14;
+        this.itemDrop_id = 14;
+    }
+}
+
+class Block_farmlandWet extends Block_Solid {
+    constructor(x, y) {
+        super('farmland_wet', x, y, 40, './assets/textures/farmland_wet.png');
+        this.id = 15;
+        this.itemDrop_id = 15;
+    }
+}
+
+class Block_wheat extends Block_Solid {
+    constructor(x, y) {
+        super('wheat', x, y, 40, './assets/textures/wheat.png');
+        this.id = 16;
+        this.itemDrop_id = 40;
+
+        this.growthChance = 1; //Percent chance of growth in a given tick
+        this.maxGrowthState = 7;
+
+        this.placeRequirements = {
+            adjacent: [],
+
+            left: [],
+            right: [],
+            top: [],
+            bottom: [14, 15]
+        };
+    }
+
+    setStatus(status_value) {
+        super.setStatus(status_value);
+
+        if (status_value === 7) { // Full growth
+            this.itemDrop_id = 41;
+        }
+    }
+
+    run_gametick_logic(tick) {
+        const rand = Math.random() * 100;
+
+        if (rand <= this.growthChance) {
+            const growthState = this.status === this.maxGrowthState ? this.status: this.status + 1;
+            this.setStatus(growthState);
+        }
+
+        
+    }
+}
+
+class Item_wheatSeeds extends Item {
+    constructor() {
+        super('wheat_seeds', './assets/items/wheat_seeds.png');
+        this.id = 40;
+        this.placeBlock_id = 16;
+
+    }
+}
+
+class Item_wheatBundle extends Item {
+    constructor() {
+        super('wheat_bundle', './assets/items/wheat_bundle.png');
+        this.id = 41;
+
+        this.fuel_value = 50;
+    }
+}
+
 
 // Pickaxes ---------------------------->
 
@@ -832,6 +920,9 @@ class Item_Directory {
             '11': Block_furnace,
             '12': Block_torch,
             '13': Block_water,
+            '14': Block_farmlandDry,
+            '15': Block_farmlandWet,
+            '16': Block_wheat,
 
             '24': Block_coalOre,
             '25': Item_coal,
@@ -843,6 +934,9 @@ class Item_Directory {
             '31': Item_ironIngot,
             '32': Block_diamondOre,
             '33': Item_diamond,
+
+            '40': Item_wheatSeeds,
+            '41': Item_wheatBundle,
 
             '64': Item_pork,
             '65': Item_porkCooked,

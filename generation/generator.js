@@ -274,6 +274,10 @@ class Generator {
     }
 
     placeBlockOnly(blockID, x, y) {
+        const placeBlock_ID = this.item_directory.getProperty(blockID, 'placeBlock_id');
+
+        blockID = placeBlock_ID ? placeBlock_ID: blockID;
+
         let block = this.item_directory.item[blockID];
 
         if (!this.item_directory.getProperty(blockID, 'isBlock')) return;

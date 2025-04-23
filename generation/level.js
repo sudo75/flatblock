@@ -468,7 +468,7 @@ class Level {
 
     }
 
-    blockCanBePlaced(x, y) {
+    blockCanBePlaced(x, y, blockID) {
         const playerX_min = Math.floor(this.game.player.x);
         const playerX_max = this.calc.hardRoundDown(this.game.player.x + this.game.player.width_blocks);
         const playerY_min = Math.floor(this.game.player.y);
@@ -484,6 +484,48 @@ class Level {
 
         if (this.game.entity_handler.isMobAt(x, y)) {
             return false;
+        }
+
+        //Check block data for placment requirements
+
+        const block_left = this.calc.getBlockData(x - 1, y);
+        const block_right = this.calc.getBlockData(x + 1, y);
+        const block_up = this.calc.getBlockData(x, y + 1);
+        const block_down = this.calc.getBlockData(x, y - 1);
+        
+        const placeRequirements = this.item_directory.getProperty(blockID, 'placeRequirements');
+        
+        for (let direction in placeRequirements) {
+            if (placeRequirements[direction].length === 0) continue;
+            
+            const requirements = placeRequirements[direction];
+
+            switch (direction) {
+                case 'adjacent': {
+                    const neighborIDs = [block_left.id, block_right.id, block_up.id, block_down.id];
+                    let matches = neighborIDs.some(id => requirements.includes(id));
+                    if (!matches) return false;
+                    break;
+                }
+
+                case 'left': {
+                    if (!requirements.includes(block_left.id)) return false;
+                    break;
+                }
+                case 'right': {
+                    if (!requirements.includes(block_right.id)) return false;
+                    break;
+                }
+                case 'top': {
+                    if (!requirements.includes(block_up.id)) return false;
+                    break;
+                }
+                case 'bottom': {
+                    if (!requirements.includes(block_down.id)) return false;
+                    break;
+                }
+
+            }
         }
 
         return true;
@@ -503,8 +545,8 @@ class Level {
                 this.calc.getBlockData(selectedX, selectedY).type !== 'solid' &&
                 this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim &&
                 this.calc.solidBlockAdjacent(selectedX, selectedY) &&
-                this.blockCanBePlaced(selectedX, selectedY) &&
-                this.item_directory.getProperty(slotItemID, 'isBlock')
+                this.blockCanBePlaced(selectedX, selectedY, slotItemID) &&
+                (this.item_directory.getProperty(slotItemID, 'isBlock') || this.item_directory.getProperty(slotItemID, 'placeBlock_id'))
             ) {
                 this.generator.placeBlock(slotItemID, selectedX, selectedY);
             }

@@ -98,10 +98,10 @@ class Player extends Entity_creature {
 
     init_debug_inventory() { // inventory test
         this.inventory.setSlot(5, 0, 16);
-        this.inventory.setSlot(9, 1, 3);
-        this.inventory.setSlot(10, 2, 2);
-        this.inventory.setSlot(11, 3, 2);
-        this.inventory.setSlot(129, 4, 1);
+        this.inventory.setSlot(14, 1, 16);
+        this.inventory.setSlot(15, 2, 16);
+        this.inventory.setSlot(16, 3, 16);
+
         this.inventory.setSlot(3, 5, 16);
         this.inventory.setSlot(13, 7, 16);
         this.inventory.setSlot(12, 8, 16);
