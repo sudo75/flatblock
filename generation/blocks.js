@@ -187,6 +187,7 @@ class Block_wheat extends Block_Solid {
         super('wheat', x, y, 40, './assets/textures/wheat.png');
         this.id = 16;
         this.itemDrop_id = 40;
+        this.physics = false;
 
         this.growthChance = 1; //Percent chance of growth in a given tick
         this.maxGrowthState = 7;
@@ -216,8 +217,6 @@ class Block_wheat extends Block_Solid {
             const growthState = this.status === this.maxGrowthState ? this.status: this.status + 1;
             this.setStatus(growthState);
         }
-
-        
     }
 }
 
