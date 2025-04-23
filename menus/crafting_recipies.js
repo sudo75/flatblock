@@ -667,6 +667,110 @@ const recipies = [
             ]
         ]
     },
+
+    // HOES --------------------------->
+
+    { // 2 planks + 2 sticks => 1 wooden hoe
+        result: 153,
+        quantity: 1,
+        recipie: [
+            [
+                [8, 8, null],
+                [null, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 8, 8],
+                [null, 128, null],
+                [null, 128, null]
+            ]
+        ]
+    },
+
+    { // 2 stone + 2 sticks => 1 stone hoe
+        result: 154,
+        quantity: 1,
+        recipie: [
+            [
+                [3, 3, null],
+                [null, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 3, 3],
+                [null, 128, null],
+                [null, 128, null]
+            ]
+        ]
+    },
+
+    { // 2 copper + 2 copper => 1 copper hoe
+        result: 155,
+        quantity: 1,
+        recipie: [
+            [
+                [27, 27, null],
+                [null, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 27, 27],
+                [null, 128, null],
+                [null, 128, null]
+            ]
+        ]
+    },
+
+    { // 2 gold + 2 sticks => 1 golden hoe
+        result: 156,
+        quantity: 1,
+        recipie: [
+            [
+                [29, 29, null],
+                [null, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 29, 29],
+                [null, 128, null],
+                [null, 128, null]
+            ]
+        ]
+    },
+
+    { // 2 iron + 2 sticks => 1 iron hoe
+        result: 157,
+        quantity: 1,
+        recipie: [
+            [
+                [31, 31, null],
+                [null, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 31, 31],
+                [null, 128, null],
+                [null, 128, null]
+            ]
+        ]
+    },
+
+    { // 2 diamonds + 2 sticks => 1 diamond hoe
+        result: 158,
+        quantity: 1,
+        recipie: [
+            [
+                [33, 33, null],
+                [null, 128, null],
+                [null, 128, null]
+            ],
+            [
+                [null, 33, 33],
+                [null, 128, null],
+                [null, 128, null]
+            ]
+        ]
+    },
 ];
 
 export { recipies };

@@ -26,7 +26,7 @@ class Meta {
 
         this.placedAt = 0; //Tick when placed
 
-        this.onNextTick = null;
+        this.onNextTick = null; // Should be set as an object with an id of new block and properties of that block {id: ..., properties: {...}}
 
         this.placeRequirements = {
             adjacent: [],
@@ -36,11 +36,17 @@ class Meta {
             top: [],
             bottom: []
         };
+
+        this.spawnItem = null; // Spawn item on next tick {id: ..., quantity: ...}
     }
 
     setStatus(status_value) {
         this.status = status_value;
         this.spriteSheetX = 16 * status_value;
+    }
+
+    interact(seletedItemID) {
+        // No function
     }
 }
 
@@ -246,6 +252,7 @@ class Item_pickaxe extends Tool {
         super(name, texture_location);
         this.purpose = [3, 24, 26, 28, 30, 32]; //list of block IDs the tool breaks
 
+        this.toolClass = 'pickaxe';
     }
 }
 
@@ -330,6 +337,7 @@ class Item_axe extends Tool {
         super(name, texture_location);
         this.purpose = [4, 5, 7, 8]; //list of block IDs the tool breaks
 
+        this.toolClass = 'axe';
     }
 }
 
@@ -408,6 +416,7 @@ class Item_shovel extends Tool {
         super(name, texture_location);
         this.purpose = [1, 2]; //list of block IDs the tool breaks
 
+        this.toolClass = 'shovel';
     }
 }
 
@@ -479,13 +488,14 @@ class Item_diamondShovel extends Item_shovel {
     }
 }
 
-// Sword ---------------------------->
+// Swords ---------------------------->
 
 class Item_sword extends Tool {
     constructor(name, texture_location) {
         super(name, texture_location);
         this.purpose = [6, 7]; //list of block IDs the tool breaks
 
+        this.toolClass = 'sword';
     }
 }
 
@@ -557,6 +567,85 @@ class Item_diamondSword extends Item_sword {
     }
 }
 
+// Hoes ---------------------------->
+
+class Item_hoe extends Tool {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+        this.purpose = []; //list of block IDs the tool breaks
+
+        this.toolClass = 'hoe';
+    }
+}
+
+class Item_woodenHoe extends Item_hoe {
+    constructor() {
+        super('wooden_hoe', './assets/items/wooden_hoe.png');
+        this.id = 153;
+        this.durability = 32;
+
+        this.strength = 2;
+        this.damage = 1;
+
+        this.fuel_value = 200;
+    }
+}
+
+class Item_stoneHoe extends Item_hoe {
+    constructor() {
+        super('stone_hoe', './assets/items/stone_hoe.png');
+        this.id = 154;
+        this.durability = 64;
+
+        this.strength = 3;
+        this.damage = 2;
+    }
+}
+
+class Item_copperHoe extends Item_hoe {
+    constructor() {
+        super('copper_hoe', './assets/items/copper_hoe.png');
+        this.id = 155;
+        this.durability = 192;
+
+        this.strength = 5;
+        this.damage = 2;
+    }
+}
+
+class Item_goldenHoe extends Item_hoe {
+    constructor() {
+        super('golden_hoe', './assets/items/golden_hoe.png');
+        this.id = 156;
+        this.durability = 96;
+
+        this.strength = 7;
+        this.damage = 2;
+    }
+}
+
+class Item_ironHoe extends Item_hoe {
+    constructor() {
+        super('iron_hoe', './assets/items/iron_hoe.png');
+        this.id = 157;
+        this.durability = 256;
+
+        this.strength = 6;
+        this.damage = 3;
+    }
+}
+
+class Item_diamondHoe extends Item_hoe {
+    constructor() {
+        super('diamond_hoe', './assets/items/diamond_hoe.png');
+        this.id = 158;
+        this.durability = 1024;
+
+        this.strength = 8;
+        this.damage = 4;
+    }
+}
+
 
 // BLOCKS ----------------------------------------->
 
@@ -566,6 +655,20 @@ class Block_dirt extends Block_Solid {
         this.id = 1;
         this.itemDrop_id = 1;
     }
+
+    interact(seletedItemID) {
+        const toolClass = this.item_directory.getProperty(seletedItemID, 'toolClass');
+
+        if (toolClass === 'hoe') {
+            this.onNextTick = {
+                id: 14, // dry farmland
+                properties: {}
+            }
+        }
+
+    }
+
+
 }
 
 class Block_grass extends Block_Solid {
@@ -573,6 +676,29 @@ class Block_grass extends Block_Solid {
         super('grass', x, y, 60, './assets/textures/grass.png');
         this.id = 2;
         this.itemDrop_id = 2;
+
+        this.getSeedChance = 20; //Percent chance of getting a seed when interacted with by a hoe
+    }
+
+    interact(seletedItemID) {
+        const toolClass = this.item_directory.getProperty(seletedItemID, 'toolClass');
+
+        if (toolClass === 'hoe') {
+            this.onNextTick = {
+                id: 14, // dry farmland
+                properties: {}
+            }
+
+            const rand = Math.random() * 100;
+
+            if (rand <= this.getSeedChance) {
+                this.spawnItem = {
+                    id: 40,
+                    quantity: 2
+                };
+            }
+        }
+
     }
 }
 
@@ -968,7 +1094,14 @@ class Item_Directory {
             '149': Item_copperSword,
             '150': Item_goldenSword,
             '151': Item_ironSword,
-            '152': Item_diamondSword
+            '152': Item_diamondSword,
+
+            '153': Item_woodenHoe,
+            '154': Item_stoneHoe,
+            '155': Item_copperHoe,
+            '156': Item_goldenHoe,
+            '157': Item_ironHoe,
+            '158': Item_diamondHoe
         }
     }
 

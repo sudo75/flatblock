@@ -152,6 +152,47 @@ class Level {
             }
         }
 
+        //Compute spawnItem data
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                    if (block.spawnItem) {
+                        if (!block.spawnItem.id || !block.spawnItem.quantity) continue;
+
+
+                        for (let i = 0; i < block.spawnItem.quantity; i++) {
+                            this.game.entity_handler.newEntity_Item(abs_x, y, block.spawnItem.id, 0, 0, null);
+                        }
+
+                        this.generator.editProperty(abs_x, y, 'spawnItem', null);
+                    }
+                }
+            }
+        }
+
+        //Compute onNextTick data
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                    if (block.onNextTick) {
+                        if (!block.onNextTick.id) continue;
+
+                        this.generator.placeBlockOnly(block.onNextTick.id, abs_x, y);
+
+                        for (const key in block.onNextTick.properties) {
+                            this.generator.editProperty(abs_x, y, key, block.onNextTick.properties[key]);
+                        }
+                    }
+                }
+            }
+        }
+
         //Run time logic
         this.incrementTime();
 
@@ -552,6 +593,11 @@ class Level {
                 (this.item_directory.getProperty(placeBlockID, 'isBlock') || this.item_directory.getProperty(placeBlockID, 'placeBlock_id'))
             ) {
                 this.generator.placeBlock(placeBlockID, selectedX, selectedY);
+            } else {
+                const chunk_id = this.calc.getChunkID(selectedX);
+                const rel_x = this.calc.getRelativeX(selectedX);
+
+                this.data[chunk_id].block_data[rel_x][selectedY].interact(slotItemID);
             }
         }
     }
