@@ -539,16 +539,19 @@ class Level {
 
         const selectedSlot = this.game.player.inventory.selectedSlot;
         const slotItemID = this.game.player.inventory.data[selectedSlot].id;
+        
+        const placeblockID_ = this.item_directory.getProperty(slotItemID, 'placeBlock_id');
+        const placeBlockID = placeblockID_ ? placeblockID_: slotItemID
 
         if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(selectedX, selectedY)) {
             if (
                 this.calc.getBlockData(selectedX, selectedY).type !== 'solid' &&
                 this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim &&
                 this.calc.solidBlockAdjacent(selectedX, selectedY) &&
-                this.blockCanBePlaced(selectedX, selectedY, slotItemID) &&
-                (this.item_directory.getProperty(slotItemID, 'isBlock') || this.item_directory.getProperty(slotItemID, 'placeBlock_id'))
+                this.blockCanBePlaced(selectedX, selectedY, placeBlockID) &&
+                (this.item_directory.getProperty(placeBlockID, 'isBlock') || this.item_directory.getProperty(placeBlockID, 'placeBlock_id'))
             ) {
-                this.generator.placeBlock(slotItemID, selectedX, selectedY);
+                this.generator.placeBlock(placeBlockID, selectedX, selectedY);
             }
         }
     }
