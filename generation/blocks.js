@@ -48,6 +48,73 @@ class Meta {
     interact(seletedItemID) {
         // No function
     }
+
+    distanceFromBlock_euclidean(id) {
+        const maxDist = 3;
+        
+        const queue = [{neighbour_data: this.neighbour_data}];
+        const og_x = this.x;
+        const og_y = this.y;
+
+        while (queue.length > 0) {
+
+            const { neighbour_data } = queue.shift(); // Remove first element from queue
+
+            for (const key in neighbour_data) {
+                const neighbour = neighbour_data[key];
+                const new_x = neighbour.x;
+                const new_y = neighbour.y;
+
+                const new_dist = Math.max(Math.abs(new_x - og_x), Math.abs(new_y - og_y));
+
+                if (new_dist > maxDist) {
+                    return Infinity;
+                }
+
+                if (neighbour.id === id) {
+                    return new_dist;
+                }
+    
+                queue.push({neighbour_data: neighbour.neighbour_data});
+            }
+        }
+    }
+
+    distanceFromBlock(id) {
+        const maxDist = 8;
+        
+        const queue = [{neighbour_data: this.neighbour_data, dist: 0}];
+
+
+        while (queue.length > 0) {
+
+            const { neighbour_data, dist } = queue.shift(); // Remove first element from queue
+
+            for (const key in neighbour_data) {
+                const neighbour = neighbour_data[key];
+                const new_dist = dist + 1;
+
+                if (new_dist > maxDist) {
+                    return Infinity;
+                }
+
+                if (neighbour.id === id) {
+                    return new_dist;
+                }
+    
+                queue.push({neighbour_data: neighbour.neighbour_data, dist: new_dist});
+            }
+        }
+    }
+
+    randomBool_precise(chance) {
+        const rand = Math.random() * 100;
+
+        if (rand <= chance) {
+            return true;
+        }
+        return false;
+    }
 }
 
 class Block extends Meta {
@@ -177,6 +244,29 @@ class Block_farmlandDry extends Block_Solid {
         super('farmland_dry', x, y, 40, './assets/textures/farmland_dry.png');
         this.id = 14;
         this.itemDrop_id = 14;
+
+        this.decayChance = 1;
+    }
+
+    run_gametick_logic(tick) {
+        if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
+            this.onNextTick = {
+                id: 1, // dirt
+                properties: {}
+            }
+        }
+
+        if (this.distanceFromBlock(13) <= 4) {
+            this.onNextTick = {
+                id: 15, // wet farmland
+                properties: {}
+            }
+        } else if (this.randomBool_precise(this.decayChance)) {
+            this.onNextTick = {
+                id: 1,
+                properties: {}
+            }
+        }
     }
 }
 
@@ -185,6 +275,24 @@ class Block_farmlandWet extends Block_Solid {
         super('farmland_wet', x, y, 40, './assets/textures/farmland_wet.png');
         this.id = 15;
         this.itemDrop_id = 15;
+
+        this.dehydrationChance = 5;
+    }
+
+    run_gametick_logic(tick) {
+        if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
+            this.onNextTick = {
+                id: 1, // dirt
+                properties: {}
+            }
+        }
+
+        if (this.distanceFromBlock(13) > 4 && this.randomBool_precise(this.dehydrationChance)) {
+            this.onNextTick = {
+                id: 14, // dry farmland
+                properties: {}
+            }
+        }
     }
 }
 
@@ -217,12 +325,24 @@ class Block_wheat extends Block_Solid {
     }
 
     run_gametick_logic(tick) {
-        const rand = Math.random() * 100;
-
-        if (rand <= this.growthChance) {
+        if (this.randomBool_precise(this.growthChance)) {
             const growthState = this.status === this.maxGrowthState ? this.status: this.status + 1;
             this.setStatus(growthState);
         }
+
+        if (this.neighbour_data) {
+            if (this.neighbour_data.down.id !== 14 && this.neighbour_data.down.id !== 15) {
+                this.spawnItem = {
+                    id: this.itemDrop_id,
+                    quantity: 1
+                };
+                this.onNextTick = {
+                    id: 0, // air
+                    properties: {}
+                }
+            }
+        }
+        
     }
 }
 
@@ -654,6 +774,8 @@ class Block_dirt extends Block_Solid {
         super('dirt', x, y, 40, './assets/textures/dirt.png');
         this.id = 1;
         this.itemDrop_id = 1;
+
+        this.grassGrowthChance = 1;
     }
 
     interact(seletedItemID) {
@@ -666,6 +788,20 @@ class Block_dirt extends Block_Solid {
             }
         }
 
+    }
+
+    run_gametick_logic(tick) {
+        if (
+            this.distanceFromBlock_euclidean(2) === 1 &&
+            this.neighbour_data.up.type !== 'solid' &&
+
+            this.randomBool_precise(this.grassGrowthChance)
+        ) {
+            this.onNextTick = {
+                id: 2, // dry farmland
+                properties: {}
+            }
+        }
     }
 
 

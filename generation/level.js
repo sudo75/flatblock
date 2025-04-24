@@ -181,7 +181,7 @@ class Level {
                     const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
                     if (block.onNextTick) {
-                        if (!block.onNextTick.id) continue;
+                        //if (!block.onNextTick.id) continue;
 
                         this.generator.placeBlockOnly(block.onNextTick.id, abs_x, y);
 
