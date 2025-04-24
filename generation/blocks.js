@@ -62,6 +62,9 @@ class Meta {
 
             for (const key in neighbour_data) {
                 const neighbour = neighbour_data[key];
+
+                if (!neighbour) continue;
+
                 const new_x = neighbour.x;
                 const new_y = neighbour.y;
 
