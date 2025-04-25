@@ -322,6 +322,8 @@ class Block_wheat extends Block_Solid {
             top: [],
             bottom: [14, 15]
         };
+
+        this.minimumGrowthLight = 10;
     }
 
     setStatus(status_value) {
@@ -333,7 +335,7 @@ class Block_wheat extends Block_Solid {
     }
 
     run_gametick_logic(tick) {
-        if (this.randomBool_precise(this.growthChance)) {
+        if (this.randomBool_precise(this.growthChance) && this.light >= this.minimumGrowthLight) {
             const growthState = this.status === this.maxGrowthState ? this.status: this.status + 1;
             this.setStatus(growthState);
         }

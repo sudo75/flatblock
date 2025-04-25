@@ -89,6 +89,8 @@ class Level {
                         }
                     }
 
+                    block.item_directory = this.item_directory;
+
                     col.push(block);
                 }
 
