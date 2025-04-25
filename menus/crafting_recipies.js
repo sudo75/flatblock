@@ -771,6 +771,28 @@ const recipies = [
             ]
         ]
     },
+
+    { // 3 wheat => 1 bread
+        result: 66,
+        quantity: 1,
+        recipie: [
+            [
+                [41, 41, 41],
+                [null, null, null],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [41, 41, 41],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [null, null, null],
+                [41, 41, 41]
+            ]
+        ]
+    },
 ];
 
 export { recipies };

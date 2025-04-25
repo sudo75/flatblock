@@ -239,6 +239,16 @@ class Item_porkCooked extends Item_food {
     }
 }
 
+class Item_bread extends Item_food {
+    constructor() {
+        super('bread', './assets/items/bread.png');
+        this.id = 66;
+
+        this.nutrition = 5;
+        this.consumption_cooldown = 30;
+    }
+}
+
 
 // Farming ----------------------------->
 
@@ -349,7 +359,7 @@ class Block_wheat extends Block_Solid {
                 this.onNextTick = {
                     id: 0, // air
                     properties: {}
-                }
+                };
             }
         }
         
@@ -1211,6 +1221,7 @@ class Item_Directory {
 
             '64': Item_pork,
             '65': Item_porkCooked,
+            '66': Item_bread,
 
             '128': Item_stick,
 
