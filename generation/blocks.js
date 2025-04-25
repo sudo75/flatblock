@@ -256,7 +256,9 @@ class Block_farmlandDry extends Block_Solid {
     constructor(x, y) {
         super('farmland_dry', x, y, 40, './assets/textures/farmland_dry.png');
         this.id = 14;
-        this.itemDrop_id = 14;
+        this.itemDrop_id = [
+            {id: 1, quantity: 1}
+        ];
 
         this.decayChance = 1;
     }
@@ -290,7 +292,9 @@ class Block_farmlandWet extends Block_Solid {
     constructor(x, y) {
         super('farmland_wet', x, y, 40, './assets/textures/farmland_wet.png');
         this.id = 15;
-        this.itemDrop_id = 15;
+        this.itemDrop_id = [
+            {id: 1, quantity: 1}
+        ];
 
         this.dehydrationChance = 5;
     }
@@ -318,7 +322,9 @@ class Block_wheat extends Block_Solid {
     constructor(x, y) {
         super('wheat', x, y, 40, './assets/textures/wheat.png');
         this.id = 16;
-        this.itemDrop_id = 40;
+        this.itemDrop_id = [
+            {id: 40, quantity: 1}
+        ];
         this.physics = false;
 
         this.growthChance = 1; //Percent chance of growth in a given tick
@@ -340,7 +346,10 @@ class Block_wheat extends Block_Solid {
         super.setStatus(status_value);
 
         if (status_value === 7) { // Full growth
-            this.itemDrop_id = 41;
+            this.itemDrop_id = [
+                {id: 40, quantity: 2},
+                {id: 41, quantity: 1}
+            ];
         }
     }
 
@@ -793,7 +802,9 @@ class Block_dirt extends Block_Solid {
     constructor(x, y) {
         super('dirt', x, y, 40, './assets/textures/dirt.png');
         this.id = 1;
-        this.itemDrop_id = 1;
+        this.itemDrop_id = [
+            {id: 1, quantity: 1}
+        ];
 
         this.grassGrowthChance = 1;
     }
@@ -831,7 +842,9 @@ class Block_grass extends Block_Solid {
     constructor(x, y) {
         super('grass', x, y, 60, './assets/textures/grass.png');
         this.id = 2;
-        this.itemDrop_id = 2;
+        this.itemDrop_id = [
+            {id: 2, quantity: 1}
+        ];
 
         this.getSeedChance = 20; //Percent chance of getting a seed when interacted with by a hoe
     }
@@ -862,7 +875,9 @@ class Block_stone extends Block_Solid {
     constructor(x, y) {
         super('stone', x, y, 120, './assets/textures/stone.png');
         this.id = 3;
-        this.itemDrop_id = 3;
+        this.itemDrop_id = [
+            {id: 3, quantity: 1}
+        ];
 
         this.furnace_result = 2; //ID of smelted item
     }
@@ -872,7 +887,9 @@ class Block_treeLog extends Block_Solid {
     constructor(x, y) {
         super('tree_log', x, y, 100, './assets/textures/log.png');
         this.id = 4;
-        this.itemDrop_id = 5;
+        this.itemDrop_id = [
+            {id: 5, quantity: 1}
+        ];
         this.physics = false;
         this.transparency = 1;
 
@@ -884,7 +901,9 @@ class Block_log extends Block_Solid {
     constructor(x, y) {
         super('log', x, y, 100, './assets/textures/log.png');
         this.id = 5;
-        this.itemDrop_id = 5;
+        this.itemDrop_id = [
+            {id: 5, quantity: 1}
+        ];
 
         this.fuel_value = 400;
         this.furnace_result = 25;
@@ -895,7 +914,9 @@ class Block_treeLeaves extends Block_Solid {
     constructor(x, y) {
         super('tree_leaves', x, y, 15, './assets/textures/leaves.png');
         this.id = 6;
-        this.itemDrop_id = 7;
+        this.itemDrop_id = [
+            {id: 7, quantity: 1}
+        ];
         this.physics = false;
         this.transparency = 1;
 
@@ -907,7 +928,9 @@ class Block_leaves extends Block_Solid {
     constructor(x, y) {
         super('leaves', x, y, 15, './assets/textures/leaves.png');
         this.id = 7;
-        this.itemDrop_id = 7;
+        this.itemDrop_id = [
+            {id: 7, quantity: 1}
+        ];
 
         this.fuel_value = 50;
     }
@@ -917,7 +940,9 @@ class Block_planks extends Block_Solid {
     constructor(x, y) {
         super('planks', x, y, 60, './assets/textures/planks.png');
         this.id = 8;
-        this.itemDrop_id = 8;
+        this.itemDrop_id = [
+            {id: 8, quantity: 1}
+        ];
 
         this.fuel_value = 300;
     }
@@ -927,7 +952,9 @@ class Block_torch extends Block_Solid {
     constructor(x, y) {
         super('torch', x, y, 1, './assets/textures/torch.png');
         this.id = 12;
-        this.itemDrop_id = 12;
+        this.itemDrop_id = [
+            {id: 12, quantity: 1}
+        ];
         this.physics = false;
         this.transparency = 1;
 
@@ -970,7 +997,9 @@ class Block_coalOre extends Block_Solid {
     constructor(x, y) {
         super('coal_ore', x, y, 140, './assets/textures/coal_ore.png');
         this.id = 24;
-        this.itemDrop_id = 25;
+        this.itemDrop_id = [
+            {id: 25, quantity: 1}
+        ];
 
         this.furnace_result = 25;
     }
@@ -989,7 +1018,9 @@ class Block_copperOre extends Block_Solid {
     constructor(x, y) {
         super('copper_ore', x, y, 140, './assets/textures/copper_ore.png');
         this.id = 26;
-        this.itemDrop_id = 26;
+        this.itemDrop_id = [
+            {id: 26, quantity: 1}
+        ];
 
         this.furnace_result = 27;
     }
@@ -1006,7 +1037,9 @@ class Block_goldOre extends Block_Solid {
     constructor(x, y) {
         super('gold_ore', x, y, 140, './assets/textures/gold_ore.png');
         this.id = 28;
-        this.itemDrop_id = 28;
+        this.itemDrop_id = [
+            {id: 28, quantity: 1}
+        ];
 
         this.furnace_result = 29;
     }
@@ -1023,7 +1056,9 @@ class Block_ironOre extends Block_Solid {
     constructor(x, y) {
         super('iron_ore', x, y, 140, './assets/textures/iron_ore.png');
         this.id = 30;
-        this.itemDrop_id = 30;
+        this.itemDrop_id = [
+            {id: 30, quantity: 1}
+        ];
 
         this.furnace_result = 31;
     }
@@ -1040,7 +1075,9 @@ class Block_diamondOre extends Block_Solid {
     constructor(x, y) {
         super('diamond_ore', x, y, 150, './assets/textures/diamond_ore.png');
         this.id = 32;
-        this.itemDrop_id = 33;
+        this.itemDrop_id = [
+            {id: 33, quantity: 1}
+        ];
 
         this.furnace_result = 33;
     }
@@ -1061,7 +1098,9 @@ class Block_chest extends Block_Solid {
     constructor(x, y) {
         super('chest', x, y, 40, './assets/textures/chest.png');
         this.id = 9;
-        this.itemDrop_id = 9;
+        this.itemDrop_id = [
+            {id: 9, quantity: 1}
+        ];
 
         this.inventory = new Inventory();
         this.physics = false;
@@ -1073,7 +1112,9 @@ class Block_craftingTable extends Block_Solid {
     constructor(x, y) {
         super('chest', x, y, 40, './assets/textures/crafting_table.png');
         this.id = 10;
-        this.itemDrop_id = 10;
+        this.itemDrop_id = [
+            {id: 10, quantity: 1}
+        ];
 
         this.inventory = new Inventory();
         this.physics = false;
@@ -1085,7 +1126,9 @@ class Block_furnace extends Block_Solid {
     constructor(x, y) {
         super('furnace', x, y, 40, './assets/textures/furnace_unlit.png');
         this.id = 11;
-        this.itemDrop_id = 11;
+        this.itemDrop_id = [
+            {id: 11, quantity: 1}
+        ];
 
         this.inventory = new Inventory();
         this.physics = false;

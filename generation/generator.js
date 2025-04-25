@@ -294,10 +294,17 @@ class Generator {
     }
 
     breakBlock(x, y) {
-        const itemID = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
+        const itemIDs = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
 
         //Drop item
-        this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
+        for (let i = 0; i < itemIDs.length; i++) {
+            const itemID = itemIDs[i].id;
+            const quantity = itemIDs[i].quantity;
+
+            for (let j = 0; j < quantity; j++) {
+                this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
+            }
+        }
 
         //Drop inventory
         const block_inventory = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].inventory;
