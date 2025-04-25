@@ -1053,7 +1053,7 @@ class Block_chest extends Block_Solid {
 
         this.inventory = new Inventory();
         this.physics = false;
-        this.interact = true;
+        this.interactive = true;
     }
 }
 
@@ -1065,7 +1065,7 @@ class Block_craftingTable extends Block_Solid {
 
         this.inventory = new Inventory();
         this.physics = false;
-        this.interact = true;
+        this.interactive = true;
     }
 }
 
@@ -1077,7 +1077,7 @@ class Block_furnace extends Block_Solid {
 
         this.inventory = new Inventory();
         this.physics = false;
-        this.interact = true;
+        this.interactive = true;
 
         this.og_fuelPoints = 0;
         this.fuelPoints = 0; //in ticks;
