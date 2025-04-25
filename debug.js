@@ -22,7 +22,7 @@ class Debugger {
             img_smoothing: null,
             debug_inventory: null,
             fast_break: null,
-            performace: null
+            performance: null
         };
 
         this.applySettings();
@@ -179,11 +179,11 @@ class Debugger {
                     alert('fast_break - Input a boolean.');
                 }
                 break;
-            case 'performace':
+            case 'performance':
                 if (arg2 === 'true' || arg2 === 'false') {
-                    this.settings.performace = arg2 === 'true';
+                    this.settings.performance = arg2 === 'true';
                 } else {
-                    alert('performace - Input a boolean.');
+                    alert('performance - Input a boolean.');
                 }
                 break;
         }

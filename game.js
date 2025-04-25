@@ -39,7 +39,7 @@ class Game {
         this.tps = null;
         this.fps = null;
 
-        this.performaceData_display = {
+        this.performanceData_display = {
             fps: this.fps,
             tps: this.tps
         };
@@ -708,10 +708,10 @@ class Game {
     }
 
     renderDiagnostics() {
-        if (this.debugger.settings.performace) {
+        if (this.debugger.settings.performance) {
             const data = [
-                `FPS: ${this.performaceData_display.fps}`,
-                `TPS: ${this.performaceData_display.tps}`
+                `FPS: ${this.performanceData_display.fps}`,
+                `TPS: ${this.performanceData_display.tps}`
             ];
 
             const margin = 20;
@@ -744,7 +744,7 @@ class Game {
                 }
 
                 if (this.tick % 10 === 0) {
-                    this.performaceData_display = {
+                    this.performanceData_display = {
                         fps: this.fps,
                         tps: this.tps
                     };
