@@ -39,6 +39,11 @@ class Game {
         this.tps = null;
         this.fps = null;
 
+        this.performaceData_display = {
+            fps: this.fps,
+            tps: this.tps
+        };
+
         this.menu_renderers = {};
         this.slotLoaded = null;
 
@@ -702,6 +707,28 @@ class Game {
         console.log(`FPS: ${this.fps}, TPS: ${this.tps}, Storage: ${dataSize.toLocaleString("en-US")} / ${dataQuota.toLocaleString("en-US")} bytes - ${percentage}%`);
     }
 
+    renderDiagnostics() {
+        if (this.debugger.settings.performace) {
+            const data = [
+                `FPS: ${this.performaceData_display.fps}`,
+                `TPS: ${this.performaceData_display.tps}`
+            ];
+
+            const margin = 20;
+
+            const fontSize = 12;
+            const lineSpacing = 4;
+
+            this.ctx_menu.fillStyle = 'black';
+            this.ctx_menu.font = `${fontSize}px Times New Roman`;
+
+            for (let i = 0; i < data.length; i++) {
+                const datom = data[i];
+                this.ctx_menu.fillText(datom, margin, margin + i * (fontSize + lineSpacing));
+            }
+        }
+    }
+
     startGameLoop() {
         let lastTick;
         const tick_handler = () => {
@@ -715,7 +742,13 @@ class Game {
                 } else {
                     tickTime = 0;
                 }
-                
+
+                if (this.tick % 10 === 0) {
+                    this.performaceData_display = {
+                        fps: this.fps,
+                        tps: this.tps
+                    };
+                }
 
                 this.update_world();
 
@@ -749,6 +782,7 @@ class Game {
             this.player.draw();
             this.player.updateCursor();
             this.menus();
+            this.renderDiagnostics();
 
             lastFrame = time_current;
 

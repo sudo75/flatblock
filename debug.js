@@ -21,7 +21,8 @@ class Debugger {
             xray: null,
             img_smoothing: null,
             debug_inventory: null,
-            fast_break: null
+            fast_break: null,
+            performace: null
         };
 
         this.applySettings();
@@ -90,6 +91,8 @@ class Debugger {
         }
 
         //Fast break - no exterior settings to edit
+
+        //Performance - no exterior settings to edit
     }
 
     commandInput() {
@@ -174,6 +177,13 @@ class Debugger {
                     this.settings.fast_break = arg2 === 'true';
                 } else {
                     alert('fast_break - Input a boolean.');
+                }
+                break;
+            case 'performace':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.performace = arg2 === 'true';
+                } else {
+                    alert('performace - Input a boolean.');
                 }
                 break;
         }
