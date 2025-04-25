@@ -1086,14 +1086,26 @@ class MenuHandler {
 
         //Update chest menu
         if (this.menus.chest.isOpen) {
-            //this.menus.chest.update();
+            this.menus.chest.updateInventory();
+            this.menus.chest.refresh();
         }
 
         //Update furnace menu
         if (this.menus.furnace.isOpen) {
             this.menus.furnace.updateInventory();
             this.menus.furnace.refresh();
-            //this.menus.furnace.update();
+        }
+
+        //Update inventory menu
+        if (this.menus.inventory.isOpen) {
+            this.menus.inventory.updateInventory();
+            this.menus.inventory.refresh();
+        }
+
+        //Update crafting menu
+        if (this.menus.crafting.isOpen) {
+            this.menus.crafting.updateInventory();
+            this.menus.crafting.refresh();
         }
 
 
