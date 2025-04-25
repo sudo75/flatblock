@@ -252,12 +252,15 @@ class Block_farmlandDry extends Block_Solid {
     }
 
     run_gametick_logic(tick) {
-        if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
-            this.onNextTick = {
-                id: 1, // dirt
-                properties: {}
+        if (this.neighbour_data) {
+            if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
+                this.onNextTick = {
+                    id: 1, // dirt
+                    properties: {}
+                }
             }
         }
+        
 
         if (this.distanceFromBlock(13) <= 4) {
             this.onNextTick = {
@@ -283,17 +286,19 @@ class Block_farmlandWet extends Block_Solid {
     }
 
     run_gametick_logic(tick) {
-        if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
-            this.onNextTick = {
-                id: 1, // dirt
-                properties: {}
+        if (this.neighbour_data) {
+            if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
+                this.onNextTick = {
+                    id: 1, // dirt
+                    properties: {}
+                }
             }
-        }
-
-        if (this.distanceFromBlock(13) > 4 && this.randomBool_precise(this.dehydrationChance)) {
-            this.onNextTick = {
-                id: 14, // dry farmland
-                properties: {}
+    
+            if (this.distanceFromBlock(13) > 4 && this.randomBool_precise(this.dehydrationChance)) {
+                this.onNextTick = {
+                    id: 14, // dry farmland
+                    properties: {}
+                }
             }
         }
     }
