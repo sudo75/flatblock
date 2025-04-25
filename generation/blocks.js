@@ -49,8 +49,8 @@ class Meta {
         // No function
     }
 
-    distanceFromBlock_euclidean(id) {
-        const maxDist = 3;
+    distanceFromBlock_euclidean(id, maxDist) {
+        maxDist = maxDist ? maxDist: 8;
         
         const queue = [{neighbour_data: this.neighbour_data}];
         const og_x = this.x;
@@ -83,8 +83,8 @@ class Meta {
         }
     }
 
-    distanceFromBlock(id) {
-        const maxDist = 8;
+    distanceFromBlock(id, maxDist) {
+        maxDist = maxDist ? maxDist: 8;
         
         const queue = [{neighbour_data: this.neighbour_data, dist: 0}];
 
@@ -262,7 +262,7 @@ class Block_farmlandDry extends Block_Solid {
         }
         
 
-        if (this.distanceFromBlock(13) <= 4) {
+        if (this.distanceFromBlock(13, 4) <= 4) {
             this.onNextTick = {
                 id: 15, // wet farmland
                 properties: {}
@@ -294,7 +294,7 @@ class Block_farmlandWet extends Block_Solid {
                 }
             }
     
-            if (this.distanceFromBlock(13) > 4 && this.randomBool_precise(this.dehydrationChance)) {
+            if (this.distanceFromBlock(13, 5) > 4 && this.randomBool_precise(this.dehydrationChance)) {
                 this.onNextTick = {
                     id: 14, // dry farmland
                     properties: {}
@@ -800,7 +800,7 @@ class Block_dirt extends Block_Solid {
 
     run_gametick_logic(tick) {
         if (
-            this.distanceFromBlock_euclidean(2) === 1 &&
+            this.distanceFromBlock_euclidean(2, 6) === 1 &&
             this.neighbour_data.up.type !== 'solid' &&
 
             this.randomBool_precise(this.grassGrowthChance)
