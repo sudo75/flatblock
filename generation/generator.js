@@ -147,6 +147,8 @@ class Generator {
 
                 const dirtLevel = grassLevel - 4;
 
+                const seaLevel = 40; // The block above the highest water block
+
                 const chooseBlock = () => {
                     let blockClass = this.item_directory.item[0]; //Default to air
 
@@ -162,6 +164,14 @@ class Generator {
 
                     } else if (y < grassLevel) {
                         blockClass = this.item_directory.item[1]; //Dirt
+                    } else if (y < seaLevel - 1) {
+                        blockClass = this.item_directory.item[13]; // Water
+                    }  else if (y < seaLevel) {
+                        if (this.getContour(absolute_x - 1) === seaLevel || this.getContour(absolute_x + 1) === seaLevel) {
+                            blockClass = this.item_directory.item[2]; //Grass
+                        } else {
+                            blockClass = this.item_directory.item[13]; // Water
+                        }
                     } else if (y === grassLevel) {
                         blockClass = this.item_directory.item[2]; //Grass
                     }
