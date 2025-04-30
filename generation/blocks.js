@@ -825,6 +825,7 @@ class Block_dirt extends Block_Solid {
         if (
             this.distanceFromBlock_euclidean(2, 6) === 1 &&
             this.neighbour_data.up.type !== 'solid' &&
+            this.neighbour_data.up.type !== 'liquid' &&
 
             this.randomBool_precise(this.grassGrowthChance)
         ) {
