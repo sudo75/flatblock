@@ -711,7 +711,8 @@ class Game {
         if (this.debugger.settings.performance) {
             const data = [
                 `FPS: ${this.performanceData_display.fps}`,
-                `TPS: ${this.performanceData_display.tps}`
+                `TPS: ${this.performanceData_display.tps}`,
+                `Player: ${this.player.x.toFixed(2)}, ${this.player.y.toFixed(2)}`
             ];
 
             const margin = 20;
