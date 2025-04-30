@@ -245,7 +245,6 @@ class Generator {
 
         // Calculate block positions
         for (let i = 0; i < blocks_template.length; i++) {
-            const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
             if (this.calc.randomBool(blocks_template[i].chance)) {
                 blocks.push(blocks_template[i]);
             }
@@ -265,6 +264,9 @@ class Generator {
                 return;
             }
         }
+
+        //Ensure block below is dirt or grass
+        if (this.calc.getBlockData(x, y - 1).id !== 1 && this.calc.getBlockData(x, y - 1).id !== 2) return;
 
         //Build tree
         for (let i = 0; i < blocks.length; i++) {
