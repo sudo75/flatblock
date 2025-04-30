@@ -206,13 +206,16 @@ class Generator {
     generate_mobs(chunk_id) {
         for (let x = 0; x < this.game.level.chunk_size; x++) {
             const absoluteX = this.calc.getAbsoluteX(x, chunk_id);
+            const y = this.getContour(absoluteX) + 1;
 
             //Attempt to generate trees at 15% probability
             const seed1 = this.seed;
             const seed2 = this.seed / absoluteX * 12.8 + 131.5;
 
             if (this.calc.randomBoolByTwoSeeds(seed1, seed2, 5)) {
-                this.game.entity_handler.spawnRandomPassiveMob(absoluteX, this.getContour(absoluteX) + 1);
+                if (!this.calc.getBlockData(absoluteX, y).id === 0) continue;
+                
+                this.game.entity_handler.spawnRandomPassiveMob(absoluteX, y);
             }
         }
     }
