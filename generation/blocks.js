@@ -922,6 +922,20 @@ class Block_treeLeaves extends Block_Solid {
         this.transparency = 1;
 
         this.fuel_value = 50;
+        this.decayChance = 0.5; // Per tick
+
+        this.decayRange = 3;
+    }
+
+    run_gametick_logic(tick) {
+        const distFromTreeLog = this.distanceFromBlock(4, 4);
+
+        if (distFromTreeLog > this.decayRange && this.randomBool_precise(this.decayChance)) {
+            this.onNextTick = {
+                id: 0,
+                properties: {}
+            }
+        }
     }
 }
 
