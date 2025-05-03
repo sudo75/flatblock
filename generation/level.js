@@ -138,7 +138,7 @@ class Level {
         const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
         const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
-        if (toCompute.blockReq) {
+        if (toCompute.gametick_logic) {
             //Run gametick logic of blocks
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
@@ -162,6 +162,9 @@ class Level {
                     }
                 }
             }
+        }
+
+        if (toCompute.blockReq) {
 
             //Compute spawnItem data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
