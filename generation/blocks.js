@@ -104,6 +104,8 @@ class Meta {
 
             for (const key in neighbour_data) {
                 const neighbour = neighbour_data[key];
+                if (!neighbour) continue;
+
                 const new_dist = dist + 1;
 
                 if (new_dist > maxDist) {

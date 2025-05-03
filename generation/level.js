@@ -123,6 +123,14 @@ class Level {
     }
 
     run_gametick_logic(tick) { //Can help run blocks with animations, update block states (ex. illuminated vs. dark, etc.)
+        const toCompute = {
+            gametick_logic: true,
+            lighting: true,
+            liquid: true,
+            blockReq: true,
+            time: true,
+            neighbour: true
+        };
         
         const simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.simulation_distance).min;
         const simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.simulation_distance).max;
@@ -130,204 +138,215 @@ class Level {
         const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
         const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
-        //Run gametick logic of blocks
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+        if (toCompute.blockReq) {
+            //Run gametick logic of blocks
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
-                    if (block.run_gametick_logic) {
-                        block.run_gametick_logic(tick);
-                    }
-
-                    if (
-                        block.light <= this.game.entity_handler.mob_handler.minHostileMobLightLevel &&
-                        !this.calc.isSolidBlock(abs_x, y) &&
-                        this.calc.isSolidBlock(abs_x, y - 1)
-                    ) {
-                        if (this.calc.randomBool_precise(this.game.entity_handler.mob_handler.hostileMobSpawnChance)) {
-                            this.game.entity_handler.spawnRandomHostileMob(abs_x, y);
-                        }
-                    }
-                }
-            }
-        }
-
-        //Compute spawnItem data
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
-
-                    if (block.spawnItem) {
-                        if (!block.spawnItem.id || !block.spawnItem.quantity) continue;
-
-
-                        for (let i = 0; i < block.spawnItem.quantity; i++) {
-                            this.game.entity_handler.newEntity_Item(abs_x, y, block.spawnItem.id, 0, 0, block.spawnItem.durability || null);
+                        if (block.run_gametick_logic) {
+                            block.run_gametick_logic(tick);
                         }
 
-                        this.generator.editProperty(abs_x, y, 'spawnItem', null);
-                    }
-                }
-            }
-        }
-
-        //Compute removeItem data
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
-
-                    if (block.removeItem) {
-                        this.game.player.inventory.subtract(this.game.player.inventory.selectedSlot);
-
-                        this.generator.editProperty(abs_x, y, 'removeItem', false);
-                    }
-                }
-            }
-        }
-
-        //Compute giveItem data
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
-
-                    if (block.giveItem) {
-                        if (!block.giveItem.id || !block.giveItem.quantity) continue;
-
-
-                        for (let i = 0; i < block.giveItem.quantity; i++) {
-                            if (this.game.player.inventory.canAddItem(block.giveItem.id)) {
-                                this.game.player.inventory.addItems(block.giveItem.id, block.giveItem.durability || null);
-                            } else {
-                                this.game.entity_handler.newEntity_Item(x, y, block.giveItem.id, 0, 0, block.giveItem.durability || null);
+                        if (
+                            block.light <= this.game.entity_handler.mob_handler.minHostileMobLightLevel &&
+                            !this.calc.isSolidBlock(abs_x, y) &&
+                            this.calc.isSolidBlock(abs_x, y - 1)
+                        ) {
+                            if (this.calc.randomBool_precise(this.game.entity_handler.mob_handler.hostileMobSpawnChance)) {
+                                this.game.entity_handler.spawnRandomHostileMob(abs_x, y);
                             }
                         }
-
-                        this.generator.editProperty(abs_x, y, 'giveItem', null);
                     }
                 }
             }
-        }
 
-        //Compute decrementDurability data
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+            //Compute spawnItem data
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
-                    if (block.decrementDurability) {
-                        this.game.player.inventory.decrementDurability(this.game.player.inventory.selectedSlot);
+                        if (block.spawnItem) {
+                            if (!block.spawnItem.id || !block.spawnItem.quantity) continue;
+
+
+                            for (let i = 0; i < block.spawnItem.quantity; i++) {
+                                this.game.entity_handler.newEntity_Item(abs_x, y, block.spawnItem.id, 0, 0, block.spawnItem.durability || null);
+                            }
+
+                            this.generator.editProperty(abs_x, y, 'spawnItem', null);
+                        }
                     }
-
-                    this.generator.editProperty(abs_x, y, 'decrementDurability', false);
                 }
             }
-        }
+
+            //Compute removeItem data
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                        if (block.removeItem) {
+                            this.game.player.inventory.subtract(this.game.player.inventory.selectedSlot);
+
+                            this.generator.editProperty(abs_x, y, 'removeItem', false);
+                        }
+                    }
+                }
+            }
+
+            //Compute giveItem data
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                        if (block.giveItem) {
+                            if (!block.giveItem.id || !block.giveItem.quantity) continue;
 
 
-        //Compute onNextTick data
-        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+                            for (let i = 0; i < block.giveItem.quantity; i++) {
+                                if (this.game.player.inventory.canAddItem(block.giveItem.id)) {
+                                    this.game.player.inventory.addItems(block.giveItem.id, block.giveItem.durability || null);
+                                } else {
+                                    this.game.entity_handler.newEntity_Item(x, y, block.giveItem.id, 0, 0, block.giveItem.durability || null);
+                                }
+                            }
 
-                    if (block.onNextTick) {
-                        //if (!block.onNextTick.id) continue;
+                            this.generator.editProperty(abs_x, y, 'giveItem', null);
+                        }
+                    }
+                }
+            }
 
-                        this.generator.placeBlockOnly(block.onNextTick.id, abs_x, y);
+            //Compute decrementDurability data
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
-                        for (const key in block.onNextTick.properties) {
-                            this.generator.editProperty(abs_x, y, key, block.onNextTick.properties[key]);
+                        if (block.decrementDurability) {
+                            this.game.player.inventory.decrementDurability(this.game.player.inventory.selectedSlot);
+                        }
+
+                        this.generator.editProperty(abs_x, y, 'decrementDurability', false);
+                    }
+                }
+            }
+
+
+            //Compute onNextTick data
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                        if (block.onNextTick) {
+                            //if (!block.onNextTick.id) continue;
+
+                            this.generator.placeBlockOnly(block.onNextTick.id, abs_x, y);
+
+                            for (const key in block.onNextTick.properties) {
+                                this.generator.editProperty(abs_x, y, key, block.onNextTick.properties[key]);
+                            }
                         }
                     }
                 }
             }
         }
 
-        //Run time logic
-        this.incrementTime();
+        if (toCompute.time) {
+            //Run time logic
+            this.incrementTime();
 
-        //Day
-        if (this.time >= 0 && this.time < 12000) {
-            this.sun_strength = 15;
+            //Day
+            if (this.time >= 0 && this.time < 12000) {
+                this.sun_strength = 15;
+            }
+
+            //Evening
+            if (this.time >= 12000 && this.time < 14000) {
+                const lighting_decimal = 1 - (this.time - 12000) / 2000;
+                this.sun_strength = Math.floor(15 * (lighting_decimal));
+            }
+
+            //Night
+            if (this.time >= 14000 && this.time < 22000) {
+                this.sun_strength = 0;
+            }
+
+            //Morning
+            if (this.time >= 22000 && this.time < 24000) {
+                const lighting_decimal = (this.time - 22000) / 2000;
+                this.sun_strength = Math.floor(15 * (lighting_decimal));
+            }
+
         }
 
-        //Evening
-        if (this.time >= 12000 && this.time < 14000) {
-            const lighting_decimal = 1 - (this.time - 12000) / 2000;
-            this.sun_strength = Math.floor(15 * (lighting_decimal));
+        if (toCompute.liquid) {
+            if (tick % this.item_directory.getProperty(13, 'spread_speed') === 0) {
+                this.calculateLiquids(tick, block_simulated_chunk_min, block_simulated_chunk_max);
+            }
         }
-
-        //Night
-        if (this.time >= 14000 && this.time < 22000) {
-            this.sun_strength = 0;
+            
+        if (toCompute.lighting) {
+            if (tick % 1 === 0) {
+                this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
+            }
         }
-
-        //Morning
-        if (this.time >= 22000 && this.time < 24000) {
-            const lighting_decimal = (this.time - 22000) / 2000;
-            this.sun_strength = Math.floor(15 * (lighting_decimal));
-        }
-
-        if (tick % this.item_directory.getProperty(13, 'spread_speed') === 0) {
-            this.calculateLiquids(tick, block_simulated_chunk_min, block_simulated_chunk_max);
-        }
-
-        if (tick % 1 === 0) {
-            this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
-        }
-
-
-        //Set neighbour properties
         
-        for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
-            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                for (let y = 0; y < this.properties.height_blocks; y++) {
-                    const block = this.data[i].block_data[rel_x][y];
 
-                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+        if (toCompute.neighbour) {
+            
+            //Set neighbour properties
 
-                    const getBlockProperties = (x, y) => {
-                        if (this.calc.isWithinWorldBounds(x, y)) {
-                            return this.calc.getBlockData(x, y);
-                        } else {
-                            return null;
-                        }
-                    };
-
-                    //Left
-                    const block_left = getBlockProperties(abs_x - 1, y);
-                    
-                    //Right
-                    const block_right = getBlockProperties(abs_x + 1, y);
-
-                    //Up
-                    const block_up = getBlockProperties(abs_x, y + 1);
-
-                    //Down
-                    const block_down = getBlockProperties(abs_x, y - 1);
-
-                    const neighbour_data = {
-                        'left': block_left,
-                        'right': block_right,
-                        'up': block_up,
-                        'down': block_down,
-                    };
-
-                    this.data[i].block_data[rel_x][y].neighbour_data = neighbour_data;
+            for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+    
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
+    
+                        const getBlockProperties = (x, y) => {
+                            if (this.calc.isWithinWorldBounds(x, y)) {
+                                return this.calc.getBlockData(x, y);
+                            } else {
+                                return null;
+                            }
+                        };
+    
+                        //Left
+                        const block_left = getBlockProperties(abs_x - 1, y);
+                        
+                        //Right
+                        const block_right = getBlockProperties(abs_x + 1, y);
+    
+                        //Up
+                        const block_up = getBlockProperties(abs_x, y + 1);
+    
+                        //Down
+                        const block_down = getBlockProperties(abs_x, y - 1);
+    
+                        const neighbour_data = {
+                            'left': block_left,
+                            'right': block_right,
+                            'up': block_up,
+                            'down': block_down,
+                        };
+    
+                        this.data[i].block_data[rel_x][y].neighbour_data = neighbour_data;
+                    }
                 }
             }
         }
-
 
     }
 

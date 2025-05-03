@@ -41,7 +41,9 @@ class Game {
 
         this.performanceData_display = {
             fps: this.fps,
-            tps: this.tps
+            tps: this.tps,
+            tick: this.tick,
+            time: null
         };
 
         this.menu_renderers = {};
@@ -712,7 +714,9 @@ class Game {
             const data = [
                 `FPS: ${this.performanceData_display.fps}`,
                 `TPS: ${this.performanceData_display.tps}`,
-                `Player: ${this.player.x.toFixed(2)}, ${this.player.y.toFixed(2)}`
+                `Player: ${this.player.x.toFixed(2)}, ${this.player.y.toFixed(2)}`,
+                `Tick: ${this.performanceData_display.tick}`,
+                `Time: ${this.performanceData_display.time}`
             ];
 
             const margin = 20;
@@ -747,7 +751,9 @@ class Game {
                 if (this.tick % 10 === 0) {
                     this.performanceData_display = {
                         fps: this.fps,
-                        tps: this.tps
+                        tps: this.tps,
+                        tick: this.tick,
+                        time: this.level.time,
                     };
                 }
 
