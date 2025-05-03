@@ -772,6 +772,8 @@ const recipies = [
         ]
     },
 
+    // Other -------------------------->
+
     { // 3 wheat => 1 bread
         result: 66,
         quantity: 1,
@@ -790,6 +792,23 @@ const recipies = [
                 [null, null, null],
                 [null, null, null],
                 [41, 41, 41]
+            ]
+        ]
+    },
+
+    { // 3 iron => 1 bucket
+        result: 50,
+        quantity: 1,
+        recipie: [
+            [
+                [31, null, 31],
+                [null, 31, null],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [31, null, 31],
+                [null, 31, null]
             ]
         ]
     },
