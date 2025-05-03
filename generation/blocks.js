@@ -433,6 +433,7 @@ class Item_bucket extends Item {
         super('bucket', './assets/items/bucket.png');
         this.id = 50;
 
+        this.maxStackSize = 1;
     }
 }
 
@@ -443,6 +444,8 @@ class Item_bucketWater extends Item {
 
         this.placeBlock_id = 13;
         this.giveItemUponPlace = 50;
+
+        this.maxStackSize = 1;
     }
 }
 
