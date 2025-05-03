@@ -166,7 +166,7 @@ class Level {
 
 
                         for (let i = 0; i < block.spawnItem.quantity; i++) {
-                            this.game.entity_handler.newEntity_Item(abs_x, y, block.spawnItem.id, 0, 0, null);
+                            this.game.entity_handler.newEntity_Item(abs_x, y, block.spawnItem.id, 0, 0, block.spawnItem.durability || null);
                         }
 
                         this.generator.editProperty(abs_x, y, 'spawnItem', null);
@@ -174,6 +174,64 @@ class Level {
                 }
             }
         }
+
+        //Compute removeItem data
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                    if (block.removeItem) {
+                        this.game.player.inventory.subtract(this.game.player.inventory.selectedSlot);
+
+                        this.generator.editProperty(abs_x, y, 'removeItem', false);
+                    }
+                }
+            }
+        }
+
+        //Compute giveItem data
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                    if (block.giveItem) {
+                        if (!block.giveItem.id || !block.giveItem.quantity) continue;
+
+
+                        for (let i = 0; i < block.giveItem.quantity; i++) {
+                            if (this.game.player.inventory.canAddItem(block.giveItem.id)) {
+                                this.game.player.inventory.addItems(block.giveItem.id, block.giveItem.durability || null);
+                            } else {
+                                this.game.entity_handler.newEntity_Item(x, y, block.giveItem.id, 0, 0, block.giveItem.durability || null);
+                            }
+                        }
+
+                        this.generator.editProperty(abs_x, y, 'giveItem', null);
+                    }
+                }
+            }
+        }
+
+        //Compute decrementDurability data
+        for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                for (let y = 0; y < this.properties.height_blocks; y++) {
+                    const block = this.data[i].block_data[rel_x][y];
+                    const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                    if (block.decrementDurability) {
+                        this.game.player.inventory.decrementDurability(this.game.player.inventory.selectedSlot);
+                    }
+
+                    this.generator.editProperty(abs_x, y, 'decrementDurability', false);
+                }
+            }
+        }
+
 
         //Compute onNextTick data
         for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
@@ -584,7 +642,7 @@ class Level {
         const slotItemID = this.game.player.inventory.data[selectedSlot].id;
         
         const placeblockID_ = this.item_directory.getProperty(slotItemID, 'placeBlock_id');
-        const placeBlockID = placeblockID_ ? placeblockID_: slotItemID
+        const placeBlockID = placeblockID_ ? placeblockID_: slotItemID;
 
         if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(selectedX, selectedY)) {
             if (
@@ -595,6 +653,18 @@ class Level {
                 (this.item_directory.getProperty(placeBlockID, 'isBlock') || this.item_directory.getProperty(placeBlockID, 'placeBlock_id'))
             ) {
                 this.generator.placeBlock(placeBlockID, selectedX, selectedY);
+
+                const giveItemUponPlace = this.item_directory.getProperty(slotItemID, 'giveItemUponPlace');
+                const durability = this.item_directory.getProperty(placeBlockID, 'durability') || null;
+
+                if (giveItemUponPlace) {
+                    if (this.game.player.inventory.canAddItem(giveItemUponPlace)){
+                        this.game.player.inventory.addItems(giveItemUponPlace, durability);
+                    } else {
+                        this.game.entity_handler.newEntity_Item(x, y, giveItemUponPlace, 0, 0, durability);
+                    }
+                }
+
             } else {
                 const chunk_id = this.calc.getChunkID(selectedX);
                 const rel_x = this.calc.getRelativeX(selectedX);

@@ -6,6 +6,8 @@ class Meta {
         this.item_type = item_type;
         this.isBlock = true;
 
+        this.untouchable = false;
+
         this.item_directory = new Item_Directory();
 
         this.maxStackSize = 16;
@@ -37,7 +39,14 @@ class Meta {
             bottom: []
         };
 
+        //placeBlock_id is optional
+
+        this.giveItemUponPlace = null; // {id: ..., quantity: ...}
+
         this.spawnItem = null; // Spawn item on next tick {id: ..., quantity: ...}
+        this.removeItem = false;
+        this.giveItem = null; // {id: ..., quantity: ...}
+        this.decrementDurability = false;
     }
 
     setStatus(status_value) {
@@ -155,6 +164,16 @@ class Block_Liquid extends Block {
 
         this.liquid_spread = 8;
         this.source = true;
+
+        this.touchCooldown = 4; // Number of ticks that must have passed for the liquid to be interacted with again
+    }
+
+    run_gametick_logic(tick) {
+        if (tick - this.placedAt < this.touchCooldown) {
+            this.untouchable = true;
+        } else {
+            this.untouchable = false;
+        }
     }
 }
 
@@ -164,6 +183,20 @@ class Block_water extends Block_Liquid {
         this.id = 13;
 
         this.spread_speed = 10;
+    }
+
+    interact(seletedItemID) {
+        if (seletedItemID === 50 && this.source && !this.untouchable) {
+            this.removeItem = true;
+            this.giveItem = {
+                id: 51, // Water bucket
+                quantity: 1
+            }
+            this.onNextTick = {
+                id: 0, // Air
+                properties: {}
+            }
+        }
 
     }
 }
@@ -390,6 +423,24 @@ class Item_wheatBundle extends Item {
         this.id = 41;
 
         this.fuel_value = 50;
+    }
+}
+
+class Item_bucket extends Item {
+    constructor() {
+        super('bucket', './assets/items/bucket.png');
+        this.id = 50;
+
+    }
+}
+
+class Item_bucketWater extends Item {
+    constructor() {
+        super('bucket_water', './assets/items/bucket_water.png');
+        this.id = 51;
+
+        this.placeBlock_id = 13;
+        this.giveItemUponPlace = 50;
     }
 }
 
@@ -1276,6 +1327,8 @@ class Item_Directory {
 
             '40': Item_wheatSeeds,
             '41': Item_wheatBundle,
+            '50': Item_bucket,
+            '51': Item_bucketWater,
 
             '64': Item_pork,
             '65': Item_porkCooked,
