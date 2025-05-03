@@ -867,7 +867,8 @@ class Block_dirt extends Block_Solid {
             this.onNextTick = {
                 id: 14, // dry farmland
                 properties: {}
-            }
+            };
+            this.decrementDurability = true;
         }
 
     }
@@ -908,7 +909,7 @@ class Block_grass extends Block_Solid {
             this.onNextTick = {
                 id: 14, // dry farmland
                 properties: {}
-            }
+            };
 
             const rand = Math.random() * 100;
 
@@ -918,6 +919,7 @@ class Block_grass extends Block_Solid {
                     quantity: 2
                 };
             }
+            this.decrementDurability = true;
         }
 
     }
