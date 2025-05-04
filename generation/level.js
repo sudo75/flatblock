@@ -131,6 +131,15 @@ class Level {
             time: true,
             neighbour: true
         };
+
+        const computeFreq = {
+            gametick_logic: 1,
+            lighting: 1,
+            liquid: 1,
+            blockReq: 1,
+            time: 1,
+            neighbour: 1
+        };
         
         const simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.simulation_distance).min;
         const simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.simulation_distance).max;
@@ -138,7 +147,7 @@ class Level {
         const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
         const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
-        if (toCompute.gametick_logic) {
+        if (toCompute.gametick_logic && tick % computeFreq.gametick_logic === 0) {
             //Run gametick logic of blocks
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
@@ -164,7 +173,7 @@ class Level {
             }
         }
 
-        if (toCompute.blockReq) {
+        if (toCompute.blockReq && tick % computeFreq.blockReq === 0) {
 
             //Compute spawnItem data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
@@ -266,7 +275,7 @@ class Level {
             }
         }
 
-        if (toCompute.time) {
+        if (toCompute.time && tick % computeFreq.time === 0) {
             //Run time logic
             this.incrementTime();
 
@@ -294,20 +303,20 @@ class Level {
 
         }
 
-        if (toCompute.liquid) {
+        if (toCompute.liquid && tick % computeFreq.liquid === 0) {
             if (tick % this.item_directory.getProperty(13, 'spread_speed') === 0) {
                 this.calculateLiquids(tick, block_simulated_chunk_min, block_simulated_chunk_max);
             }
         }
             
-        if (toCompute.lighting) {
+        if (toCompute.lighting && tick % computeFreq.lighting === 0) {
             if (tick % 1 === 0) {
                 this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
             }
         }
         
 
-        if (toCompute.neighbour) {
+        if (toCompute.neighbour && tick % computeFreq.neighbour === 0) {
             
             //Set neighbour properties
 
