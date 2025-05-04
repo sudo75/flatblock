@@ -132,7 +132,7 @@ class Level {
             neighbour: true
         };
 
-        const computeFreq = {
+        let computeFreq = {
             gametick_logic: 1,
             lighting: 1,
             liquid: 1,
@@ -140,6 +140,55 @@ class Level {
             time: 1,
             neighbour: 1
         };
+
+        if (this.game.debugger.settings.performance){
+            const tps = this.game.tps;
+            const tps_target = this.game.tps_target;
+
+            const delay = tps_target - tps;
+            const delayPercent = Math.round(delay / tps * 100);
+
+            if (delayPercent >= 50) {
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 5,
+                    liquid: 1,
+                    blockReq: 10,
+                    time: 1,
+                    neighbour: 20
+                };
+            } else if (delayPercent >= 40) {
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 5,
+                    liquid: 1,
+                    blockReq: 5,
+                    time: 1,
+                    neighbour: 10
+                };
+            } else if (delayPercent >= 20) {
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 2,
+                    liquid: 1,
+                    blockReq: 2,
+                    time: 1,
+                    neighbour: 5
+                };
+            } else if (delayPercent >= 10) {
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 2,
+                    liquid: 1,
+                    blockReq: 1,
+                    time: 1,
+                    neighbour: 2
+                };
+            }
+
+            console.log(computeFreq)
+
+        }
         
         const simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.simulation_distance).min;
         const simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.simulation_distance).max;

@@ -22,6 +22,7 @@ class Debugger {
             img_smoothing: null,
             debug_inventory: null,
             fast_break: null,
+            debug_menu: null,
             performance: null
         };
 
@@ -91,6 +92,8 @@ class Debugger {
         }
 
         //Fast break - no exterior settings to edit
+
+        //Debug menu - no exterior settings to edit
 
         //Performance - no exterior settings to edit
     }
@@ -179,7 +182,14 @@ class Debugger {
                     alert('fast_break - Input a boolean.');
                 }
                 break;
-            case 'performance':
+            case 'debug_menu':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.debug_menu = arg2 === 'true';
+                } else {
+                    alert('debug_menu - Input a boolean.');
+                }
+                break;
+            case 'fast':
                 if (arg2 === 'true' || arg2 === 'false') {
                     this.settings.performance = arg2 === 'true';
                 } else {

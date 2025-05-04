@@ -710,7 +710,7 @@ class Game {
     }
 
     renderDiagnostics() {
-        if (this.debugger.settings.performance) {
+        if (this.debugger.settings.debug_menu) {
             const data = [
                 `FPS: ${this.performanceData_display.fps}`,
                 `TPS: ${this.performanceData_display.tps}`,
