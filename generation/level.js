@@ -148,45 +148,45 @@ class Level {
             const delay = tps_target - tps;
             const delayPercent = Math.round(delay / tps * 100);
 
-            if (delayPercent >= 50) {
+
+            console.log(delayPercent)
+            if (delayPercent >= 40) {
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 5,
+                    lighting: 20,
+                    liquid: 1,
+                    blockReq: 20,
+                    time: 1,
+                    neighbour: 40
+                };
+            } else if (delayPercent >= 20) {
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 10,
                     liquid: 1,
                     blockReq: 10,
                     time: 1,
                     neighbour: 20
                 };
-            } else if (delayPercent >= 40) {
+            } else if (delayPercent >= 10) {
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 5,
+                    lighting: 10,
                     liquid: 1,
                     blockReq: 5,
                     time: 1,
                     neighbour: 10
                 };
-            } else if (delayPercent >= 20) {
+            } else if (delayPercent >= 5) {
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 2,
+                    lighting: 5,
                     liquid: 1,
                     blockReq: 2,
                     time: 1,
                     neighbour: 5
                 };
-            } else if (delayPercent >= 10) {
-                computeFreq = {
-                    gametick_logic: 1,
-                    lighting: 2,
-                    liquid: 1,
-                    blockReq: 1,
-                    time: 1,
-                    neighbour: 2
-                };
             }
-
-            console.log(computeFreq)
 
         }
         
