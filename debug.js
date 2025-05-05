@@ -189,7 +189,7 @@ class Debugger {
                     alert('debug_menu - Input a boolean.');
                 }
                 break;
-            case 'fast':
+            case 'performance':
                 if (arg2 === 'true' || arg2 === 'false') {
                     this.settings.performance = arg2 === 'true';
                 } else {
