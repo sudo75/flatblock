@@ -148,8 +148,6 @@ class Level {
             const delay = tps_target - tps;
             const delayPercent = Math.round(delay / tps * 100);
 
-
-            console.log(delayPercent)
             if (delayPercent >= 40) {
                 computeFreq = {
                     gametick_logic: 1,
