@@ -3,10 +3,12 @@ import { Item_Directory } from '../generation/blocks.js';
 class Inventory {
     constructor() {
         this.data = [];
-        this.selectedSlot = 0; // 0 - 35
+        this.selectedSlot = 0; // 0 - 35 + 4 armour
 
         this.rows = 4;
         this.cols = 9;
+
+        this.additional = 4;
         this.init();
 
         this.item_directory = new Item_Directory();

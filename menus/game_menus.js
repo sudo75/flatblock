@@ -890,11 +890,13 @@ class Menu_Hotbar extends Menu {
 
 class Menu_Healthbar extends Menu {
     constructor(canvas_menu, ctx, player) {
-        super(canvas_menu, ctx, 0.4, 0.1);
+        super(canvas_menu, ctx, 0.3, 0.08);
 
         this.textureCache = {};
 
         this.margin = 20;
+
+        this.x = this.canvas_width * 0.2 + this.margin;
         this.y = this.canvas_height - this.real_height - this.margin;
 
         this.player = player;
@@ -951,7 +953,7 @@ class Menu_Healthbar extends Menu {
         let count_hearts_empty = 0;
 
         for (let i = 0; i < maxHearts; i++) {
-            const heartSpacing = 5;
+            const heartSpacing = 0;
             const startX = this.x - this.margin / 2;
             const startY = this.y -40;
 
@@ -970,6 +972,95 @@ class Menu_Healthbar extends Menu {
 
             const heartX = startX + i * (this.heartSize + heartSpacing);
             drawHeart(heartX, startY, type);
+        }
+    }
+}
+
+class Menu_Armour extends Menu {
+    constructor(canvas_menu, ctx, player) {
+        super(canvas_menu, ctx, 0.3, 0.08);
+
+        this.textureCache = {};
+
+        this.margin = 20;
+
+        this.x = this.canvas_width * 0.5 + this.margin * 2;
+        this.y = this.canvas_height - this.real_height - this.margin;
+
+        this.player = player;
+        this.armourSize = this.real_width / 10;
+    }
+
+    open() {
+        return;
+        super.open();
+        this.canvas_menu.style.pointerEvents = 'none'; //Override pointer events code in super
+
+        const armour = this.player.armour;
+        const maxArmour = this.player.maxArmour / 2;
+        
+        const armour_full = Math.floor(armour / 2);
+        const armour_half = armour % 2;
+        const armour_empty = maxArmour - armour_full - armour_half;
+
+        const drawArmour = (x, y, type) => {
+
+            const getArmourLocation = (type) => {
+                switch (type) {
+                    case 'full':
+                        return './assets/ui/armour_full.png';
+                    case 'half':
+                        return './assets/ui/armour_half.png';
+                    case 'empty':
+                        return './assets/ui/armour_empty.png';
+                }
+            };
+            
+            const armourImage_location = getArmourLocation(type);
+
+            let armourImage;
+            if (armourImage_location) {
+                if (!this.textureCache[armourImage_location]) {
+                    armourImage = new Image();
+                    armourImage.src = armourImage_location;
+        
+                    this.textureCache[armourImage_location] = armourImage;
+                } else {
+                    armourImage = this.textureCache[armourImage_location];
+                }
+                
+                if (armourImage) {
+                    this.ctx.drawImage(armourImage, x, y, this.armourSize, this.armourSize);
+                } else {
+                    this.ctx.fillRect(x, y, this.armourSize, this.armourSize);
+                }
+            }
+        }
+
+        let count_armour_full = 0;
+        let count_armour_half = 0;
+        let count_armour_empty = 0;
+
+        for (let i = 0; i < maxArmour; i++) {
+            const armourSpacing = 0;
+            const startX = this.x - this.margin / 2;
+            const startY = this.y -40;
+
+            let type;
+            if (count_armour_full < armour_full) {
+                count_armour_full++;
+                type = 'full';
+            } else if (count_armour_half < armour_half) {
+                count_armour_half++;
+                type = 'half';
+            } else if (count_armour_empty < armour_empty) {
+                count_armour_empty++;
+                type = 'empty';
+            }
+
+
+            const armourX = startX + i * (this.armourSize + armourSpacing);
+            drawArmour(armourX, startY, type);
         }
     }
 }
@@ -1006,10 +1097,12 @@ class MenuHandler {
 
         this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
         this.healthbar = new Menu_Healthbar(this.canvas_menu, this.ctx_menu, this.game.player);
+        this.armour = new Menu_Armour(this.canvas_menu, this.ctx_menu, this.game.player);
 
         setTimeout(() => {
             this.hotbar.open();
             this.healthbar.open();
+            this.armour.open();
         }, 100);
     }
 
@@ -1037,18 +1130,21 @@ class MenuHandler {
             if (blockData.id === 9 && !this.aMenuIsOpen()) { //chest
                 this.hotbar.close();
                 this.healthbar.close();
+                this.armour.close();
                 this.menus.chest.open(blockData.inventory); //param doesn't do anything yet
             }
 
             if (blockData.id === 10 && !this.aMenuIsOpen()) { //crafting table
                 this.hotbar.close();
                 this.healthbar.close();
+                this.armour.close();
                 this.menus.crafting.open();
             }
 
             if (blockData.id === 11 && !this.aMenuIsOpen()) { //furnace
                 this.hotbar.close();
                 this.healthbar.close();
+                this.armour.close();
                 this.menus.furnace.open(blockData.inventory);
             }
         }
@@ -1057,12 +1153,16 @@ class MenuHandler {
         if (this.healthbar.isOpen || this.hotbar.isOpen) {
             this.healthbar.close();
             this.hotbar.close();
+            this.armour.close();
 
             // Refreshes healthbar
             this.healthbar.open();
 
             // Refreshes hotbar
             this.hotbar.open();
+
+            //Refreshes armour bar
+            this.armour.open();
         }
 
 
@@ -1073,11 +1173,13 @@ class MenuHandler {
             if (!this.aMenuIsOpen()) {
                 this.hotbar.close();
                 this.healthbar.close();
+                this.armour.close();
                 this.menus.inventory.open();
             } else {
                 this.closeAllMenus();
                 this.hotbar.open();
                 this.healthbar.open();
+                this.armour.open();
             }
             this.keyHold.e = true;
         } else {

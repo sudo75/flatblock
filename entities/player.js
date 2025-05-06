@@ -46,6 +46,9 @@ class Player extends Entity_creature {
         this.consumption_cooldown = 0;
 
         this.debug_inventory = false;
+
+        this.armour = 0;
+        this.maxArmour = 20;
     }
 
     spawn() {
@@ -73,8 +76,13 @@ class Player extends Entity_creature {
         this.y = position.y;
 
         this.inventory.data = inventory_data;
+        this.calcArmour();
 
         this.draw();
+    }
+
+    calcArmour() {
+
     }
 
     throwItem(inventory_slot) {
@@ -226,6 +234,8 @@ class Player extends Entity_creature {
         if (this.health <= 0) {
             this.uponDeath();
         }
+
+        this.calcArmour();
     }
 
     uponDeath() {
