@@ -390,6 +390,36 @@ class Entity_creature extends Entity {
         this.effects = {
             invincible: 0
         };
+
+        this.highestPoint = null;
+
+        this.fallDamageThreshold = 3; // If a creature entity falls a greater height than this value, it takes 1 damage, each additional block increases damage by 1
+    }
+
+    update(input, deltaTime) {
+        super.update(input, deltaTime);
+
+        //Calculate fall damage
+        if (this.y < this.highestPoint && this.isOnSolidBlock()) {
+            //Fall damage
+
+            const fall = Math.round(this.highestPoint - this.y);
+            const damage = fall - this.fallDamageThreshold;
+
+
+            if (damage >= 1) {
+                this.applyDamage(damage);
+                this.applyDamageVel();
+            }
+        }
+
+        if (this.isOnSolidBlock()) {
+            this.highestPoint = this.y;
+        }
+
+        if (!this.isOnSolidBlock()) {
+            this.highestPoint = this.highestPoint < this.y ? this.y: this.highestPoint;
+        }
     }
 
     run_gametick_logic(tick) {
@@ -406,6 +436,11 @@ class Entity_creature extends Entity {
         if (this.health <= 0) {
             this.kill();
         }
+    }
+
+    applyDamageVel() {
+        this.h_vel = Math.random() > 0.5 ? 1: -1;
+        this.v_vel = 1;
     }
 
     applyHealth(health) {
