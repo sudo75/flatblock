@@ -136,6 +136,40 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         return false;
     }
 
+    isSumbergedInLiquid() {
+        const minX = Math.floor(this.x); // minX of entity
+        const minY = Math.floor(this.y);
+        const maxX = this.calc.hardRoundDown(this.x + this.width_blocks);
+        const maxY = this.calc.hardRoundDown(this.y + this.height_blocks);
+
+        for (let i = minX; i <= maxX; i++) {
+            for (let j = minY; j <= maxY; j++) {
+                if (!this.calc.isWithinWorldBounds(i, j)) continue;
+                if (this.calc.getBlockData(i, j).type === 'liquid') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    isSumbergedInLiquid_completely() {
+        const minX = Math.floor(this.x); // minX of entity
+        const minY = Math.floor(this.y);
+        const maxX = this.calc.hardRoundDown(this.x + this.width_blocks);
+        const maxY = this.calc.hardRoundDown(this.y + this.height_blocks);
+
+        for (let i = minX; i <= maxX; i++) {
+            for (let j = minY; j <= maxY; j++) {
+                if (!this.calc.isWithinWorldBounds(i, j)) continue;
+                if (this.calc.getBlockData(i, j).type !== 'liquid') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     willCollide(x, y, minX_, minY_, maxX_, maxY_) { // Input position to test
 
         const minX = minX_ ? minX_: Math.floor(x); // minX of entity
@@ -387,6 +421,11 @@ class Entity_creature extends Entity {
         this.health = health;
         this.maxHealth = maxHealth;
 
+        this.air = 10;
+        this.maxAir = 10;
+
+        this.air_depletion_speed = 20;
+
         this.effects = {
             invincible: 0
         };
@@ -425,6 +464,19 @@ class Entity_creature extends Entity {
     run_gametick_logic(tick) {
         for (let effect in this.effects) {
             this.effects[effect]--;
+        }
+
+        // Compute air and drowning
+        if (tick % this.air_depletion_speed === 0 && this.isSumbergedInLiquid_completely()) {
+            if (this.air > 0) {
+                this.air--;
+            } else {
+                this.health -= 2;
+            }   
+        }
+
+        if (!this.isSumbergedInLiquid_completely()) {
+            this.air = this.maxAir;
         }
     }
 

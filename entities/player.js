@@ -220,7 +220,7 @@ class Player extends Entity_creature {
     }
 
     run_gametick_logic(tick) {
-        super.run_gametick_logic();
+        super.run_gametick_logic(tick);
         if (this.hitCooldown > 0) {
             this.hitCooldown--;
         }

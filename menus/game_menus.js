@@ -976,6 +976,81 @@ class Menu_Healthbar extends Menu {
     }
 }
 
+class Menu_Airbar extends Menu {
+    constructor(canvas_menu, ctx, player) {
+        super(canvas_menu, ctx, 0.3, 0.08);
+
+        this.textureCache = {};
+
+        this.margin = 20;
+
+        this.x = this.canvas_width * 0.2 + this.margin;
+        this.y = this.canvas_height - this.real_height - this.margin - this.real_width / 10 - 5;
+
+        this.player = player;
+        this.bubbleSize = this.real_width / 10;
+    }
+
+    open() {
+        super.open();
+        this.canvas_menu.style.pointerEvents = 'none'; //Override pointer events code in super
+
+        const bubbles = this.player.air;
+        const maxBubbles = this.player.maxAir;
+
+        if (bubbles === maxBubbles) return;
+
+        const drawBubble = (x, y, type) => {
+
+            const getBubbleLocation = (type) => {
+                switch (type) {
+                    case 'full':
+                        return './assets/ui/air_bubble.png';
+                    case 'empty':
+                        return './assets/ui/empty_bubble.png';
+                }
+            };
+            
+            const bubbleImage_location = getBubbleLocation(type);
+
+            let bubbleImage;
+            if (bubbleImage_location) {
+                if (!this.textureCache[bubbleImage_location]) {
+                    bubbleImage = new Image();
+                    bubbleImage.src = bubbleImage_location;
+        
+                    this.textureCache[bubbleImage_location] = bubbleImage;
+                } else {
+                    bubbleImage = this.textureCache[bubbleImage_location];
+                }
+                
+                if (bubbleImage) {
+                    this.ctx.drawImage(bubbleImage, x, y, this.bubbleSize, this.bubbleSize);
+                } else {
+                    this.ctx.fillRect(x, y, this.bubbleSize, this.bubbleSize);
+                }
+            }
+        }
+
+
+        for (let i = 0; i < maxBubbles; i++) {
+            const bubbleSpacing = 0;
+            const startX = this.x - this.margin / 2;
+            const startY = this.y -40;
+
+            let type;
+            if (i < bubbles) {
+                type = 'full';
+            } else {
+                type = 'empty';
+            }
+
+            const bubbleX = startX + i * (this.bubbleSize + bubbleSpacing);
+            drawBubble(bubbleX, startY, type);
+        }
+    }
+}
+
 class Menu_Armour extends Menu {
     constructor(canvas_menu, ctx, player) {
         super(canvas_menu, ctx, 0.3, 0.08);
@@ -1098,6 +1173,7 @@ class MenuHandler {
         this.hotbar = new Menu_Hotbar(this.canvas_menu, this.ctx_menu, this.game.player.inventory);
         this.healthbar = new Menu_Healthbar(this.canvas_menu, this.ctx_menu, this.game.player);
         this.armour = new Menu_Armour(this.canvas_menu, this.ctx_menu, this.game.player);
+        this.air = new Menu_Airbar(this.canvas_menu, this.ctx_menu, this.game.player);
 
         setTimeout(() => {
             this.hotbar.open();
@@ -1131,6 +1207,7 @@ class MenuHandler {
                 this.hotbar.close();
                 this.healthbar.close();
                 this.armour.close();
+                this.air.close();
                 this.menus.chest.open(blockData.inventory); //param doesn't do anything yet
             }
 
@@ -1138,6 +1215,7 @@ class MenuHandler {
                 this.hotbar.close();
                 this.healthbar.close();
                 this.armour.close();
+                this.air.close();
                 this.menus.crafting.open();
             }
 
@@ -1145,6 +1223,7 @@ class MenuHandler {
                 this.hotbar.close();
                 this.healthbar.close();
                 this.armour.close();
+                this.air.close();
                 this.menus.furnace.open(blockData.inventory);
             }
         }
@@ -1154,15 +1233,13 @@ class MenuHandler {
             this.healthbar.close();
             this.hotbar.close();
             this.armour.close();
+            this.air.close();
 
-            // Refreshes healthbar
+            // Refresh
             this.healthbar.open();
-
-            // Refreshes hotbar
             this.hotbar.open();
-
-            //Refreshes armour bar
             this.armour.open();
+            this.air.open();
         }
 
 
@@ -1174,12 +1251,14 @@ class MenuHandler {
                 this.hotbar.close();
                 this.healthbar.close();
                 this.armour.close();
+                this.air.close();
                 this.menus.inventory.open();
             } else {
                 this.closeAllMenus();
                 this.hotbar.open();
                 this.healthbar.open();
                 this.armour.open();
+                this.air.open();
             }
             this.keyHold.e = true;
         } else {
