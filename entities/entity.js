@@ -86,6 +86,19 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         return false;
     }
 
+    isInLiquidBlock() {
+        if (this.y >= 0) {
+            if (
+                (this.calc.getBlockData(Math.floor(this.x), Math.floor(this.y)).type === 'liquid' && this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y))) ||
+                (this.calc.getBlockData(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)).type === 'liquid' && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)))
+            ) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
     inViscosity_highest() {
         if (this.y >= 0) {
             const va = this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y)) ? this.calc.getBlockData(Math.floor(this.x), Math.floor(this.y)).viscosity: null;
@@ -452,7 +465,7 @@ class Entity_creature extends Entity {
             }
         }
 
-        if (this.isOnSolidBlock()) {
+        if (this.isOnSolidBlock() || this.isInLiquidBlock()) {
             this.highestPoint = this.y;
         }
 
