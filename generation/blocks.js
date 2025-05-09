@@ -1300,6 +1300,17 @@ class Block_furnace extends Block_Solid {
     }
 }
 
+class Block_bedrock extends Block_Solid {
+    constructor(x, y) {
+        super('bedrock', x, y, Infinity, './assets/textures/bedrock.png');
+        this.id = 200;
+        this.itemDrop_id = [
+            {id: 200, quantity: 1}
+        ];
+
+    }
+}
+
 class Item_Directory {
     constructor() {
         this.item = {
@@ -1376,7 +1387,9 @@ class Item_Directory {
             '155': Item_copperHoe,
             '156': Item_goldenHoe,
             '157': Item_ironHoe,
-            '158': Item_diamondHoe
+            '158': Item_diamondHoe,
+
+            '200': Block_bedrock
         }
     }
 

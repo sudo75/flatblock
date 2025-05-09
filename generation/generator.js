@@ -153,7 +153,9 @@ class Generator {
                     let blockClass = this.item_directory.item[0]; //Default to air
 
 
-                    if (y < dirtLevel) {
+                    if (y === 0) {
+                        blockClass = this.item_directory.item[200]; //Bedrock
+                    } else if (y < dirtLevel) {
                         const possibleOreID = this.ore_table.isOreType_id(absolute_x, y);
                         if (possibleOreID) {
                             blockClass = this.item_directory.item[possibleOreID]; //Ores
