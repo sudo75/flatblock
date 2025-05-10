@@ -761,7 +761,7 @@ class Level {
         };
         if (this.game.input.mouseDown) {
             if (this.current_breaking) {
-                if (this.game.player.selectedBlock.x !== this.current_breaking.x && this.game.player.selectedBlock.y !== this.current_breaking.y) {
+                if (this.game.player.selectedBlock.x !== this.current_breaking.x || this.game.player.selectedBlock.y !== this.current_breaking.y) {
                     resetBreakStatus();
                 }
             }
