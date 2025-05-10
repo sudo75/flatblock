@@ -153,7 +153,7 @@ class Calc_World {
     }
 
     getBlockData(x, y) {
-        if (!this.isWithinWorldBounds(x, y)) return false;
+        if (!this.game.level.data) return;
 
         const chunkID = this.getChunkID(x);
         const relativeX = this.getRelativeX(x);
