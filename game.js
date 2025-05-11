@@ -136,7 +136,7 @@ class Game {
 
         const main_menu_messages = [
             'Good day sir!',
-            '5000 lines of code',
+            '6000 lines of code',
             'Spaghetti code!',
             'Poorly programmed'
         ];
