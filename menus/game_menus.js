@@ -57,6 +57,9 @@ class Menu_Inventory extends Menu {
             case 'inventory':
                 this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 2, 2, this.recipies);
                 break;
+            case 'armour':
+                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Armour(this, 0.4, 0.3);
+                break;
             case 'crafting':
                 this.Menu_ComponentUI_1 = new Menu_ComponentUI_Crafting(this, 0.4, 0.3, 3, 3, this.recipies);
                 this.Menu_ComponentUI_1.x = this.x + (this.real_width - this.Menu_ComponentUI_1.real_width) / 2;
@@ -82,7 +85,16 @@ class Menu_Inventory extends Menu {
                     this.editingStack = false;
                     this.selectedSlotIndex = undefined;
                 } else if (this.selectedSlotIndex !== undefined) {
+
                     if (this.getSlotIndexByXY(x, y) !== undefined) {
+
+                        const itemID = this.inventory_data[this.selectedSlotIndex].id;
+                        if (this.Menu_ComponentUI_1.allowable && this.getSlotIndexByXY(x, y) >= this.Menu_ComponentUI_1.minSlotIndex) {
+                            if (!this.Menu_ComponentUI_1.allowable.includes(itemID)) {
+                                return;
+                            }
+                        }
+
                         const resultSlotIndex = this.getResultSlotIndex();
                         if (resultSlotIndex) {
                             if (this.getSlotIndexByXY(x, y) !== resultSlotIndex) {
@@ -120,7 +132,16 @@ class Menu_Inventory extends Menu {
             let y = event.clientY - rect.top;
 
             if (this.selectedSlotIndex !== undefined) {
+
                 if (this.getSlotIndexByXY(x, y) !== undefined) {
+
+                    const itemID = this.inventory_data[this.selectedSlotIndex].id;
+                    if (this.Menu_ComponentUI_1.allowable && this.getSlotIndexByXY(x, y) >= this.Menu_ComponentUI_1.minSlotIndex) {
+                        if (!this.Menu_ComponentUI_1.allowable.includes(itemID)) {
+                            return;
+                        }
+                    }
+
                     const resultSlotIndex = this.getResultSlotIndex();
                     //if (!resultSlotIndex) return;
                     //if (getSlotIndexByXY(x, y) === resultSlotIndex) return; // commented out bc. the code broke something else, but not sure if it might be important
@@ -798,6 +819,92 @@ class Menu_ComponentUI_Chest {
     }
 }
 
+class Menu_ComponentUI_Armour {
+    constructor(main, width, height) {
+        this.main = main;
+        this.width = width;
+        this.height = height;
+        this.minSlotIndex = null;
+
+        this.canvas_menu = main.canvas_menu;
+        this.canvas_width = this.canvas_menu.width;
+        this.canvas_height = this.canvas_menu.height;
+
+        this.ctx = main.ctx;
+
+        this.margin = 10;
+
+        const getAllowable = () => {
+            const item_directory = this.main.item_directory;
+
+            return item_directory.getItemsWithProperty('armour');
+        }
+
+        this.allowable = getAllowable(); //Allowable items for putting in the armour slots
+
+        this.real_width = main.real_width * this.width;
+        this.real_height = main.real_height * this.height;
+        this.x = main.x + this.margin;
+        this.y = main.y + this.margin;
+        
+        this.slotPosition = []; // Required for integration with main menu
+
+        this.item_directory = new Item_Directory();
+    }
+
+    open() {
+        //Set player's inventory to include chest data
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + 4; i++) {
+            this.main.game.player.inventory.data[i] = this.main.game.player.inventory.armour[i];
+        }
+
+        // Draw slots (Aligned perfectly)
+        this.slotPosition = [];
+        for (let i = 0; i < 4; i++) {
+            const slot_margin = 5;
+            const slot_width = this.main.slot_width;
+            const slot_height = this.main.slot_height;
+
+            const slot_x = this.x;
+            const slot_y = this.y + i * (slot_height + slot_margin);
+
+            this.slotPosition.push({
+                slot_x: slot_x,
+                slot_y: slot_y,
+                isResult: false
+            });
+
+            this.ctx.fillStyle = 'lightgrey'; // slot BG
+            this.ctx.fillRect(slot_x, slot_y, slot_width, slot_height);
+
+            this.ctx.strokeStyle = "black"; // Slot border
+            this.ctx.lineWidth = this.minSlotIndex + i === this.main.selectedSlotIndex ? 4: 1;
+            this.ctx.strokeRect(slot_x, slot_y, slot_width, slot_height);
+        }
+    }
+
+    close() {
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {        
+            const item = this.main.inventory_data[i];
+            const itemQuant = item.quantity;
+            for (let j = 0; j < itemQuant; j++) {
+                this.main.inventory.subtract(i);
+            }
+        }
+    }
+
+    update() { //Updates armour data
+
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + 4; i++) {
+            this.main.game.player.inventory.armour[i] = this.main.game.player.inventory.data[i];
+        }
+    }
+
+    getAllSlotPositions() {
+        return this.slotPosition;
+    }
+}
+
 class Menu_Hotbar extends Menu {
     constructor(canvas_menu, ctx, inventory) {
         super(canvas_menu, ctx, 0.6, 0.1);
@@ -1154,13 +1261,15 @@ class MenuHandler {
         this.keyHold = {
             e: false,
             c: false,
-            q: false
+            q: false,
+            r: false
         };
     }
 
     init() {
         this.menus = {
             inventory: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'inventory', this.game),
+            armour: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'armour', this.game),
             crafting: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'crafting', this.game),
             chest: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'chest', this.game),
             furnace: new Menu_Inventory(this.canvas_menu, this.ctx_menu, this.game.player.inventory, 'furnace', this.game)
@@ -1265,6 +1374,28 @@ class MenuHandler {
             this.keyHold.e = false;
         }
 
+        if (input.includes('r')) {
+            if (this.keyHold.r) {
+                return;
+            }
+            if (!this.aMenuIsOpen()) {
+                this.hotbar.close();
+                this.healthbar.close();
+                this.armour.close();
+                this.air.close();
+                this.menus.armour.open();
+            } else {
+                this.closeAllMenus();
+                this.hotbar.open();
+                this.healthbar.open();
+                this.armour.open();
+                this.air.open();
+            }
+            this.keyHold.r = true;
+        } else {
+            this.keyHold.r = false;
+        }
+
         //Update chest menu
         if (this.menus.chest.isOpen) {
             this.menus.chest.updateInventory();
@@ -1281,6 +1412,12 @@ class MenuHandler {
         if (this.menus.inventory.isOpen) {
             this.menus.inventory.updateInventory();
             this.menus.inventory.refresh();
+        }
+
+        //Update armour menu
+        if (this.menus.armour.isOpen) {
+            this.menus.armour.updateInventory();
+            this.menus.armour.refresh();
         }
 
         //Update crafting menu

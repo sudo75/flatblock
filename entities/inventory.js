@@ -9,6 +9,7 @@ class Inventory {
         this.cols = 9;
 
         this.additional = 4;
+        this.armour = [];
         this.init();
 
         this.item_directory = new Item_Directory();
@@ -20,6 +21,12 @@ class Inventory {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 this.data.push({id: null, quantity: null, durability: null});
+            }
+        }
+
+        for (let i = 0; i < this.additional; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.armour.push({id: null, quantity: null, durability: null});
             }
         }
     }

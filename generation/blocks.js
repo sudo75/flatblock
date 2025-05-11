@@ -18,7 +18,7 @@ class Meta {
 
         this.spriteSheetX = 0;
 
-        this.fuel = 0;
+        this.fuel_value = 0;
 
         this.light_source = 0;
         this.light_source_sun = 0;
@@ -1400,6 +1400,21 @@ class Item_Directory {
         const itemInstance = new itemClass;
 
         return itemInstance[property];
+    }
+
+    getItemsWithProperty(property) {
+        let itemIDs = [];
+        for (const id in this.item) {
+            const itemClass = this.item[id];
+            if (!itemClass) continue;
+    
+            const itemInstance = new itemClass();
+            if (itemInstance[property]) {
+                itemIDs.push(id);
+            }
+        }
+
+        return itemIDs;
     }
 
     getTextureLocationByID(id) {

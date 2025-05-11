@@ -71,11 +71,13 @@ class Player extends Entity_creature {
         this.draw();
     }
 
-    copy(position, inventory_data) { //copy from saved data
-        this.x = position.x;
-        this.y = position.y;
+    copy(data_player) { //copy from saved data
+        this.x = data_player.position.x;
+        this.y = data_player.position.y;
 
-        this.inventory.data = inventory_data;
+        this.inventory.data = data_player.inventory;
+        this.inventory.armour = data_player.armour;
+
         this.calcArmour();
 
         this.draw();

@@ -511,7 +511,8 @@ class Game {
                 x: this.player.x,
                 y: this.player.y
             },
-            inventory: this.player.inventory.data
+            inventory: this.player.inventory.data,
+            armour: this.player.inventory.armour
         };
 
         const data = {
@@ -608,7 +609,7 @@ class Game {
     
         //Load player
         const playerStart = performance.now();
-        this.player.copy(gameData_parsed.data_player.position, gameData_parsed.data_player.inventory);
+        this.player.copy(gameData_parsed.data_player);
         logPerformance("Player spawned", playerStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         //Load gameloop
