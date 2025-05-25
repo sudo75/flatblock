@@ -207,10 +207,10 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
         
         //set direction
-        if (input.includes('ArrowLeft')) {
+        if (input.includes('ArrowLeft') || input.includes('w') || input.includes('W')) {
             this.direction = 'left';
         }
-        if (input.includes('ArrowRight')) {
+        if (input.includes('ArrowRight') || input.includes('d') || input.includes('D')) {
             this.direction = 'right';
         }
 
@@ -237,17 +237,17 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             this.v_vel = 0;
 
             const speed = this.fast ? 32: 12;
-            if (input.includes('ArrowLeft')) {
+            if (input.includes('ArrowLeft') || input.includes('w') || input.includes('W')) {
                 this.h_vel = -speed;
             }
-            if (input.includes('ArrowRight')) {
+            if (input.includes('ArrowRight') || input.includes('d') || input.includes('D')) {
                 this.h_vel = speed;
             }
     
-            if (input.includes('ArrowUp')) {
+            if (input.includes('ArrowUp') || input.includes('w') || input.includes('W')) {
                 this.v_vel = speed;
             }
-            if (input.includes('ArrowDown')) {
+            if (input.includes('ArrowDown') || input.includes('s') || input.includes('S')) {
                 this.v_vel = -speed;
             }
             
@@ -273,7 +273,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         }
         
         //Set velocities
-        if (input.includes('ArrowLeft') && !this.isSolidBlockAdjacent('left')) {
+        if ((input.includes('ArrowLeft') || input.includes('a') || input.includes('A')) && !this.isSolidBlockAdjacent('left')) {
             if (this.isOnSolidBlock()) {
                 this.h_vel = this.h_minVel;
             } else {
@@ -282,7 +282,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
                 }
             }
         }
-        if (input.includes('ArrowRight') && !this.isSolidBlockAdjacent('right')) {
+        if ((input.includes('ArrowRight') || input.includes('d') || input.includes('D')) && !this.isSolidBlockAdjacent('right')) {
             if (this.isOnSolidBlock()) {
                 this.h_vel = this.h_maxVel;
             } else {
@@ -292,20 +292,20 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             }
         }
 
-        if (input.includes('ArrowUp')) {
+        if (input.includes('ArrowUp') || input.includes('w') || input.includes('W')) {
             if (this.isOnSolidBlock() && !this.isSolidBlockAbove()) {
                 this.jump();
             } else if (viscosity) {
                 this.v_vel = this.v_maxVel * this.swimStrength;
             }
         }
-        if (input.includes('ArrowDown')) {
+        if (input.includes('ArrowDown') || input.includes('s') || input.includes('S')) {
             //this.v_vel = this.v_minVel;
         }
 
 
         //Induce horizontal glide
-        if (!input.includes('ArrowLeft') && !input.includes('ArrowRight') && this.h_vel !== 0) {
+        if ((!input.includes('ArrowLeft') && !input.includes('ArrowRight') && !input.includes('a') && !input.includes('A') && !input.includes('d') && !input.includes('D')) && this.h_vel !== 0) {
             if (this.isOnSolidBlock()) {
                 const h_vel_change = (this.h_vel * 15) * deltaTime; //h_vel * resistance * delta_time
                 this.h_vel -= h_vel_change;

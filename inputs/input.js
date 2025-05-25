@@ -6,7 +6,7 @@ class InputHandler {
         this.mouseDown = false;
         this.mouseDown_right = false;
 
-        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'e', 'r', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4', 'F8'];
+        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 'e', 'r', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4', 'F8'];
 
         window.addEventListener('keydown', (event) => {
             const key = event.key;
@@ -18,13 +18,16 @@ class InputHandler {
         });
 
         window.addEventListener('keyup', (event) => {
-            const key = event.key;
-            if (this.keys.indexOf(key) === -1) return;
+            const key = event.key.toLowerCase(); // Normalise to lowercase
 
-            if (this.keys.includes(key)) {
-                this.keys.splice(this.keys.indexOf(key), 1);
+            this.keys = this.keys.map(k => k.toLowerCase());
+
+            const index = this.keys.indexOf(key);
+            if (index !== -1) {
+                this.keys.splice(index, 1);
             }
         });
+
 
         this.game.canvas_player.addEventListener('mousemove', (event) => {
             let rect = this.game.canvas_player.getBoundingClientRect();
