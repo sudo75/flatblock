@@ -1617,24 +1617,24 @@ class Item_Directory {
             '158': Item_diamondHoe,
 
             '170': Item_copperBoots,
-            '172': Item_copperLeggings,
-            '173': Item_copperChestplate,
-            '174': Item_copperHelmet,
+            '171': Item_copperLeggings,
+            '172': Item_copperChestplate,
+            '173': Item_copperHelmet,
 
-            '175': Item_goldenBoots,
-            '176': Item_goldenLeggings,
-            '177': Item_goldenChestplate,
-            '178': Item_goldenHelmet,
+            '174': Item_goldenBoots,
+            '175': Item_goldenLeggings,
+            '176': Item_goldenChestplate,
+            '177': Item_goldenHelmet,
 
-            '179': Item_ironBoots,
-            '180': Item_ironLeggings,
-            '181': Item_ironChestplate,
-            '182': Item_ironHelmet,
+            '178': Item_ironBoots,
+            '179': Item_ironLeggings,
+            '180': Item_ironChestplate,
+            '181': Item_ironHelmet,
 
-            '183': Item_diamondBoots,
-            '184': Item_diamondLeggings,
-            '185': Item_diamondChestplate,
-            '186': Item_diamondHelmet,
+            '182': Item_diamondBoots,
+            '183': Item_diamondLeggings,
+            '184': Item_diamondChestplate,
+            '185': Item_diamondHelmet,
 
             '200': Block_bedrock
         }

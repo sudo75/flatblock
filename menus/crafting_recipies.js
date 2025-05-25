@@ -248,7 +248,7 @@ const recipies = [
         ]
     },
 
-    { // 3 copper + 2 copper => 1 copper pickaxe
+    { // 3 copper + 2 sticks => 1 copper pickaxe
         result: 131,
         quantity: 1,
         recipie: [
@@ -332,7 +332,7 @@ const recipies = [
         ]
     },
 
-    { // 3 copper + 2 copper => 1 copper axe
+    { // 3 copper + 2 sticks => 1 copper axe
         result: 137,
         quantity: 1,
         recipie: [
@@ -446,7 +446,7 @@ const recipies = [
         ]
     },
 
-    { // 1 copper + 2 copper => 1 copper shovel
+    { // 1 copper + 2 sticks => 1 copper shovel
         result: 143,
         quantity: 1,
         recipie: [
@@ -580,7 +580,7 @@ const recipies = [
         ]
     },
 
-    { // 2 copper + 1 copper => 1 copper sword
+    { // 2 copper + 1 sticks => 1 copper sword
         result: 149,
         quantity: 1,
         recipie: [
@@ -704,7 +704,7 @@ const recipies = [
         ]
     },
 
-    { // 2 copper + 2 copper => 1 copper hoe
+    { // 2 copper + 2 sticks => 1 copper hoe
         result: 155,
         quantity: 1,
         recipie: [
@@ -812,6 +812,247 @@ const recipies = [
             ]
         ]
     },
+
+    // Boots
+
+    { // 4 copper => 1 copper boots
+        result: 170,
+        quantity: 1,
+        recipie: [
+            [
+                [27, null, 27],
+                [27, null, 27],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [27, null, 27],
+                [27, null, 27]
+            ]
+        ]
+    },
+
+    { // 4 gold => 1 golden boots
+        result: 174,
+        quantity: 1,
+        recipie: [
+            [
+                [29, null, 29],
+                [29, null, 29],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [29, null, 29],
+                [29, null, 29]
+            ]
+        ]
+    },
+
+    { // 4 gold => 1 iron boots
+        result: 178,
+        quantity: 1,
+        recipie: [
+            [
+                [31, null, 31],
+                [31, null, 31],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [31, null, 31],
+                [31, null, 31]
+            ]
+        ]
+    },
+
+    { // 4 gold => 1 diamond boots
+        result: 182,
+        quantity: 1,
+        recipie: [
+            [
+                [33, null, 33],
+                [33, null, 33],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [33, null, 33],
+                [33, null, 33]
+            ]
+        ]
+    },
+
+    // Leggings
+
+    { // 7 copper => 1 copper leggings
+        result: 171,
+        quantity: 1,
+        recipie: [
+            [
+                [27, 27, 27],
+                [27, null, 27],
+                [27, null, 27]
+            ]
+        ]
+    },
+
+    { // 7 gold => 1 golden leggings
+        result: 175,
+        quantity: 1,
+        recipie: [
+            [
+                [29, 29, 29],
+                [29, null, 29],
+                [29, null, 29]
+            ]
+        ]
+    },
+
+    { // 7 gold => 1 iron leggings
+        result: 179,
+        quantity: 1,
+        recipie: [
+            [
+                [31, 31, 31],
+                [31, null, 31],
+                [31, null, 31]
+            ]
+        ]
+    },
+
+    { // 7 gold => 1 diamond leggings
+        result: 183,
+        quantity: 1,
+        recipie: [
+            [
+                [33, 33, 33],
+                [33, null, 33],
+                [33, null, 33]
+            ]
+        ]
+    },
+
+    // Chestplates
+
+    { // 8 copper => 1 copper chestplate
+        result: 172,
+        quantity: 1,
+        recipie: [
+            [
+                [27, null, 27],
+                [27, 27, 27],
+                [27, 27, 27]
+            ]
+        ]
+    },
+
+    { // 8 gold => 1 golden chestplate
+        result: 176,
+        quantity: 1,
+        recipie: [
+            [
+                [29, null, 29],
+                [29, 29, 29],
+                [29, 29, 29]
+            ]
+        ]
+    },
+
+    { // 8 gold => 1 iron chestplate
+        result: 180,
+        quantity: 1,
+        recipie: [
+            [
+                [31, null, 31],
+                [31, 31, 31],
+                [31, 31, 31]
+            ]
+        ]
+    },
+
+    { // 8 gold => 1 diamond chestplate
+        result: 184,
+        quantity: 1,
+        recipie: [
+            [
+                [33, null, 33],
+                [33, 33, 33],
+                [33, 33, 33]
+            ]
+        ]
+    },
+
+    // Helmets
+
+    { // 5 copper => 1 copper helmet
+        result: 173,
+        quantity: 1,
+        recipie: [
+            [
+                [27, 27, 27],
+                [27, null, 27],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [27, 27, 27],
+                [27, null, 27]
+            ]
+        ]
+    },
+
+    { // 5 gold => 1 golden helmet
+        result: 177,
+        quantity: 1,
+        recipie: [
+            [
+                [29, 29, 29],
+                [29, null, 29],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [29, 29, 29],
+                [29, null, 29]
+            ]
+        ]
+    },
+
+    { // 5 gold => 1 iron helmet
+        result: 181,
+        quantity: 1,
+        recipie: [
+            [
+                [31, 31, 31],
+                [31, null, 31],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [31, 31, 31],
+                [31, null, 31]
+            ]
+        ]
+    },
+
+    { // 5 gold => 1 diamond helmet
+        result: 185,
+        quantity: 1,
+        recipie: [
+            [
+                [33, 33, 33],
+                [33, null, 33],
+                [null, null, null]
+            ],
+            [
+                [null, null, null],
+                [33, 33, 33],
+                [33, null, 33]
+            ]
+        ]
+    },
+
 ];
 
 export { recipies };
