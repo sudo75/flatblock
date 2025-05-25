@@ -107,6 +107,19 @@ class Game {
         this.debugger = new Debugger(this);
     }
 
+    renderMainImage() {
+        // Render main image
+        const mainImg = new Image(this.width, this.height);
+        mainImg.src = './assets/title/main.jpg';
+
+        mainImg.onload = () => {
+            this.ctx_world.drawImage(mainImg, 0, 0);
+
+            this.ctx_world.fillStyle = 'rgba(256, 256, 256, 0.25)';
+            this.ctx_world.fillRect(0, 0, this.width, this.height);
+        };
+    }
+
     async init_menu() {
         this.status = 1;
         const { Menu_Renderer } = await import('./lib/canvas-functions/menu_renderer.js');
@@ -320,6 +333,7 @@ class Game {
 
                 this.menu_renderers.death.close();
                 this.menu_renderers.main.init();
+                this.renderMainImage();
             }}
         ];
 
