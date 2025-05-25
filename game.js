@@ -121,6 +121,9 @@ class Game {
     }
 
     async init_menu() {
+
+        this.renderMainImage();
+
         this.status = 1;
         const { Menu_Renderer } = await import('./lib/canvas-functions/menu_renderer.js');
 
