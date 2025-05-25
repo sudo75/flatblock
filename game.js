@@ -155,10 +155,11 @@ class Game {
             'Poorly programmed'
         ];
 
-        const randIndex = Math.floor(Math.random() * main_menu_messages.length)
-        const message = main_menu_messages[randIndex]
+        //const randIndex = Math.floor(Math.random() * main_menu_messages.length);
+        //const message = main_menu_messages[randIndex];
+        const message = 'Beta'
 
-        this.menu_renderers.main = new Menu_Renderer('Block Game', message, `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`, btns_main, this.width, this.height, this.canvas_menu2);
+        this.menu_renderers.main = new Menu_Renderer('Flatblock', message, `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`, btns_main, this.width, this.height, this.canvas_menu2);
         this.menu_renderers.main.init();
 
         const btns_start = [
