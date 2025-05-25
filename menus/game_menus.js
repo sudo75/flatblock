@@ -1204,7 +1204,6 @@ class Menu_Armour extends Menu {
     }
 
     open() {
-        return;
         super.open();
         this.canvas_menu.style.pointerEvents = 'none'; //Override pointer events code in super
 

@@ -491,6 +491,25 @@ class Entity_creature extends Entity {
         if (!this.isSumbergedInLiquid_completely()) {
             this.air = this.maxAir;
         }
+
+        if (this.inventory) {
+            const armour = this.inventory.armour;
+            if (armour) {
+
+                let totalArmourPoints = 0;
+                for (let i = 0; i < armour.length; i++) {
+                    if (this.inventory.armour[i].id) {
+
+                        const armourPoints = this.game.item_directory.getProperty(this.inventory.armour[i].id, 'armour');
+                        totalArmourPoints += armourPoints;
+                    }
+                    
+                }
+
+                this.armour = totalArmourPoints;
+
+            }
+        }
     }
 
     applyRawDamage(damage) {
