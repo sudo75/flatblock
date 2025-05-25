@@ -575,13 +575,19 @@ class Game {
 
     compressString(string) {
         if (!string) return;
-        //return string;
+
+        if (this.debugger.settings.compression === false) return string;
+
         return LZString.compress(string);
     }
 
     decompressString(string) {
         if (!string) return;
-        //return string;
+        
+        if (this.debugger) {
+            if (this.debugger.settings.compression === false) return string;
+        }
+
         return LZString.decompress(string);
     }
 

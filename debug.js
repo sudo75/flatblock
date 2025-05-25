@@ -13,17 +13,18 @@ class Debugger {
 
     clearSettings() {
         this.settings = { //if null, default.
-            blockview: null,
-            fly: null,
-            fast: null,
-            physics: null,
-            lighting: null,
-            xray: null,
-            img_smoothing: null,
-            debug_inventory: null,
-            fast_break: null,
-            debug_menu: null,
-            performance: null
+            blockview: 15,
+            fly: false,
+            fast: false,
+            physics: true,
+            lighting: true,
+            xray: false,
+            img_smoothing: false,
+            debug_inventory: false,
+            fast_break: false,
+            debug_menu: false,
+            performance: true,
+            compression: true
         };
 
         this.applySettings();
@@ -96,6 +97,8 @@ class Debugger {
         //Debug menu - no exterior settings to edit
 
         //Performance - no exterior settings to edit
+
+        //Compression - no exterior settings to edit
     }
 
     commandInput() {
@@ -194,6 +197,13 @@ class Debugger {
                     this.settings.performance = arg2 === 'true';
                 } else {
                     alert('performance - Input a boolean.');
+                }
+                break;
+            case 'compression':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.compression = arg2 === 'true';
+                } else {
+                    alert('compression - Input a boolean.');
                 }
                 break;
         }
