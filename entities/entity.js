@@ -493,7 +493,7 @@ class Entity_creature extends Entity {
         }
     }
 
-    applyDamage(damage) {
+    applyRawDamage(damage) {
         if (this.effects.invincible > 0) return;
 
         this.health -= damage;
@@ -501,6 +501,47 @@ class Entity_creature extends Entity {
         if (this.health <= 0) {
             this.kill();
         }
+    }
+
+    applyDamage(damage) {
+
+        // Armour does not work against drowning
+
+        if (this.inventory) {
+            const armour = this.inventory.armour;
+
+            if (this.inventory.armour) {
+                let totalArmourPoints = 0;
+                for (let i = 0; i < armour.length; i++) {
+                    if (this.inventory.armour[i].id) {
+
+                        const armourPoints = this.game.item_directory.getProperty(this.inventory.armour[i].id, 'armour');
+                        totalArmourPoints += armourPoints;
+
+                        if (this.inventory.armour[i].durability > 1) {
+                            this.inventory.armour[i].durability--;
+                        } else {
+                            this.inventory.armour[i] = {id: null, quantity: null, durability: null};
+                        }
+                        
+                    }
+                    
+                }
+                const damageFactor = 1 - totalArmourPoints / 20 * 0.8;
+
+                damage *= damageFactor;
+            }
+        }
+        
+
+        if (damage < 0.2) {
+            damage = 0;
+        } else {
+            damage = Math.round(damage);
+        }
+
+        
+        this.applyRawDamage(damage);
     }
 
     applyDamageVel() {

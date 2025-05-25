@@ -53,6 +53,7 @@ class Game {
 
         window.addEventListener('beforeunload', (event) => {
             if (this.status !== 0) {
+                this.menu_handler.closeAllMenus();
                 this.save();
             }
         });

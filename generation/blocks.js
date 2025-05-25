@@ -852,6 +852,233 @@ class Item_diamondHoe extends Item_hoe {
 }
 
 
+// ARMOUR ----------------------------------------->
+
+class Item_Armour extends Item {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+        
+        this.armour = 0; // armour bars
+        this.maxStackSize = 1;
+    }
+}
+
+class Item_Boots extends Item_Armour {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+
+        this.armourType = 'boots';
+    }
+}
+
+class Item_Leggings extends Item_Armour {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+
+        this.armourType = 'leggings';
+    }
+}
+
+class Item_Chestplate extends Item_Armour {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+
+        this.armourType = 'chestplate';
+    }
+}
+
+class Item_Helmet extends Item_Armour {
+    constructor(name, texture_location) {
+        super(name, texture_location);
+
+        this.armourType = 'helmet';
+    }
+}
+
+// Copper
+
+class Item_copperBoots extends Item_Boots {
+    constructor() {
+        super('copper_boots', './assets/items/copper_boots.png');
+
+        this.id = 170;
+        this.durability = 192;
+
+        this.armour = 2;
+    }
+}
+
+class Item_copperLeggings extends Item_Leggings {
+    constructor() {
+        super('copper_leggings', './assets/items/copper_leggings.png');
+
+        this.id = 171;
+        this.durability = 192;
+
+        this.armour = 2;
+    }
+}
+
+class Item_copperChestplate extends Item_Chestplate {
+    constructor() {
+        super('copper_chestplate', './assets/items/copper_chestplate.png');
+
+        this.id = 172;
+        this.durability = 192;
+
+        this.armour = 3;
+    }
+}
+
+class Item_copperHelmet extends Item_Helmet {
+    constructor() {
+        super('copper_helmet', './assets/items/copper_helmet.png');
+
+        this.id = 173;
+        this.durability = 192;
+
+        this.armour = 2;
+    }
+}
+
+// Gold
+
+class Item_goldenBoots extends Item_Boots {
+    constructor() {
+        super('golden_boots', './assets/items/golden_boots.png');
+
+        this.id = 174;
+        this.durability = 96;
+
+        this.armour = 2;
+    }
+}
+
+class Item_goldenLeggings extends Item_Leggings {
+    constructor() {
+        super('golden_leggings', './assets/items/golden_leggings.png');
+
+        this.id = 175;
+        this.durability = 96;
+
+        this.armour = 2;
+    }
+}
+
+class Item_goldenChestplate extends Item_Chestplate {
+    constructor() {
+        super('golden_chestplate', './assets/items/golden_chestplate.png');
+
+        this.id = 176;
+        this.durability = 96;
+
+        this.armour = 3;
+    }
+}
+
+class Item_goldenHelmet extends Item_Helmet {
+    constructor() {
+        super('golden_helmet', './assets/items/golden_helmet.png');
+
+        this.id = 177;
+        this.durability = 96;
+
+        this.armour = 2;
+    }
+}
+
+// Iron
+
+class Item_ironBoots extends Item_Boots {
+    constructor() {
+        super('iron_boots', './assets/items/iron_boots.png');
+
+        this.id = 178;
+        this.durability = 256;
+
+        this.armour = 2;
+    }
+}
+
+class Item_ironLeggings extends Item_Leggings {
+    constructor() {
+        super('iron_leggings', './assets/items/iron_leggings.png');
+
+        this.id = 179;
+        this.durability = 256;
+
+        this.armour = 5;
+    }
+}
+
+class Item_ironChestplate extends Item_Chestplate {
+    constructor() {
+        super('iron_chestplate', './assets/items/iron_chestplate.png');
+
+        this.id = 180;
+        this.durability = 256;
+
+        this.armour = 6;
+    }
+}
+
+class Item_ironHelmet extends Item_Helmet {
+    constructor() {
+        super('iron_helmet', './assets/items/iron_helmet.png');
+
+        this.id = 181;
+        this.durability = 256;
+
+        this.armour = 2;
+    }
+}
+
+// Diamond
+
+class Item_diamondBoots extends Item_Boots {
+    constructor() {
+        super('diamond_boots', './assets/items/diamond_boots.png');
+
+        this.id = 182;
+        this.durability = 1024;
+
+        this.armour = 3;
+    }
+}
+
+class Item_diamondLeggings extends Item_Leggings {
+    constructor() {
+        super('diamond_leggings', './assets/items/diamond_leggings.png');
+
+        this.id = 183;
+        this.durability = 1024;
+
+        this.armour = 6;
+    }
+}
+
+class Item_diamondChestplate extends Item_Chestplate {
+    constructor() {
+        super('diamond_chestplate', './assets/items/diamond_chestplate.png');
+
+        this.id = 184;
+        this.durability = 1024;
+
+        this.armour = 8;
+    }
+}
+
+class Item_diamondHelmet extends Item_Helmet {
+    constructor() {
+        super('diamond_helmet', './assets/items/diamond_helmet.png');
+
+        this.id = 185;
+        this.durability = 1024;
+
+        this.armour = 3;
+    }
+}
+
 // BLOCKS ----------------------------------------->
 
 class Block_dirt extends Block_Solid {
@@ -1389,6 +1616,26 @@ class Item_Directory {
             '157': Item_ironHoe,
             '158': Item_diamondHoe,
 
+            '170': Item_copperBoots,
+            '172': Item_copperLeggings,
+            '173': Item_copperChestplate,
+            '174': Item_copperHelmet,
+
+            '175': Item_goldenBoots,
+            '176': Item_goldenLeggings,
+            '177': Item_goldenChestplate,
+            '178': Item_goldenHelmet,
+
+            '179': Item_ironBoots,
+            '180': Item_ironLeggings,
+            '181': Item_ironChestplate,
+            '182': Item_ironHelmet,
+
+            '183': Item_diamondBoots,
+            '184': Item_diamondLeggings,
+            '185': Item_diamondChestplate,
+            '186': Item_diamondHelmet,
+
             '200': Block_bedrock
         }
     }
@@ -1415,6 +1662,22 @@ class Item_Directory {
         }
 
         return itemIDs;
+    }
+
+    getItemsWithPropertyAndValue(property, value) {
+        const itemsWithProperty = this.getItemsWithProperty(property);
+
+        let items = [];
+
+        for (let i = 0; i < itemsWithProperty.length; i++) {
+            const item = itemsWithProperty[i];
+
+            if (this.getProperty(item, property) === value) {
+                items.push(item);
+            }
+        }
+
+        return items;
     }
 
     getTextureLocationByID(id) {

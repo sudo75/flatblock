@@ -90,7 +90,10 @@ class Menu_Inventory extends Menu {
 
                         const itemID = this.inventory_data[this.selectedSlotIndex].id;
                         if (this.Menu_ComponentUI_1.allowable && this.getSlotIndexByXY(x, y) >= this.Menu_ComponentUI_1.minSlotIndex) {
-                            if (!this.Menu_ComponentUI_1.allowable.includes(itemID)) {
+
+                            const menuComponentSlotIndex = this.getSlotIndexByXY(x, y) - this.Menu_ComponentUI_1.minSlotIndex;
+
+                            if (!this.Menu_ComponentUI_1.allowable[menuComponentSlotIndex].includes(JSON.stringify(itemID))) {
                                 return;
                             }
                         }
@@ -103,11 +106,30 @@ class Menu_Inventory extends Menu {
 
                                     }
                                 } else {
-                                    this.inventory.swapItem(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
+                                    if (this.Menu_ComponentUI_1.allowable && this.selectedSlotIndex >= this.Menu_ComponentUI_1.minSlotIndex) {
+
+                                        const menuComponentSlotIndex = this.selectedSlotIndex - this.Menu_ComponentUI_1.minSlotIndex;
+
+                                        if (this.Menu_ComponentUI_1.allowable[menuComponentSlotIndex].includes(JSON.stringify(itemID))) {
+                                            this.inventory.swapItem(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
+                                        }
+                                    } else {
+                                        this.inventory.swapItem(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
+                                    }
+                                    
                                 }
                             }
                         } else {
-                            this.inventory.swapItem(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
+                            if (this.Menu_ComponentUI_1.allowable && this.selectedSlotIndex >= this.Menu_ComponentUI_1.minSlotIndex) {
+
+                                const menuComponentSlotIndex = this.selectedSlotIndex - this.Menu_ComponentUI_1.minSlotIndex;
+
+                                if (this.Menu_ComponentUI_1.allowable[menuComponentSlotIndex].includes(JSON.stringify(itemID))) {
+                                    this.inventory.swapItem(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
+                                }
+                            } else {
+                                this.inventory.swapItem(this.selectedSlotIndex, this.getSlotIndexByXY(x, y));
+                            }
                         }
 
                     }
@@ -137,7 +159,9 @@ class Menu_Inventory extends Menu {
 
                     const itemID = this.inventory_data[this.selectedSlotIndex].id;
                     if (this.Menu_ComponentUI_1.allowable && this.getSlotIndexByXY(x, y) >= this.Menu_ComponentUI_1.minSlotIndex) {
-                        if (!this.Menu_ComponentUI_1.allowable.includes(itemID)) {
+                        const menuComponentSlotIndex = this.getSlotIndexByXY(x, y) - this.Menu_ComponentUI_1.minSlotIndex;
+
+                        if (!this.Menu_ComponentUI_1.allowable[menuComponentSlotIndex].includes(JSON.stringify(itemID))) {
                             return;
                         }
                     }
@@ -837,7 +861,14 @@ class Menu_ComponentUI_Armour {
         const getAllowable = () => {
             const item_directory = this.main.item_directory;
 
-            return item_directory.getItemsWithProperty('armour');
+            const allowable = [
+                item_directory.getItemsWithPropertyAndValue('armourType', 'helmet'),
+                item_directory.getItemsWithPropertyAndValue('armourType', 'chestplate'),
+                item_directory.getItemsWithPropertyAndValue('armourType', 'leggings'),
+                item_directory.getItemsWithPropertyAndValue('armourType', 'boots')
+            ]
+
+            return allowable;
         }
 
         this.allowable = getAllowable(); //Allowable items for putting in the armour slots
@@ -853,9 +884,9 @@ class Menu_ComponentUI_Armour {
     }
 
     open() {
-        //Set player's inventory to include chest data
+        //Set player's inventory to include armour data
         for (let i = this.minSlotIndex; i < this.minSlotIndex + 4; i++) {
-            this.main.game.player.inventory.data[i] = this.main.game.player.inventory.armour[i];
+            this.main.game.player.inventory.data[i] = this.main.game.player.inventory.armour[i - this.minSlotIndex];
         }
 
         // Draw slots (Aligned perfectly)
@@ -884,7 +915,7 @@ class Menu_ComponentUI_Armour {
     }
 
     close() {
-        for (let i = this.minSlotIndex; i < this.minSlotIndex + this.rows * this.cols; i++) {        
+        for (let i = this.minSlotIndex; i < this.minSlotIndex + 4; i++) {        
             const item = this.main.inventory_data[i];
             const itemQuant = item.quantity;
             for (let j = 0; j < itemQuant; j++) {
@@ -894,9 +925,8 @@ class Menu_ComponentUI_Armour {
     }
 
     update() { //Updates armour data
-
         for (let i = this.minSlotIndex; i < this.minSlotIndex + 4; i++) {
-            this.main.game.player.inventory.armour[i] = this.main.game.player.inventory.data[i];
+            this.main.game.player.inventory.armour[i - this.minSlotIndex] = this.main.game.calculator.deepCloneObj(this.main.game.player.inventory.data[i]);
         }
     }
 
@@ -1289,6 +1319,12 @@ class MenuHandler {
             this.healthbar.open();
             this.armour.open();
         }, 100);
+
+        this.allowMenusOpen = false;
+
+        setTimeout(() => {
+            this.allowMenusOpen = true;
+        }, 100);
     }
 
     aMenuIsOpen() {
@@ -1307,6 +1343,8 @@ class MenuHandler {
     }
 
     update(input) {
+        if (!this.allowMenusOpen) return;
+
         this.mouseDown_right = this.game.input.mouseDown_right;
         this.mouseDown_left = this.game.input.mouseDown_left;
 

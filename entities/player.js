@@ -124,6 +124,11 @@ class Player extends Entity_creature {
         this.inventory.setSlot(24, 13, 16);
         this.inventory.setSlot(25, 14, 16);
 
+        this.inventory.setSlot(183, 15, 1);
+        this.inventory.setSlot(184, 16, 1);
+        this.inventory.setSlot(185, 17, 1);
+        this.inventory.setSlot(186, 18, 1);
+
         console.log(this.inventory.data)
     }
 
