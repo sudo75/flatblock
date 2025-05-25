@@ -453,9 +453,15 @@ class Game {
     debug_keys() {
 
         //Screenshot
-        if (this.newKeys.includes('F4')) {
+        if (this.newKeys.includes('F4') || this.newKeys.includes('F8')) {
 
-            const canvasList = [this.canvas_world, this.canvas_entities, this.canvas_player];
+            let canvasList = [];
+            if (this.newKeys.includes('F8')) {
+                canvasList = [this.canvas_world, this.canvas_entities, this.canvas_player, this.canvas_menu, this.canvas_menu2];
+            } else if (this.newKeys.includes('F4')) {
+                canvasList = [this.canvas_world, this.canvas_entities, this.canvas_player];
+            }
+            
 
             // Off-screen combined canvas
             const combinedCanvas = document.createElement('canvas');
@@ -490,7 +496,8 @@ class Game {
                 const mm_ = pad(now.getMinutes());
                 const ss = pad(now.getSeconds());
 
-                return `fs_${yyyy}-${mm}-${dd}_${hh}-${mm_}_${ss}`;
+                if (this.newKeys.includes('F4')) return `fs_world_${yyyy}-${mm}-${dd}_${hh}-${mm_}_${ss}`;
+                if (this.newKeys.includes('F8')) return `fs_full_${yyyy}-${mm}-${dd}_${hh}-${mm_}_${ss}`;
             }
 
             link.download = getDownloadName();
