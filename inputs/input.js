@@ -18,14 +18,40 @@ class InputHandler {
         });
 
         window.addEventListener('keyup', (event) => {
-            const key = event.key.toLowerCase(); // Normalise to lowercase
+            const keys = [event.key]; // Normalise to lowercase
 
-            this.keys = this.keys.map(k => k.toLowerCase());
 
-            const index = this.keys.indexOf(key);
-            if (index !== -1) {
-                this.keys.splice(index, 1);
+            if (keys[0] === 'W') {
+                keys.push('w');
             }
+            if (keys[0] === 'A') {
+                keys.push('a');
+            }
+            if (keys[0] === 'S') {
+                keys.push('s');
+            }
+            if (keys[0] === 'D') {
+                keys.push('d');
+            }            
+
+            const getIndicies = (keys) => {
+                let indicies = [];
+                for (let i = 0; i < keys.length; i++) {
+                    indicies.push(this.keys.indexOf(keys[i]));
+                }
+
+                return indicies;
+            }
+
+            const indicies = getIndicies(keys);
+
+            for (let i = 0; i < indicies.length; i++) {
+                const index = indicies[i];
+                if (index !== -1) {
+                    this.keys.splice(index, 1);
+                }
+            }
+            
         });
 
 
