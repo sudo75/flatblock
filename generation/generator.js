@@ -10,7 +10,7 @@ class Generator {
 
         this.data = data;
 
-        this.seed = this.generateSeed();        
+        this.seed = this.generateSeed();
 
         this.settings = {
             maxAmp_aug: 0.2, // default = 0.2
