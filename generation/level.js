@@ -150,7 +150,31 @@ class Level {
             const delay = tps_target - tps;
             const delayPercent = Math.round(delay / tps * 100);
 
-            if (delayPercent >= 40) {
+            this.game.performance_throttle = 0;
+            if (delayPercent >= 100) {
+                this.game.performance_throttle = 6;
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 80,
+                    liquid: 1,
+                    blockReq: 80,
+                    time: 1,
+                    neighbour: 120,
+                    checkValidity: 80
+                };
+            } else if (delayPercent >= 60) {
+                this.game.performance_throttle = 5;
+                computeFreq = {
+                    gametick_logic: 1,
+                    lighting: 40,
+                    liquid: 1,
+                    blockReq: 40,
+                    time: 1,
+                    neighbour: 60,
+                    checkValidity: 40
+                };
+            } else if (delayPercent >= 40) {
+                this.game.performance_throttle = 4;
                 computeFreq = {
                     gametick_logic: 1,
                     lighting: 20,
@@ -158,9 +182,10 @@ class Level {
                     blockReq: 20,
                     time: 1,
                     neighbour: 40,
-                    checkValidity: 10
+                    checkValidity: 20
                 };
             } else if (delayPercent >= 20) {
+                this.game.performance_throttle = 3;
                 computeFreq = {
                     gametick_logic: 1,
                     lighting: 10,
@@ -168,9 +193,10 @@ class Level {
                     blockReq: 10,
                     time: 1,
                     neighbour: 20,
-                    checkValidity: 5
+                    checkValidity: 10
                 };
             } else if (delayPercent >= 10) {
+                this.game.performance_throttle = 2;
                 computeFreq = {
                     gametick_logic: 1,
                     lighting: 10,
@@ -181,6 +207,7 @@ class Level {
                     checkValidity: 5
                 };
             } else if (delayPercent >= 5) {
+                this.game.performance_throttle = 1;
                 computeFreq = {
                     gametick_logic: 1,
                     lighting: 5,
@@ -188,7 +215,7 @@ class Level {
                     blockReq: 2,
                     time: 1,
                     neighbour: 5,
-                    checkValidity: 1
+                    checkValidity: 2
                 };
             }
 
@@ -747,10 +774,10 @@ class Level {
     }
 
     checkValidity(x, y, blockID = this.calc.getBlockData(x, y).id) {
-        const block_left = this.calc.getBlockData(x - 1, y);
-        const block_right = this.calc.getBlockData(x + 1, y);
-        const block_up = this.calc.getBlockData(x, y + 1);
-        const block_down = this.calc.getBlockData(x, y - 1);
+        const block_left  = this.calc.isWithinWorldBounds(x - 1, y) ? this.calc.getBlockData(x - 1, y) : null;
+        const block_right = this.calc.isWithinWorldBounds(x + 1, y) ? this.calc.getBlockData(x + 1, y) : null;
+        const block_up = this.calc.isWithinWorldBounds(x, y + 1) ? this.calc.getBlockData(x, y + 1) : null;
+        const block_down = this.calc.isWithinWorldBounds(x, y - 1) ? this.calc.getBlockData(x, y - 1) : null;
         
         // Check place requirements
         const parseReq = (value) => { // helps parse property requirements
