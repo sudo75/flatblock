@@ -291,14 +291,18 @@ class Generator {
     }
 
     placeBlockOnly(blockID, x, y) {
+        // Get block id to place
         const placeBlock_ID = this.item_directory.getProperty(blockID, 'placeBlock_id');
 
         blockID = placeBlock_ID ? placeBlock_ID: blockID;
 
+        // Get block class from block id
         let block = this.item_directory.item[blockID];
 
+        // Do not allow non-blocks (i.e. items) to be placed
         if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
 
+        // Place block
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
 
         if (block && this.game.tick) {

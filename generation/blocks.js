@@ -7,6 +7,7 @@ class Meta {
         this.isBlock = true;
 
         this.untouchable = false;
+        this.pendingDestroy = false;
 
         this.item_directory = new Item_Directory();
 
@@ -31,19 +32,35 @@ class Meta {
         this.onNextTick = null; // Should be set as an object with an id of new block and properties of that block {id: ..., properties: {...}}
 
         this.placeRequirements = {
-            adjacent: [],
+            all: { // must follow all of these rules
+                adjacent: [], // within each array, only one must be true: ex. adjacent: [2, 3] => either a block of id 2 or 3 will sufice
 
-            left: [],
-            right: [],
-            top: [],
-            bottom: []
+                left: [],
+                right: [],
+                top: [],
+                bottom: [], // use to define properties that the value may (not) take: {property: true, key: ..., value: ...}
+            },
+
+            oneOf: [ // must follow one of these rules: ex. [{left: [2]}, {right: 2}] => either left or right neighbour must have id = 2
+                {
+                    adjacent: [],
+
+                    left: [],
+                    right: [],
+                    top: [],
+                    bottom: [],
+                },
+                {
+                    // rule 2
+                }
+            ]
         };
 
         //placeBlock_id is optional
 
         this.giveItemUponPlace = null; // {id: ..., quantity: ...}
 
-        this.spawnItem = null; // Spawn item on next tick {id: ..., quantity: ...}
+        this.spawnItems = null; // Spawn item on next tick [{id: ..., quantity: ..., durability (optional)}]
         this.removeItem = false;
         this.giveItem = null; // {id: ..., quantity: ...}
         this.decrementDurability = false;
@@ -137,12 +154,22 @@ class Block extends Meta {
         this.x = x;
         this.y = y;
     }
+
+    break() {
+        this.spawnItems = this.itemDrop_id;
+        this.onNextTick = {
+            id: 0, // air
+            properties: {}
+        };
+
+    }
 }
 
 class Block_Solid extends Block {
     constructor(name, x, y, hardness, texture_location) {
         super(name, x, y, texture_location);
         this.type = 'solid';
+        this.torchAffinity = true;
         this.viscosity = 1;
         this.transparency = 0;
 
@@ -298,7 +325,7 @@ class Block_farmlandDry extends Block_Solid {
         this.decayChance = 1;
     }
 
-    run_gametick_logic(tick) {
+    run_gametick_logic(tick) {        
         if (this.neighbour_data) {
             if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
                 this.onNextTick = {
@@ -366,15 +393,20 @@ class Block_wheat extends Block_Solid {
         this.maxGrowthState = 7;
 
         this.placeRequirements = {
-            adjacent: [],
+            all: { // must follow all of these rules
+                adjacent: [],
 
-            left: [],
-            right: [],
-            top: [],
-            bottom: [14, 15]
+                left: [],
+                right: [],
+                top: [],
+                bottom: [14, 15]
+            },
+
+            oneOf: []
         };
 
         this.minimumGrowthLight = 10;
+        this.torchAffinity = false;
     }
 
     setStatus(status_value) {
@@ -396,10 +428,7 @@ class Block_wheat extends Block_Solid {
 
         if (this.neighbour_data) {
             if (this.neighbour_data.down.id !== 14 && this.neighbour_data.down.id !== 15) {
-                this.spawnItem = {
-                    id: this.itemDrop_id,
-                    quantity: 1
-                };
+                this.spawnItems = this.itemDrop_id;
                 this.onNextTick = {
                     id: 0, // air
                     properties: {}
@@ -1146,10 +1175,10 @@ class Block_grass extends Block_Solid {
             const rand = Math.random() * 100;
 
             if (rand <= this.getSeedChance) {
-                this.spawnItem = {
+                this.spawnItems = [{
                     id: 40,
                     quantity: 2
-                };
+                }];
             }
             this.decrementDurability = true;
         }
@@ -1260,6 +1289,32 @@ class Block_torch extends Block_Solid {
 
         this.light_source = 15;
         this.spriteSheetX = 0;
+
+        this.placeRequirements = {
+                
+            all: { // must follow all of these rules
+                adjacent: [],
+
+                left: [],
+                right: [],
+                top: [],
+                bottom: [],
+            },
+
+            oneOf: [ // must follow one of these rules: ex. [{left: [2]}, {right: 2}] => either left or right neighbour must have id = 2
+                {
+                    left: [{property: true, key: 'torchAffinity', value: true}]
+                },
+                {
+                    right: [{property: true, key: 'torchAffinity', value: true}]
+                },
+                {
+                    bottom: [{property: true, key: 'torchAffinity', value: true}]
+                }
+            ]
+        }
+
+        this.torchAffinity = false;
     }
 
     run_gametick_logic(tick) {
@@ -1455,7 +1510,7 @@ class Block_furnace extends Block_Solid {
         }
     }
 
-    run_gametick_logic(tick) {
+    run_gametick_logic(tick) {        
         const input_slot = this.inventory.data[0];
         const getInputSlotFillStatus = (input_slot) => {
             if (input_slot.quantity > 0) {

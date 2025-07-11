@@ -129,7 +129,8 @@ class Level {
             liquid: true,
             blockReq: true,
             time: true,
-            neighbour: true
+            neighbour: true,
+            checkValidity: true
         };
 
         let computeFreq = {
@@ -138,7 +139,8 @@ class Level {
             liquid: 1,
             blockReq: 1,
             time: 1,
-            neighbour: 1
+            neighbour: 1,
+            checkValidity: 1
         };
 
         if (this.game.debugger.settings.performance){
@@ -155,7 +157,8 @@ class Level {
                     liquid: 1,
                     blockReq: 20,
                     time: 1,
-                    neighbour: 40
+                    neighbour: 40,
+                    checkValidity: 10
                 };
             } else if (delayPercent >= 20) {
                 computeFreq = {
@@ -164,7 +167,8 @@ class Level {
                     liquid: 1,
                     blockReq: 10,
                     time: 1,
-                    neighbour: 20
+                    neighbour: 20,
+                    checkValidity: 5
                 };
             } else if (delayPercent >= 10) {
                 computeFreq = {
@@ -173,7 +177,8 @@ class Level {
                     liquid: 1,
                     blockReq: 5,
                     time: 1,
-                    neighbour: 10
+                    neighbour: 10,
+                    checkValidity: 5
                 };
             } else if (delayPercent >= 5) {
                 computeFreq = {
@@ -182,7 +187,8 @@ class Level {
                     liquid: 1,
                     blockReq: 2,
                     time: 1,
-                    neighbour: 5
+                    neighbour: 5,
+                    checkValidity: 1
                 };
             }
 
@@ -194,7 +200,9 @@ class Level {
         const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
         const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
-        if (toCompute.gametick_logic && tick % computeFreq.gametick_logic === 0) {
+        // GAMETICK LOGIC
+
+        const gametick_logic = () => {
             //Run gametick logic of blocks
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
@@ -202,10 +210,12 @@ class Level {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
+                        // Run block gametick logic
                         if (block.run_gametick_logic) {
                             block.run_gametick_logic(tick);
                         }
 
+                        // Spawn hostile mobs
                         if (
                             block.light <= this.game.entity_handler.mob_handler.minHostileMobLightLevel &&
                             !this.calc.isSolidBlock(abs_x, y) &&
@@ -220,24 +230,67 @@ class Level {
             }
         }
 
-        if (toCompute.blockReq && tick % computeFreq.blockReq === 0) {
+        if (toCompute.gametick_logic && tick % computeFreq.gametick_logic === 0) {
+            gametick_logic();
+        }
 
-            //Compute spawnItem data
+        // CHECK VALIDITY OF PLACED BLOCKS
+
+        const checkValidity = () => {
+            //Run validity checker
+            for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                        if (!this.checkValidity(abs_x, y) && !block.pendingDestroy) {
+                            block.break();
+                            block.pendingDestroy = true;
+
+                            if (block.spawnItems) {
+                                for (const item of block.spawnItems) {
+                                    if (!item.id || !item.quantity) continue;
+
+                                    for (let j = 0; j < item.quantity; j++) {
+                                        this.game.entity_handler.newEntity_Item(abs_x, y, item.id, 0, 0, item.durability || null);
+                                    }
+
+                                    this.generator.editProperty(abs_x, y, 'spawnItems', null);
+                                }
+                                
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        if (toCompute.checkValidity && tick % computeFreq.checkValidity === 0) {
+            checkValidity();
+        }
+
+        // BLOCK REQUESTS
+
+        const blockReq = () => {
+            //Compute spawnItems data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                     for (let y = 0; y < this.properties.height_blocks; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
-                        if (block.spawnItem) {
-                            if (!block.spawnItem.id || !block.spawnItem.quantity) continue;
+                        if (block.spawnItems) {
+                            for (const item of block.spawnItems) {
+                                if (!item.id || !item.quantity) continue;
 
+                                for (let j = 0; j < item.quantity; j++) {
+                                    this.game.entity_handler.newEntity_Item(abs_x, y, item.id, 0, 0, item.durability || null);
+                                }
 
-                            for (let i = 0; i < block.spawnItem.quantity; i++) {
-                                this.game.entity_handler.newEntity_Item(abs_x, y, block.spawnItem.id, 0, 0, block.spawnItem.durability || null);
+                                this.generator.editProperty(abs_x, y, 'spawnItems', null);
                             }
-
-                            this.generator.editProperty(abs_x, y, 'spawnItem', null);
+                            
                         }
                     }
                 }
@@ -322,7 +375,13 @@ class Level {
             }
         }
 
-        if (toCompute.time && tick % computeFreq.time === 0) {
+        if (toCompute.blockReq && tick % computeFreq.blockReq === 0) {
+            blockReq();
+        }
+
+        // TIME
+
+        const time = () =>  {
             //Run time logic
             this.incrementTime();
 
@@ -347,24 +406,37 @@ class Level {
                 const lighting_decimal = (this.time - 22000) / 2000;
                 this.sun_strength = Math.floor(15 * (lighting_decimal));
             }
-
         }
 
-        if (toCompute.liquid && tick % computeFreq.liquid === 0) {
+        if (toCompute.time && tick % computeFreq.time === 0) {
+            time();
+        }
+
+        // LIQUID FLOW
+
+        const liquid = () => {
             if (tick % this.item_directory.getProperty(13, 'spread_speed') === 0) {
                 this.calculateLiquids(tick, block_simulated_chunk_min, block_simulated_chunk_max);
             }
         }
-            
-        if (toCompute.lighting && tick % computeFreq.lighting === 0) {
-            if (tick % 1 === 0) {
-                this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
-            }
+
+        if (toCompute.liquid && tick % computeFreq.liquid === 0) {
+            liquid();
         }
         
+        // LIGHTING
 
-        if (toCompute.neighbour && tick % computeFreq.neighbour === 0) {
-            
+        const lighting = () => {
+            this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
+        }
+
+        if (toCompute.lighting && tick % computeFreq.lighting === 0) {
+            lighting();
+        }
+        
+        // SET BLOCK NEIGHBOUR PROPERTY
+
+        const neighbour = () => {
             //Set neighbour properties
 
             for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
@@ -405,6 +477,10 @@ class Level {
                     }
                 }
             }
+        }
+
+        if (toCompute.neighbour && tick % computeFreq.neighbour === 0) {
+            neighbour();
         }
 
     }
@@ -665,46 +741,130 @@ class Level {
             return false;
         }
 
-        //Check block data for placment requirements
+        //Check block data for placement requirements
 
+        return this.checkValidity(x, y, blockID);
+    }
+
+    checkValidity(x, y, blockID = this.calc.getBlockData(x, y).id) {
         const block_left = this.calc.getBlockData(x - 1, y);
         const block_right = this.calc.getBlockData(x + 1, y);
         const block_up = this.calc.getBlockData(x, y + 1);
         const block_down = this.calc.getBlockData(x, y - 1);
         
-        const placeRequirements = this.item_directory.getProperty(blockID, 'placeRequirements');
-        
-        for (let direction in placeRequirements) {
-            if (placeRequirements[direction].length === 0) continue;
-            
-            const requirements = placeRequirements[direction];
+        // Check place requirements
+        const parseReq = (value) => { // helps parse property requirements
+            if (typeof(value) === 'number') return value;
 
-            switch (direction) {
-                case 'adjacent': {
-                    const neighborIDs = [block_left.id, block_right.id, block_up.id, block_down.id];
-                    let matches = neighborIDs.some(id => requirements.includes(id));
-                    if (!matches) return false;
-                    break;
-                }
+            else if (typeof(value) === 'object') {
+                if (value.property) { // has property requirements
 
-                case 'left': {
-                    if (!requirements.includes(block_left.id)) return false;
-                    break;
-                }
-                case 'right': {
-                    if (!requirements.includes(block_right.id)) return false;
-                    break;
-                }
-                case 'top': {
-                    if (!requirements.includes(block_up.id)) return false;
-                    break;
-                }
-                case 'bottom': {
-                    if (!requirements.includes(block_down.id)) return false;
-                    break;
-                }
+                    const result_str = this.generator.item_directory.getItemsWithPropertyAndValue(value.key, value.value);
 
+                    const result = result_str.map(str => Number(str));
+
+                    return result;
+                }
             }
+        }
+
+        const full_placeRequirements = this.generator.item_directory.getProperty(blockID, 'placeRequirements');
+        if (!full_placeRequirements) return true;
+
+        const checkPlaceReq_all = (() => {
+            
+           const placeRequirements = full_placeRequirements.all;
+
+            // ALL
+            for (let direction in placeRequirements) {
+                if (placeRequirements[direction].length === 0) continue;
+                
+                const requirements_raw = placeRequirements[direction];
+                const requirements = requirements_raw.map(req => parseReq(req)).flat();
+
+                switch (direction) {
+                    case 'adjacent': {
+                        const neighbourIDs = [block_left?.id, block_right?.id, block_up?.id, block_down?.id];
+                        let matches = neighbourIDs.some(id => requirements.includes(id));
+                        if (!matches) return false;
+                        break;
+                    }
+
+                    case 'left': {
+                        if (!requirements.includes(block_left?.id)) return false;
+                        break;
+                    }
+                    case 'right': {
+                        if (!requirements.includes(block_right?.id)) return false;
+                        break;
+                    }
+                    case 'top': {
+                        if (!requirements.includes(block_up?.id)) return false;
+                        break;
+                    }
+                    case 'bottom': {
+                        if (!requirements.includes(block_down?.id)) return false;
+                        break;
+                    }
+
+                }
+            }
+
+            return true;
+        })();
+
+        const checkPlaceReq_oneOf = (() => {
+            const placeRequirements = full_placeRequirements.oneOf;
+            if (placeRequirements.length === 0) return true;
+
+            let oneOf = false;
+            for (let i = 0; i < placeRequirements.length; i++) {
+                
+                let currentInstanceValidity = true;
+
+                for (let direction in placeRequirements[i]) {
+                    if (placeRequirements[i][direction].length === 0) continue;
+                    
+                    const requirements_raw = placeRequirements[i][direction]; // array
+                    const requirements = requirements_raw.map(req => parseReq(req)).flat();
+                    
+                    switch (direction) {
+                        case 'adjacent': {
+                            const neighbourIDs = [block_left?.id, block_right?.id, block_up?.id, block_down?.id];
+                            let matches = neighbourIDs.some(id => requirements.includes(id));
+                            if (!matches) currentInstanceValidity = false;
+                            break;
+                        }
+
+                        case 'left': {
+                            if (!requirements.includes(block_left?.id)) currentInstanceValidity = false;
+                            break;
+                        }
+                        case 'right': {
+                            if (!requirements.includes(block_right?.id)) currentInstanceValidity = false;
+                            break;
+                        }
+                        case 'top': {
+                            if (!requirements.includes(block_up?.id)) currentInstanceValidity = false;
+                            break;
+                        }
+                        case 'bottom': {
+                            if (!requirements.includes(block_down?.id)) currentInstanceValidity = false;
+                            break;
+                        }
+
+                    }
+
+                    if (!currentInstanceValidity) break;
+                }
+                if (currentInstanceValidity) return true;
+            }
+
+            return oneOf;
+        })();
+
+        if (!checkPlaceReq_all || !checkPlaceReq_oneOf) {
+            return false;
         }
 
         return true;
