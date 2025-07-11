@@ -17,7 +17,7 @@ class Debugger {
             fly: false,
             fast: false,
             physics: true,
-            lighting: true,
+            lighting: false,
             xray: false,
             img_smoothing: false,
             debug_inventory: false,
