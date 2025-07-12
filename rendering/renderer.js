@@ -80,6 +80,32 @@ class World_Renderer {
             this.ctx.drawImage(overlay, spriteSheetX, 0, 16, 16, left, top, this.game.block_size, this.game.block_size);
         }
 
+        if (this.game.debugger.settings.lighting) {
+            this.ctx.fillStyle = 'blue';
+            this.ctx.fillText(block_lighting, left, top + this.game.block_size);
+        }
+    }
+
+    drawBlock_basic(x, y, real_x, real_y) {
+        //The first block will be y = 0, this aligns with the canvas coordinate system, and thus no recaululation is needed
+
+        const left = Math.round(real_x); //Math.round to ensure blocks align
+        const top = this.game.height - Math.round(real_y) - this.game.block_size;
+
+        const block_data = this.calc.getBlockData(x, y);
+
+        this.ctx.fillStyle = 'green';
+        this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+
+        //Lighting
+        const block_lighting = block_data.light; // 0 - 15
+
+        if (!this.game.debugger.settings.xray) {
+            let lighting_decimal = 0.6 - block_lighting / 25;
+    
+            this.ctx.fillStyle = `rgba(0, 0, 0, ${lighting_decimal})`;
+            this.ctx.fillRect(left, top, this.game.block_size, this.game.block_size);
+        }
 
         if (this.game.debugger.settings.lighting) {
             this.ctx.fillStyle = 'blue';
