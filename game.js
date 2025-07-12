@@ -760,7 +760,15 @@ class Game {
             const fontSize = 12;
             const lineSpacing = 4;
 
-            this.ctx_menu.fillStyle = 'black';
+            // TRANSLUCENT BOX
+            const boxHeight = data.length * (fontSize + lineSpacing) + margin / 2;
+            const boxWidth = this.width / 5;
+
+            this.ctx_menu.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            this.ctx_menu.fillRect(margin / 2, margin / 4, boxWidth, boxHeight);
+
+            // FONT
+            this.ctx_menu.fillStyle = 'white';
             this.ctx_menu.font = `${fontSize}px Times New Roman`;
 
             for (let i = 0; i < data.length; i++) {
