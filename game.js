@@ -3,6 +3,9 @@ import { Debugger } from './debug.js'
 
 class Game {
     constructor(width, height) {
+
+        this.version = '0.8.1';
+
         this.canvas_world = document.querySelector('#game_canvas_back');
         this.ctx_world = this.canvas_world.getContext('2d');
 
@@ -162,7 +165,7 @@ class Game {
 
         //const randIndex = Math.floor(Math.random() * main_menu_messages.length);
         //const message = main_menu_messages[randIndex];
-        const message = 'Beta'
+        const message = `Beta v.${this.version}`;
 
         this.menu_renderers.main = new Menu_Renderer('Flatblock', message, `Storage: ${this.getDiagnostics_storage().size.toLocaleString("en-US")} / ${this.getDiagnostics_storage().quota.toLocaleString("en-US")} bytes - ${this.getDiagnostics_storage().percentage}%`, btns_main, this.width, this.height, this.canvas_menu2);
         this.menu_renderers.main.init();
@@ -205,7 +208,7 @@ class Game {
             }}
         ];
 
-        this.menu_renderers.start = new Menu_Renderer('Block Game', 'Select a slot to create a new savable game', null, btns_start, this.width, this.height, this.canvas_menu2);
+        this.menu_renderers.start = new Menu_Renderer('Flatblock', 'Select a slot to create a new savable game', null, btns_start, this.width, this.height, this.canvas_menu2);
 
         //Slot menus
         const closeSlotMenu = () => {
@@ -747,9 +750,10 @@ class Game {
     renderDiagnostics() {
         if (this.debugger.settings.debug_menu) {
             const data = [
+                `*v.${this.version}*`,
                 `FPS: ${this.performanceData_display.fps}`,
-                `TPS: ${this.performanceData_display.tps}`,
-                `Throttle: ${this.performanceData_display.performance_throttle}/6`,
+                `TPS: ${this.performanceData_display.tps}/${this.tps_target}`,
+                `Throttle: ${this.performanceData_display.performance_throttle}/5`,
                 `Player: ${this.player.x.toFixed(2)}, ${this.player.y.toFixed(2)}`,
                 `Tick: ${this.performanceData_display.tick}`,
                 `Time: ${this.performanceData_display.time}`
