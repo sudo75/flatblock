@@ -24,6 +24,7 @@ class Debugger {
             fast_break: false,
             debug_menu: false,
             performance: true,
+            performance_chunks: true,
             compression: true
         };
 
@@ -97,6 +98,8 @@ class Debugger {
         //Debug menu - no exterior settings to edit
 
         //Performance - no exterior settings to edit
+
+        //Performance chunks - no exterior settings to edit
 
         //Compression - no exterior settings to edit
     }
@@ -197,6 +200,13 @@ class Debugger {
                     this.settings.performance = arg2 === 'true';
                 } else {
                     alert('performance - Input a boolean.');
+                }
+                break;
+            case 'performance_chunks':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.performance_chunks = arg2 === 'true';
+                } else {
+                    alert('performance_chunks - Input a boolean.');
                 }
                 break;
             case 'compression':

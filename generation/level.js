@@ -16,6 +16,10 @@ class Level {
         this.simulation_distance = null; // For general block updates
         this.block_simulation_distance = null; // For light calculations
 
+        // Simulation distances for performance ticks
+        this.simulation_distance_performance = 2;
+        this.block_simulation_distance_performance = 2;
+
         this.chunk_size = 16;
         this.calc = this.game.calculator;
 
@@ -143,6 +147,15 @@ class Level {
             checkValidity: 1
         };
 
+        let performanceTickFreq = { // Set to -1 to ignore performance ticks for a process
+            gametick_logic: 1,
+            lighting: 1,
+            liquid: 1,
+            blockReq: 1,
+            neighbour: 1,
+            checkValidity: 1
+        };
+
         if (this.game.debugger.settings.performance){
             const tps = this.game.tps;
             const tps_target = this.game.tps_target;
@@ -151,87 +164,158 @@ class Level {
             const delayPercent = Math.round(delay / tps * 100);
 
             this.game.performance_throttle = 0;
-            if (delayPercent >= 100) {
+            if (delayPercent >= 70) {
                 this.game.performance_throttle = 6;
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 80,
+                    lighting: 161,
                     liquid: 1,
-                    blockReq: 80,
+                    blockReq: 160,
                     time: 1,
-                    neighbour: 120,
-                    checkValidity: 80
+                    neighbour: 241,
+                    checkValidity: 163
                 };
-            } else if (delayPercent >= 60) {
+                performanceTickFreq = { 
+                    gametick_logic: 1,
+                    lighting: 23,
+                    liquid: 1,
+                    blockReq: 25,
+                    neighbour: 37,
+                    checkValidity: 19
+                };
+
+            } else if (delayPercent >= 40) {
                 this.game.performance_throttle = 5;
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 40,
+                    lighting: 81,
                     liquid: 1,
-                    blockReq: 40,
+                    blockReq: 80,
                     time: 1,
-                    neighbour: 60,
-                    checkValidity: 40
+                    neighbour: 121,
+                    checkValidity: 83
                 };
-            } else if (delayPercent >= 40) {
+                performanceTickFreq = { 
+                    gametick_logic: 1,
+                    lighting: 8,
+                    liquid: 1,
+                    blockReq: 9,
+                    neighbour: 13,
+                    checkValidity: 7
+                };
+
+            } else if (delayPercent >= 25) {
                 this.game.performance_throttle = 4;
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 20,
+                    lighting: 41,
                     liquid: 1,
-                    blockReq: 20,
+                    blockReq: 43,
                     time: 1,
-                    neighbour: 40,
-                    checkValidity: 20
+                    neighbour: 82,
+                    checkValidity: 43
                 };
-            } else if (delayPercent >= 20) {
+                performanceTickFreq = { 
+                    gametick_logic: 1,
+                    lighting: 4,
+                    liquid: 1,
+                    blockReq: 3,
+                    neighbour: 9,
+                    checkValidity: 5
+                };
+
+            } else if (delayPercent >= 15) {
                 this.game.performance_throttle = 3;
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 10,
+                    lighting: 21,
                     liquid: 1,
-                    blockReq: 10,
+                    blockReq: 23,
                     time: 1,
-                    neighbour: 20,
-                    checkValidity: 10
+                    neighbour: 43,
+                    checkValidity: 22
                 };
+                performanceTickFreq = { 
+                    gametick_logic: 1,
+                    lighting: 2,
+                    liquid: 1,
+                    blockReq: 3,
+                    neighbour: 5,
+                    checkValidity: 4
+                };
+
             } else if (delayPercent >= 10) {
                 this.game.performance_throttle = 2;
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 10,
+                    lighting: 21,
                     liquid: 1,
-                    blockReq: 5,
+                    blockReq: 11,
                     time: 1,
-                    neighbour: 10,
-                    checkValidity: 5
+                    neighbour: 23,
+                    checkValidity: 10
                 };
+                performanceTickFreq = { 
+                    gametick_logic: 1,
+                    lighting: 2,
+                    liquid: 1,
+                    blockReq: 2,
+                    neighbour: 3,
+                    checkValidity: 1
+                };
+
             } else if (delayPercent >= 5) {
                 this.game.performance_throttle = 1;
                 computeFreq = {
                     gametick_logic: 1,
-                    lighting: 5,
+                    lighting: 11,
                     liquid: 1,
-                    blockReq: 2,
+                    blockReq: 4,
                     time: 1,
-                    neighbour: 5,
-                    checkValidity: 2
+                    neighbour: 13,
+                    checkValidity: 5
                 };
+                performanceTickFreq = { 
+                    gametick_logic: 1,
+                    lighting: 1,
+                    liquid: 1,
+                    blockReq: 1,
+                    neighbour: 1,
+                    checkValidity: 1
+                };
+
             }
 
+        }
+
+        if (!this.game.debugger.settings.performance_chunks) {
+            performanceTickFreq = {
+                gametick_logic: Infinity,
+                lighting: Infinity,
+                liquid: Infinity,
+                blockReq: Infinity,
+                neighbour: Infinity,
+                checkValidity: Infinity
+            };
         }
         
         const simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.simulation_distance).min;
         const simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.simulation_distance).max;
 
+        const simulated_chunk_performance_min = this.calc.getSimulatedChunkBounds(this.simulation_distance_performance).min;
+        const simulated_chunk_performance_max = this.calc.getSimulatedChunkBounds(this.simulation_distance_performance).max;
+
         const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
         const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
+        const block_simulated_chunk_performance_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance_performance).min;
+        const block_simulated_chunk_performance_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance_performance).max;
+
         // GAMETICK LOGIC
 
-        const gametick_logic = () => {
+        const gametick_logic = (chunk_min, chunk_max) => {
             //Run gametick logic of blocks
-            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+            for (let i = chunk_min; i <= chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                     for (let y = 0; y < this.properties.height_blocks; y++) {
                         const block = this.data[i].block_data[rel_x][y];
@@ -257,15 +341,20 @@ class Level {
             }
         }
 
-        if (toCompute.gametick_logic && tick % computeFreq.gametick_logic === 0) {
-            gametick_logic();
+        if (toCompute.gametick_logic) {
+            if (tick % computeFreq.gametick_logic === 0) {
+                gametick_logic(simulated_chunk_min, simulated_chunk_max);
+            } else if (tick % performanceTickFreq.gametick_logic === 0) {
+                gametick_logic(simulated_chunk_performance_min, simulated_chunk_performance_max);
+            }
+            
         }
 
         // CHECK VALIDITY OF PLACED BLOCKS
 
-        const checkValidity = () => {
+        const checkValidity = (chunk_min, chunk_max) => {
             //Run validity checker
-            for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
+            for (let i = chunk_min; i <= chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                     for (let y = 0; y < this.properties.height_blocks; y++) {
                         const block = this.data[i].block_data[rel_x][y];
@@ -293,13 +382,19 @@ class Level {
                 }
             }
         }
-        if (toCompute.checkValidity && tick % computeFreq.checkValidity === 0) {
-            checkValidity();
+
+        if (toCompute.checkValidity) {
+            if (tick % computeFreq.checkValidity === 0) {
+                checkValidity(simulated_chunk_min, simulated_chunk_max);
+            } else if (tick % performanceTickFreq.checkValidity === 0) {
+                checkValidity(simulated_chunk_performance_min, simulated_chunk_performance_max);
+            }
         }
+            
 
         // BLOCK REQUESTS
 
-        const blockReq = () => {
+        const blockReq = (chunk_min, chunk_max) => {
             //Compute spawnItems data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
@@ -405,6 +500,13 @@ class Level {
         if (toCompute.blockReq && tick % computeFreq.blockReq === 0) {
             blockReq();
         }
+        if (toCompute.checkValidity) {
+            if (tick % computeFreq.checkValidity === 0) {
+                checkValidity(simulated_chunk_min, simulated_chunk_max);
+            } else if (tick % performanceTickFreq.checkValidity === 0) {
+                checkValidity(simulated_chunk_performance_min, simulated_chunk_performance_max);
+            }
+        }
 
         // TIME
 
@@ -441,32 +543,40 @@ class Level {
 
         // LIQUID FLOW
 
-        const liquid = () => {
+        const liquid = (chunk_min, chunk_max) => {
             if (tick % this.item_directory.getProperty(13, 'spread_speed') === 0) {
-                this.calculateLiquids(tick, block_simulated_chunk_min, block_simulated_chunk_max);
+                this.calculateLiquids(tick, chunk_min, chunk_max);
             }
         }
 
-        if (toCompute.liquid && tick % computeFreq.liquid === 0) {
-            liquid();
+        if (toCompute.liquid) {
+            if (tick % computeFreq.liquid === 0) {
+                liquid(simulated_chunk_min, simulated_chunk_max);
+            } else if (tick % performanceTickFreq.liquid === 0) {
+                liquid(simulated_chunk_performance_min, simulated_chunk_performance_max);
+            }
         }
         
         // LIGHTING
 
-        const lighting = () => {
-            this.calculateLighting(block_simulated_chunk_min, block_simulated_chunk_max);
+        const lighting = (chunk_min, chunk_max) => {
+            this.calculateLighting(chunk_min, chunk_max);
         }
 
-        if (toCompute.lighting && tick % computeFreq.lighting === 0) {
-            lighting();
+        if (toCompute.lighting) {
+            if (tick % computeFreq.lighting === 0) {
+                lighting(block_simulated_chunk_min, block_simulated_chunk_max);
+            } else if (tick % performanceTickFreq.lighting === 0) {
+                lighting(block_simulated_chunk_performance_min, block_simulated_chunk_performance_max);
+            }
         }
         
         // SET BLOCK NEIGHBOUR PROPERTY
 
-        const neighbour = () => {
+        const neighbour = (chunk_min, chunk_max) => {
             //Set neighbour properties
 
-            for (let i = block_simulated_chunk_min; i <= block_simulated_chunk_max; i++) {
+            for (let i = chunk_min; i <= chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
                     for (let y = 0; y < this.properties.height_blocks; y++) {
                         const block = this.data[i].block_data[rel_x][y];
@@ -506,8 +616,12 @@ class Level {
             }
         }
 
-        if (toCompute.neighbour && tick % computeFreq.neighbour === 0) {
-            neighbour();
+        if (toCompute.neighbour) {
+            if (tick % computeFreq.neighbour === 0) {
+                neighbour(block_simulated_chunk_min, block_simulated_chunk_max);
+            } else if (tick % performanceTickFreq.neighbour === 0) {
+                neighbour(block_simulated_chunk_performance_min, block_simulated_chunk_performance_max);
+            }
         }
 
     }
