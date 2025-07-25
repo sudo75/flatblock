@@ -321,10 +321,14 @@ class Generator {
         for (let i = 0; i < itemIDs.length; i++) {
             const itemID = itemIDs[i].id;
             const quantity = itemIDs[i].quantity;
+            const chance = itemIDs[i]?.chance ?? 100;
 
-            for (let j = 0; j < quantity; j++) {
-                this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
+            if (this.calc.randomBool(chance)) {
+                for (let j = 0; j < quantity; j++) {
+                    this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
+                }
             }
+            
         }
 
         //Drop inventory

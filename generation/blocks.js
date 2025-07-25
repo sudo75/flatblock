@@ -1,3 +1,5 @@
+import { Utils } from "../calculations/utils.js";
+
 class Meta {
     constructor(name, texture_location, item_type) {
         this.name = name;
@@ -10,6 +12,7 @@ class Meta {
         this.pendingDestroy = false;
 
         this.item_directory = new Item_Directory();
+        this.utils = new Utils();
 
         this.maxStackSize = 16;
 
@@ -60,7 +63,7 @@ class Meta {
 
         this.giveItemUponPlace = null; // {id: ..., quantity: ...}
 
-        this.spawnItems = null; // Spawn item on next tick [{id: ..., quantity: ..., durability (optional)}]
+        this.spawnItems = null; // Spawn item on next tick [{id: ..., quantity: ..., durability (optional), chance: (optional)}]
         this.removeItem = false;
         this.giveItem = null; // {id: ..., quantity: ...}
         this.decrementDurability = false;
@@ -153,14 +156,20 @@ class Block extends Meta {
         super(name, texture_location, 'block');
         this.x = x;
         this.y = y;
+
+        this.break_block = false;
     }
 
     break() {
+        /*
         this.spawnItems = this.itemDrop_id;
         this.onNextTick = {
             id: 0, // air
             properties: {}
         };
+        */
+
+        this.break_block = true;
 
     }
 }
@@ -312,7 +321,7 @@ class Item_bread extends Item_food {
 }
 
 
-// Farming ----------------------------->
+// Farming & plants ----------------------------->
 
 class Block_farmlandDry extends Block_Solid {
     constructor(x, y) {
@@ -425,16 +434,6 @@ class Block_wheat extends Block_Solid {
             const growthState = this.status === this.maxGrowthState ? this.status: this.status + 1;
             this.setStatus(growthState);
         }
-
-        if (this.neighbour_data) {
-            if (this.neighbour_data.down.id !== 14 && this.neighbour_data.down.id !== 15) {
-                this.spawnItems = this.itemDrop_id;
-                this.onNextTick = {
-                    id: 0, // air
-                    properties: {}
-                };
-            }
-        }
         
     }
 }
@@ -475,6 +474,181 @@ class Item_bucketWater extends Item {
         this.giveItemUponPlace = 50;
 
         this.maxStackSize = 1;
+    }
+}
+
+class Block_sapling extends Block_Solid {
+    constructor(x, y) {
+        super('sapling', x, y, 40, './assets/textures/sapling.png');
+        this.id = 17;
+        this.itemDrop_id = [
+            {id: 17, quantity: 1}
+        ];
+        this.physics = false;
+
+        this.growthChance = 0.1; //Percent chance of growth in a given tick
+        this.maxGrowthState = 7;
+
+        this.placeRequirements = {
+            all: { // must follow all of these rules
+                adjacent: [],
+
+                left: [],
+                right: [],
+                top: [],
+                bottom: [1, 2]
+            },
+
+            oneOf: []
+        };
+
+        this.minimumGrowthLight = 10;
+        this.torchAffinity = false;
+    }
+
+    run_gametick_logic(tick) {
+        if (this.randomBool_precise(this.growthChance) && this.light >= this.minimumGrowthLight) {
+            this.growTree();
+        }
+    }
+
+    growTree() {
+        const blocks_template = [
+            {id: 4, dx: 0, dy: 0, chance: 100},
+            {id: 4, dx: 0, dy: 1, chance: 100},
+            {id: 4, dx: 0, dy: 2, chance: 100},
+            {id: 4, dx: 0, dy: 3, chance: 100},
+
+            {id: 6, dx: -1, dy: 2, chance: 100},
+            {id: 6, dx: -1, dy: 3, chance: 100},
+            {id: 6, dx: -1, dy: 4, chance: 100},
+            {id: 6, dx: 0, dy: 4, chance: 100},
+            {id: 6, dx: 1, dy: 4, chance: 100},
+            {id: 6, dx: 1, dy: 3, chance: 100},
+            {id: 6, dx: 1, dy: 2, chance: 100},
+            
+            {id: 6, dx: -2, dy: 2, chance: 80},
+            {id: 6, dx: -2, dy: 3, chance: 80},
+            {id: 6, dx: -1, dy: 5, chance: 80},
+            {id: 6, dx: 0, dy: 5, chance: 100},
+            {id: 6, dx: 1, dy: 5, chance: 80},
+            {id: 6, dx: 2, dy: 3, chance: 80},
+            {id: 6, dx: 2, dy: 2, chance: 80},
+        ];
+
+        let blocks = [];
+
+        // Calculate block positions
+        for (let i = 0; i < blocks_template.length; i++) {
+            if (this.utils.randomBool(blocks_template[i].chance)) {
+                blocks.push(blocks_template[i]);
+            }
+        }
+
+        // Tree may grow if all logs can be placed AND 3 or fewer leaves are obstructed
+        const canGrow = (() => {
+            let leaf_obstructions = 0;
+
+            for (let i = 0; i < blocks.length; i++) {
+                const blockID = blocks[i].id;
+
+                // Use neighbour block interface to find the block information
+
+                let dx = blocks[i].dx;
+                let dy = blocks[i].dy;
+
+                let focusBlock = this;
+
+                while(Math.abs(dx) > 0) {
+                    if (dx > 0) {// if positive
+                        if (!focusBlock.neighbour_data?.right) return false;
+                        focusBlock = focusBlock.neighbour_data.right;
+                        
+                        dx--;
+                    }
+                    if (dx < 0) {// if negative
+                        if (!focusBlock.neighbour_data?.left) return false;
+                        focusBlock = focusBlock.neighbour_data.left;
+                        
+                        dx++;
+                    }
+                }
+
+                while(Math.abs(dy) > 0) {
+                    if (dy > 0) {// if positive
+                        if (!focusBlock.neighbour_data?.up) return false;
+                        focusBlock = focusBlock.neighbour_data.up;
+                        
+                        dy--;
+                    }
+                    if (dy < 0) {// if negative
+                        if (!focusBlock.neighbour_data?.down) return false;
+                        focusBlock = focusBlock.neighbour_data.down;
+                        
+                        dy++;
+                    }
+                }
+
+                if (focusBlock.id !== 0 && (focusBlock.x !== this.x && focusBlock.y !== this.y)) { //if not air & not current sapling
+                    if (blockID === 4) { // do not allow tree to grow if log is obstructed
+                        return false;
+                    }
+
+                    leaf_obstructions++;
+                }
+            }
+
+            return leaf_obstructions <= 3;
+        })();
+
+
+        // Grow tree
+        if (canGrow) {
+            for (let i = 0; i < blocks.length; i++) {
+                const blockID = blocks[i].id;
+
+                // Use neighbour block interface to find the block information
+
+                let dx = blocks[i].dx;
+                let dy = blocks[i].dy;
+
+                let focusBlock = this;
+
+                while(Math.abs(dx) > 0) {
+                    if (dx > 0) {// if positive
+                        focusBlock = focusBlock.neighbour_data.right;
+                        
+                        dx--;
+                    }
+                    if (dx < 0) {// if negative
+                        focusBlock = focusBlock.neighbour_data.left;
+                        
+                        dx++;
+                    }
+                }
+
+                while(Math.abs(dy) > 0) {
+                    if (dy > 0) {// if positive
+                        focusBlock = focusBlock.neighbour_data.up;
+                        
+                        dy--;
+                    }
+                    if (dy < 0) {// if negative
+                        focusBlock = focusBlock.neighbour_data.down;
+                        
+                        dy++;
+                    }
+                }
+
+                if (focusBlock.id === 0 || (focusBlock.x === this.x && focusBlock.y === this.y)) { //if air or current sapling
+                    focusBlock.onNextTick = {
+                        id: blockID,
+                        properties: {}
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -1230,7 +1404,7 @@ class Block_treeLeaves extends Block_Solid {
         super('tree_leaves', x, y, 15, './assets/textures/leaves.png');
         this.id = 6;
         this.itemDrop_id = [
-            {id: 7, quantity: 1}
+            {id: 17, quantity: 1, chance: 15}
         ];
         this.physics = false;
         this.transparency = 1;
@@ -1245,10 +1419,7 @@ class Block_treeLeaves extends Block_Solid {
         const distFromTreeLog = this.distanceFromBlock(4, 4);
 
         if (distFromTreeLog > this.decayRange && this.randomBool_precise(this.decayChance)) {
-            this.onNextTick = {
-                id: 0,
-                properties: {}
-            }
+            this.break();
         }
     }
 }
@@ -1258,7 +1429,7 @@ class Block_leaves extends Block_Solid {
         super('leaves', x, y, 15, './assets/textures/leaves.png');
         this.id = 7;
         this.itemDrop_id = [
-            {id: 7, quantity: 1}
+            {id: 17, quantity: 1, chance: 15}
         ];
 
         this.fuel_value = 50;
@@ -1613,6 +1784,7 @@ class Item_Directory {
             '14': Block_farmlandDry,
             '15': Block_farmlandWet,
             '16': Block_wheat,
+            '17': Block_sapling,
 
             '24': Block_coalOre,
             '25': Item_coal,

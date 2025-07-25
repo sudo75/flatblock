@@ -368,6 +368,10 @@ class Level {
                                 for (const item of block.spawnItems) {
                                     if (!item.id || !item.quantity) continue;
 
+                                    const chance = item?.chance ?? 100;
+
+                                    if (!this.calc.randomBool(chance)) continue;
+
                                     for (let j = 0; j < item.quantity; j++) {
                                         this.game.entity_handler.newEntity_Item(abs_x, y, item.id, 0, 0, item.durability || null);
                                     }
@@ -491,6 +495,20 @@ class Level {
                             for (const key in block.onNextTick.properties) {
                                 this.generator.editProperty(abs_x, y, key, block.onNextTick.properties[key]);
                             }
+                        }
+                    }
+                }
+            }
+
+            // Compute break_block
+            for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
+                for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
+                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                        const block = this.data[i].block_data[rel_x][y];
+                        const abs_x = this.calc.getAbsoluteX(rel_x, i);
+
+                        if (block.break_block) {
+                            this.generator.breakBlock(abs_x, y);
                         }
                     }
                 }
