@@ -6,7 +6,7 @@ class InputHandler {
         this.mouseDown = false;
         this.mouseDown_right = false;
 
-        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', 'e', 'r', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4', 'F8'];
+        this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'e', 'r', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4', 'F8'];
 
         window.addEventListener('keydown', (event) => {
             const key = event.key;
@@ -21,19 +21,21 @@ class InputHandler {
             const keys = [event.key]; // Normalise to lowercase
 
 
-            if (keys[0] === 'W') {
-                keys.push('w');
+            if (this.game.debugger.settings.wasd) {
+                if (keys[0] === 'W') {
+                    keys.push('w');
+                }
+                if (keys[0] === 'A') {
+                    keys.push('a');
+                }
+                if (keys[0] === 'S') {
+                    keys.push('s');
+                }
+                if (keys[0] === 'D') {
+                    keys.push('d');
+                }
             }
-            if (keys[0] === 'A') {
-                keys.push('a');
-            }
-            if (keys[0] === 'S') {
-                keys.push('s');
-            }
-            if (keys[0] === 'D') {
-                keys.push('d');
-            }            
-
+            
             const getIndicies = (keys) => {
                 let indicies = [];
                 for (let i = 0; i < keys.length; i++) {
@@ -89,7 +91,13 @@ class InputHandler {
         });
     }
 
-    
+    initSettings() {
+        if (this.game?.debugger?.settings?.wasd) {
+            this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'e', 'r', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4', 'F8', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'];
+        } else {
+            this.acceptedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift', 'e', 'r', 'c', 'h', 'q', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'F4', 'F8'];
+        }
+    }
 }
 
 export { InputHandler }

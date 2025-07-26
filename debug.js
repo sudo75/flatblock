@@ -25,7 +25,8 @@ class Debugger {
             debug_menu: false,
             performance: true,
             performance_chunks: true,
-            compression: true
+            compression: true,
+            wasd: false
         };
 
         this.applySettings();
@@ -102,6 +103,11 @@ class Debugger {
         //Performance chunks - no exterior settings to edit
 
         //Compression - no exterior settings to edit
+
+        //wasd
+        if (this.settings.wasd !== null) {
+            this.game.input.initSettings();
+        }
     }
 
     commandInput() {
@@ -214,6 +220,13 @@ class Debugger {
                     this.settings.compression = arg2 === 'true';
                 } else {
                     alert('compression - Input a boolean.');
+                }
+                break;
+            case 'wasd':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.wasd = arg2 === 'true';
+                } else {
+                    alert('wasd - Input a boolean.');
                 }
                 break;
         }

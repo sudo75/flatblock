@@ -110,6 +110,8 @@ class Game {
         this.entity_handler = new EntityHandler(this);
 
         this.debugger = new Debugger(this);
+
+        this.input.initSettings();
     }
 
     renderMainImage() {
