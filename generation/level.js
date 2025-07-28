@@ -17,8 +17,8 @@ class Level {
         this.block_simulation_distance = null; // For light calculations
 
         // Simulation distances for performance ticks
-        this.simulation_distance_performance = 2;
-        this.block_simulation_distance_performance = 2;
+        this.simulation_distance_performance = 3;
+        this.block_simulation_distance_performance = 3;
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
