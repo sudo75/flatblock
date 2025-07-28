@@ -65,6 +65,8 @@ class Game {
 
         this.keysHeld = [];
         this.newKeys = [];
+
+        this.save_chunks = []; // which chunks should be saved
     }
 
     setImgSmoothing(smoothing) {
@@ -244,7 +246,7 @@ class Game {
                     if (confirm(`Clear slot ${i}?`)) {
                         localStorage.removeItem(`slot_${i}`);
 
-                        const level_size = this.getSlotData(i, 'level_size');
+                        const level_size = this.getSlotDataPoint(i, 'level_size');
                         const text = level_size ? `Level size: ${level_size}`: `-Empty-`;
                         
                         const storage_data = this.getDiagnosticsBySlot_storage(i);
@@ -265,7 +267,7 @@ class Game {
                 }}
             ];
 
-            const level_size = this.getSlotData(i, 'level_size');
+            const level_size = this.getSlotDataPoint(i, 'level_size');
             const text1 = level_size ? `Level size: ${level_size}`: `-Empty-`;
 
             const storage_data = this.getDiagnosticsBySlot_storage(i);
@@ -324,7 +326,7 @@ class Game {
                 }}
             ];
 
-            const level_size = this.getSlotData(i, 'level_size');
+            const level_size = this.getSlotDataPoint(i, 'level_size');
             const text = level_size ? `Level size: ${level_size}`: `-Empty-`;
             this.menu_renderers.new_game[i] = new Menu_Renderer(`Slot ${i}`, `${text}`, null, btns_slot, this.width, this.height, this.canvas_menu2);
         }
@@ -409,16 +411,25 @@ class Game {
         
 
         const levelStart = performance.now();
-        this.level.properties.width_chunks = width_chunks;
-        this.level.properties.height_blocks = height_blocks;
 
-        this.level.simulation_distance = 7;
-        this.level.block_simulation_distance = 7;
+        this.fullscreenMessage('Generating level...');
+        await new Promise(requestAnimationFrame); // let the browser paint the save screen
+        await new Promise(resolve => {
+            setTimeout(() => {
+                this.level.properties.width_chunks = width_chunks;
+                this.level.properties.height_blocks = height_blocks;
 
-        this.level.level_size = level_size;
+                this.level.simulation_distance = 7;
+                this.level.block_simulation_distance = 7;
 
-        this.level.generate();
-        
+                this.level.level_size = level_size;
+
+                this.level.generate();
+
+                resolve();
+            }, 0);
+        });
+        this.clearFullscreenMessage();
         logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         const playerStart = performance.now();
@@ -429,6 +440,25 @@ class Game {
         this.menu_handler.init();
         this.startGameLoop();
         logPerformance("Game loop started", gameLoopStart, "color:rgb(255, 220, 0); font-weight: bold;");
+
+        if (this.slotLoaded !== 'default') {
+            const saveGameStart = performance.now();
+
+            this.save_animation();
+            await new Promise(requestAnimationFrame); // let the browser paint the save screen
+
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    localStorage.removeItem(`slot_${this.slotLoaded}`);
+                    this.saveAll();
+                    resolve();
+                }, 0);
+            });
+
+            this.clear_save_animation();
+
+            logPerformance("Game saved", saveGameStart, "color: rgb(255, 220, 0); font-weight: bold;");
+        }
     
         logPerformance("Total init execution time", startTime, "color: orange; font-size: 16px; font-weight: bold;");
     }
@@ -529,16 +559,45 @@ class Game {
         this.status = 1;
     }
 
+    saveAll() {
+        console.log('Saving all chunks...');
+        const worldBounds = this.calculator.getWorldBounds(); // Leftmost and rightmost chunk IDs
+        
+        const allChunkIDs = (() => {
+            let chunkIDs = [];
+
+            for (let i = worldBounds[0]; i <= worldBounds[1]; i++) {
+                chunkIDs.push(i);
+            }
+
+            return chunkIDs;
+        })();
+
+        this.saveChunks(allChunkIDs);
+
+        this.save_chunks = [];
+
+        console.log('Saved all chunks!');
+    }
+
     save() {
         if (this.slotLoaded == null || this.slotLoaded == 'default') return;
-        
-        let data_world = {};
 
-        this.level.clearNeighbourData();
-        for (let key in this.level.data) {
-            data_world[key] = {'block_data': this.level.data[key].block_data, entity_data: [] };
+        this.saveChunks(this.save_chunks);
+        this.save_chunks = [];
+    }
+
+    saveChunks(chunkIDs) { // should be an array with chunk IDs
+
+        console.log(`saving chunks: ${JSON.stringify(chunkIDs)}`);
+
+        let data_world = this.getSlotDataPoint_raw(this.slotLoaded, 'data_world') ?? {}; // returns an object with values of the object compressed
+
+        for (const chunkID of chunkIDs) {
+            this.level.clearNeighbourData(chunkID);
+            data_world[chunkID] = this.compressString(JSON.stringify({'block_data': this.level.data[chunkID].block_data, entity_data: [] }));
         }
-
+        
         const data_player = {
             position: {
                 x: this.player.x,
@@ -550,24 +609,95 @@ class Game {
 
         const data = {
             data_world: data_world,
-            data_player: data_player,
-            entity: this.entity_handler.entity_data,
-            seed: this.level.generator.seed,
-            tick: this.tick,
-            time: this.level.time,
-            level_properties: this.level.properties,
-            level_size: this.level.level_size
+            data_player: this.compressString(JSON.stringify(data_player)),
+            entity: this.compressString(JSON.stringify(this.entity_handler.entity_data)),
+            seed: this.compressString(JSON.stringify(this.level.generator.seed)),
+            tick: this.compressString(JSON.stringify(this.tick)),
+            time: this.compressString(JSON.stringify(this.level.time)),
+            level_properties: this.compressString(JSON.stringify(this.level.properties)),
+            level_size: this.compressString(JSON.stringify(this.level.level_size))
         };
 
-        const packagedData = this.compressString(JSON.stringify(data));
+        //const packagedData = this.compressString(JSON.stringify(data));
+        const packagedData = JSON.stringify(data);
 
         localStorage.setItem(`slot_${this.slotLoaded}`, packagedData);
+
+        console.log(`saved chunks: ${JSON.stringify(chunkIDs)}`);
+    }
+
+    getChunkData(slot, chunkID) {
+        return this.getSlotDataPoint(slot, 'data_world')[chunkID];
+    }
+
+    getSlotDataPoint_raw(slot, data) {
+        const gameData = localStorage.getItem(`slot_${slot}`);
+        const unpackagedData = JSON.parse(gameData);
+        
+        let gameData_raw = {};
+        for (const key in unpackagedData) {
+            gameData_raw[key] = unpackagedData[key];
+            
+        }
+
+        return gameData_raw?.[data];
+    }
+
+    getSlotDataPoint(slot, data) {
+        return this.getSlotDataAll(slot)?.[data];
+    }
+
+    getSlotDataAll(slot) {
+        const gameData = localStorage.getItem(`slot_${slot}`);
+        const unpackagedData = JSON.parse(gameData);
+        
+        let gameData_parsed = {};
+        for (const key in unpackagedData) {
+            if (key === 'data_world') {
+                const chunks_compressed = unpackagedData[key];
+
+                let data_world = {};
+                for (const chunkID in chunks_compressed) {
+                    const chunk_compressed = chunks_compressed[chunkID];
+                    data_world[chunkID] = JSON.parse(this.decompressString(chunk_compressed));
+                }
+
+                gameData_parsed[key] = data_world;
+            } else {
+                gameData_parsed[key] = JSON.parse(this.decompressString(unpackagedData[key]));
+            }
+            
+        }
+
+        return gameData_parsed;
     }
 
     clear_save_animation() {
         this.ctx_menu2.clearRect(0, 0, this.width, this.height);
     }
 
+    clearFullscreenMessage() {
+        this.ctx_menu2.clearRect(0, 0, this.width, this.height);
+    }
+
+    fullscreenMessage(text) {
+        const width = 0.6 * this.width;
+        const height = 0.6 * this.height;
+
+        const rectX = (this.width - width) / 2;
+        const rectY = (this.height - height) / 2;
+
+        this.ctx_menu2.fillStyle = "rgba(0, 0, 0, 0.7)";
+        this.ctx_menu2.fillRect(rectX, rectY, width, height);
+
+        this.ctx_menu2.fillStyle = "#ffffff"; // White text
+        this.ctx_menu2.font = "20px Arial"; // Set font size and style
+        this.ctx_menu2.textAlign="center"; 
+        this.ctx_menu2.textBaseline = "middle";
+        
+        this.ctx_menu2.fillText(text, rectX + (width / 2), rectY + (height / 2));
+    }
+    
     save_animation() {
         const width = 0.6 * this.width;
         const height = 0.6 * this.height;
@@ -609,42 +739,54 @@ class Game {
     }
 
     async loadGame(slot) {
-        //FETCH DATA
-        const gameData = localStorage.getItem(`slot_${slot}`);
-        const unpackagedData = this.decompressString(gameData);
-
-        let gameData_parsed;
-        if (unpackagedData) {
-            gameData_parsed = JSON.parse(unpackagedData);
-            console.log(gameData_parsed);
-        } else {
-            console.log('No game data found.');
-            return;
-        }
-
-
-        //LOAD
-        this.slotLoaded = slot != undefined ? slot: 'default';
-
         function logPerformance(taskName, startTime, style = "color: black; font-weight: normal;") {
             const elapsedTime = (performance.now() - startTime).toFixed(1);
             console.log(`%c${taskName}: ${elapsedTime}ms`, style);
         }
 
-        const startTime = performance.now();        
+        const startTime = performance.now();
+
+        //FETCH DATA
+        const fetchDataStart = performance.now();
+        let gameData_parsed;
+        this.fullscreenMessage('Fetching data...');
+        await new Promise(requestAnimationFrame); // let the browser paint the save screen
+        await new Promise(resolve => {
+            setTimeout(() => {
+                const gameData = this.getSlotDataAll(slot);
+                if (!gameData) return;
+
+                gameData_parsed = gameData;
+                resolve();
+            }, 0);
+        });
+        this.clearFullscreenMessage();
+        logPerformance("Level data fetched", fetchDataStart, "color: rgb(255, 220, 0); font-weight: bold;");
+
+        //LOAD
+        this.slotLoaded = slot != undefined ? slot: 'default';
+
     
         //Load level
         const levelStart = performance.now();
 
-        this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
-        this.level.level_size = gameData_parsed.level_size;
-        this.tick = gameData_parsed.tick;
-        this.level.time = gameData_parsed.time;
+        this.fullscreenMessage('Loading level...');
+        await new Promise(requestAnimationFrame); // let the browser paint the save screen
+        await new Promise(resolve => {
+            setTimeout(() => {
+                this.level.copy(gameData_parsed.data_world, gameData_parsed.entity, gameData_parsed.seed, gameData_parsed.level_properties);
+                this.level.level_size = gameData_parsed.level_size;
+                this.tick = gameData_parsed.tick;
+                this.level.time = gameData_parsed.time;
 
-        this.level.simulation_distance = gameData_parsed.level_properties.width_chunks;
-        this.level.block_simulation_distance = 3;
+                this.level.simulation_distance = gameData_parsed.level_properties.width_chunks;
+                this.level.block_simulation_distance = 3;
 
-        logPerformance("Level generated", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
+                resolve();
+            }, 0);
+        });
+        this.clearFullscreenMessage();
+        logPerformance("Level loaded", levelStart, "color: rgb(255, 220, 0); font-weight: bold;");
     
         //Load player
         const playerStart = performance.now();
@@ -668,20 +810,6 @@ class Game {
         }
     }
 
-    getSlotData(slot, data) {
-        const gameData = localStorage.getItem(`slot_${slot}`);
-        const unpackagedData = this.decompressString(gameData);
-
-        let gameData_parsed;
-        if (unpackagedData) {
-            gameData_parsed = JSON.parse(unpackagedData);
-        } else {
-            return null;
-        }
-
-        return gameData_parsed[data];
-    }
-
     update_world() {
         // Logic that requires game ticks and world update logic
         this.level.run_gametick_logic(this.tick);
@@ -690,7 +818,7 @@ class Game {
         this.entity_handler.run_gametick_logic(this.tick);
         this.player.run_gametick_logic(this.tick);
 
-        if (this.tick % 6000 === 0) { //Save every 5 minutes (6000 ticks)
+        if (this.tick % 6000 === 0 && this.tick !== 0) { //Save every 5 minutes (6000 ticks)
             this.save_game();
         }
         

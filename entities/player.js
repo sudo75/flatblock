@@ -187,6 +187,13 @@ class Player extends Entity_creature {
                 this.inventory.subtract(selectedSlot);
             }
         }
+
+        // Check to see if this chunk should be added to the save list
+        const currentChunkID = this.calc.getChunkID(this.x);
+        if (!this.game.save_chunks.includes(currentChunkID) && this.game.slotLoaded !== 'default') {
+            this.game.save_chunks.push(currentChunkID);
+            console.log(`Added chunkID to save list: ${currentChunkID}`);
+        }
         
         super.update(input, deltaTime);
     }
