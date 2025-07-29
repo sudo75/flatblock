@@ -158,7 +158,7 @@ class Calc_World {
         const chunkID = this.getChunkID(x);
         const relativeX = this.getRelativeX(x);
 
-        const block_data = this.game.level.data[chunkID].block_data[relativeX][y];
+        const block_data = this.game.level.data[chunkID]?.block_data[relativeX][y];
         return block_data;
     }
 
