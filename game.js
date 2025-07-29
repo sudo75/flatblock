@@ -67,6 +67,14 @@ class Game {
         this.newKeys = [];
 
         this.save_chunks = []; // which chunks should be saved
+
+        this.level_sizing = {
+            tiny: { width_chunks: 3, width_blocks: 48, height_blocks: 120 },
+            small: { width_chunks: 7, width_blocks: 112, height_blocks: 120 },
+            medium: { width_chunks: 15, width_blocks: 240, height_blocks: 150 },
+            large: { width_chunks: 27, width_blocks: 432, height_blocks: 150 },
+            huge: { width_chunks: 53, width_blocks: 848, height_blocks: 180 }
+        };
     }
 
     setImgSmoothing(smoothing) {
@@ -176,10 +184,8 @@ class Game {
 
         const btns_start = [
             {txt: ['New game *will not save*'], callback: () => {
-                console.log('loading game...');
-
                 this.menu_renderers.start.close();
-                this.init();
+                this.menu_renderers.slot_default.init();
             }},
 
             {txt: ['Slot 0'], callback: () => {
@@ -213,6 +219,49 @@ class Game {
         ];
 
         this.menu_renderers.start = new Menu_Renderer('Flatblock', 'Select a slot to create a new savable game', null, btns_start, this.width, this.height, this.canvas_menu2);
+
+
+        // Default slot menu
+        const btns_slot_default = [
+            {txt: [`Tiny (width: ${this.level_sizing.tiny.width_blocks}, height: ${this.level_sizing.tiny.height_blocks})`], callback: () => {
+                    console.log('loading game...');
+    
+                    this.menu_renderers.slot_default.close();
+                    this.init(null, 'tiny');
+                }},
+                {txt: [`Small (width: ${this.level_sizing.small.width_blocks}, height: ${this.level_sizing.small.height_blocks})`], callback: () => {
+                    console.log('loading game...');
+    
+                    this.menu_renderers.slot_default.close();
+                    this.init(null, 'small');
+                }},
+                {txt: [`Medium (width: ${this.level_sizing.medium.width_blocks}, height: ${this.level_sizing.medium.height_blocks})`], callback: () => {
+                    console.log('loading game...');
+    
+                    this.menu_renderers.slot_default.close();
+                    this.init(null, 'medium');
+                }},
+                {txt: [`Large (width: ${this.level_sizing.large.width_blocks}, height: ${this.level_sizing.large.height_blocks})`], callback: () => {
+                    console.log('loading game...');
+    
+                    this.menu_renderers.slot_default.close();
+                    this.init(null, 'large');
+                }},
+                {txt: [`Huge (width: ${this.level_sizing.huge.width_blocks}, height: ${this.level_sizing.huge.height_blocks})`], callback: () => {
+                    console.log('loading game...');
+    
+                    this.menu_renderers.slot_default.close();
+                    this.init(null, 'huge');
+                }},
+            {txt: ['<= Back'], callback: () => {
+
+                this.menu_renderers.slot_default.close();
+                this.menu_renderers.start.init();
+            }}
+        ];
+
+        this.menu_renderers.slot_default = new Menu_Renderer('Default', 'This game will NOT save!', null, btns_slot_default, this.width, this.height, this.canvas_menu2);
+        
 
         //Slot menus
         const closeSlotMenu = () => {
@@ -285,33 +334,34 @@ class Game {
         }
 
         this.menu_renderers.new_game = [];
+
         for (let i = 0; i < 5; i++) {
             const btns_slot = [
-                {txt: ['Tiny'], callback: () => {
+                {txt: [`Tiny (width: ${this.level_sizing.tiny.width_blocks}, height: ${this.level_sizing.tiny.height_blocks})`], callback: () => {
                     console.log('loading game...');
     
                     closeNewGameMenu();
                     this.init(i, 'tiny');
                 }},
-                {txt: ['Small'], callback: () => {
+                {txt: [`Small (width: ${this.level_sizing.small.width_blocks}, height: ${this.level_sizing.small.height_blocks})`], callback: () => {
                     console.log('loading game...');
     
                     closeNewGameMenu();
                     this.init(i, 'small');
                 }},
-                {txt: ['Medium'], callback: () => {
+                {txt: [`Medium (width: ${this.level_sizing.medium.width_blocks}, height: ${this.level_sizing.medium.height_blocks})`], callback: () => {
                     console.log('loading game...');
     
                     closeNewGameMenu();
                     this.init(i, 'medium');
                 }},
-                {txt: ['Large'], callback: () => {
+                {txt: [`Large (width: ${this.level_sizing.large.width_blocks}, height: ${this.level_sizing.large.height_blocks})`], callback: () => {
                     console.log('loading game...');
     
                     closeNewGameMenu();
                     this.init(i, 'large');
                 }},
-                {txt: ['Huge'], callback: () => {
+                {txt: [`Huge (width: ${this.level_sizing.huge.width_blocks}, height: ${this.level_sizing.huge.height_blocks})`], callback: () => {
                     console.log('loading game...');
     
                     closeNewGameMenu();
@@ -360,47 +410,12 @@ class Game {
         this.ctx_menu.clearRect(0, 0, this.width, this.height);
     }
     
-    async init(slot, level_size) {
+    async init(slot, level_size = 'medium') {
         this.slotLoaded = slot != undefined ? slot: 'default';
         this.status = 1;
 
-        const getSize = (level_size) => {
-            let width_chunks;
-            let height_blocks;
-            switch(level_size) {
-                case 'tiny':
-                    width_chunks = 3;
-                    height_blocks = 120;
-                    break;
-                case 'small':
-                    width_chunks = 7;
-                    height_blocks = 120;
-                    break;
-                case 'medium':
-                    width_chunks = 15;
-                    height_blocks = 150;
-                    break;
-                case 'large':
-                    width_chunks = 27;
-                    height_blocks = 150;
-                    break;
-                case 'huge':
-                    width_chunks = 53;
-                    height_blocks = 180;
-                    break;
-                default:
-                    width_chunks = 15;
-                    height_blocks = 150;
-            }
-
-            return {
-                width_chunks: width_chunks,
-                height_blocks: height_blocks
-            };
-        };
-
-        const width_chunks = getSize(level_size).width_chunks;
-        const height_blocks = getSize(level_size).height_blocks;
+        const width_chunks = this.level_sizing[level_size].width_chunks;
+        const height_blocks = this.level_sizing[level_size].height_blocks;
 
         function logPerformance(taskName, startTime, style = "color: black; font-weight: normal;") {
             const elapsedTime = (performance.now() - startTime).toFixed(1);
