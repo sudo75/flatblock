@@ -73,7 +73,8 @@ class Game {
             small: { width_chunks: 7, width_blocks: 112, height_blocks: 120 },
             medium: { width_chunks: 15, width_blocks: 240, height_blocks: 150 },
             large: { width_chunks: 27, width_blocks: 432, height_blocks: 150 },
-            huge: { width_chunks: 53, width_blocks: 848, height_blocks: 180 }
+            huge: { width_chunks: 53, width_blocks: 848, height_blocks: 180 },
+            gigantic: { width_chunks: 101, width_blocks: 1616, height_blocks: 200 },
         };
     }
 
@@ -253,6 +254,12 @@ class Game {
                     this.menu_renderers.slot_default.close();
                     this.init(null, 'huge');
                 }},
+                {txt: [`Gigantic (width: ${this.level_sizing.gigantic.width_blocks}, height: ${this.level_sizing.gigantic.height_blocks})`], callback: () => {
+                    console.log('loading game...');
+    
+                    this.menu_renderers.slot_default.close();
+                    this.init(null, 'gigantic');
+                }},
             {txt: ['<= Back'], callback: () => {
 
                 this.menu_renderers.slot_default.close();
@@ -367,7 +374,6 @@ class Game {
                     closeNewGameMenu();
                     this.init(i, 'huge');
                 }},
-                
     
                 {txt: ['<= Back'], callback: () => {
     
