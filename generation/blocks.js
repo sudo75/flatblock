@@ -1364,6 +1364,17 @@ class Block_grass extends Block_Solid {
         }
 
     }
+
+    run_gametick_logic(tick) {
+        if (this.neighbour_data) {
+            if (this.neighbour_data.up.type === 'solid' && this.neighbour_data.up.physics) {
+                this.onNextTick = {
+                    id: 1, // dirt
+                    properties: {}
+                }
+            }
+        }
+    }
 }
 
 class Block_stone extends Block_Solid {
