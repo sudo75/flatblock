@@ -16,7 +16,7 @@ class Entity_item extends Entity {
         this.texture_location = this.item_directory.getTextureLocationByID(this.itemID);
 
         this.spawnTick = spawnTick;
-        this.pickup_grace = 40; //ticks
+        this.pickup_grace = 20; //ticks
         this.player_maxReach = 1.05;
 
         this.entityType = 'item';
