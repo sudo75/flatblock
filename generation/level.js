@@ -1134,7 +1134,7 @@ class Level {
                 const hardness = blockData.hardness;
                 const blockID = blockData.id;
 
-                const breakStatus = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status;
+                let breakStatus = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status;
 
                 //Set break status
                 const selectedSlot = this.game.player.inventory.selectedSlot;
@@ -1156,8 +1156,11 @@ class Level {
                 }
 
                 if (blockType === 'solid' && hardness) {
-                    this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status += strength;
+                    breakStatus += strength;
                 }
+
+                // Set break status
+                this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y].break_status = breakStatus;
 
                 //Break block
                 if (breakStatus >= hardness) {
