@@ -1176,6 +1176,16 @@ class Level {
         } else {
             resetBreakStatus();
         }
+
+        if (this.current_breaking) {
+            const block = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y];
+
+            if (block.sound) {
+                const break_sound = block.sound.get('break');
+                block.playSound(break_sound);
+            }
+
+        }
     }
 }
 

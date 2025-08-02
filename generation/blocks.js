@@ -69,6 +69,39 @@ class Meta {
         this.removeItem = false;
         this.giveItem = null; // {id: ..., quantity: ...}
         this.decrementDurability = false;
+
+        this.sound = {
+            get(audio_class) {
+                const audioArray = this[audio_class];
+
+                const randIndex = Math.floor(Math.random() * audioArray.length);
+
+                return new Audio(audioArray[randIndex]);
+            },
+            break: [
+                '/assets/sounds/break_gravel_1.mp3',
+                './assets/sounds/break_gravel_2.mp3',
+                './assets/sounds/break_gravel_3.mp3',
+            ]
+        }
+        this.soundPlaying = false;
+    }
+
+    playSound(audio) {
+        if (this.soundPlaying) return;
+        this.soundPlaying = true;
+
+        const onTimeUpdate = () => {
+        const progress = audio.currentTime / audio.duration;
+            if (progress >= 0.25) {
+                this.soundPlaying = false;
+                audio.removeEventListener('timeupdate', onTimeUpdate);
+            }
+        };
+
+        audio.addEventListener('timeupdate', onTimeUpdate);
+
+        audio.play();
     }
 
     setStatus(status_value) {
@@ -253,6 +286,8 @@ class Block_Air extends Block {
         this.transparency = 1;
 
         this.id = 0;
+
+        this.sound = null;
     }
 }
 
