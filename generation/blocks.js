@@ -240,6 +240,8 @@ class Block_Liquid extends Block {
         this.liquid_spread = 8;
         this.source = true;
 
+        this.sound = null;
+
         this.touchCooldown = 4; // Number of ticks that must have passed for the liquid to be interacted with again
     }
 
