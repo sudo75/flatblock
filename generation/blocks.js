@@ -34,6 +34,8 @@ class Meta {
 
         this.placedAt = 0; //Tick when placed
 
+        this.entityBound = true; // true = can only be placed where there is no entity
+
         this.onNextTick = null; // Should be set as an object with an id of new block and properties of that block {id: ..., properties: {...}}
 
         this.placeRequirements = {
@@ -256,6 +258,8 @@ class Block_water extends Block_Liquid {
         this.id = 13;
 
         this.spread_speed = 10;
+
+        this.entityBound = false;
 
         this.requireClick_interact = true;
     }
@@ -1512,6 +1516,8 @@ class Block_torch extends Block_Solid {
 
         this.light_source = 15;
         this.spriteSheetX = 0;
+
+        this.entityBound = false;
 
         this.placeRequirements = {
                 

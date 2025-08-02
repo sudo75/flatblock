@@ -910,22 +910,25 @@ class Level {
     }
 
     blockCanBePlaced(x, y, blockID) {
-        const playerX_min = Math.floor(this.game.player.x);
-        const playerX_max = this.calc.hardRoundDown(this.game.player.x + this.game.player.width_blocks);
-        const playerY_min = Math.floor(this.game.player.y);
-        const playerY_max = this.calc.hardRoundDown(this.game.player.y + this.game.player.height_blocks);
+        if (this.item_directory.getProperty(blockID, 'entityBound')) { // check for player/entity collision only if the block is entity bound
+            const playerX_min = Math.floor(this.game.player.x);
+            const playerX_max = this.calc.hardRoundDown(this.game.player.x + this.game.player.width_blocks);
+            const playerY_min = Math.floor(this.game.player.y);
+            const playerY_max = this.calc.hardRoundDown(this.game.player.y + this.game.player.height_blocks);
 
-        for (let i = playerX_min; i <= playerX_max; i++) {
-            for (let j = playerY_min; j <= playerY_max; j++) {
-                if (x === i && y === j) {
-                    return false;
+            for (let i = playerX_min; i <= playerX_max; i++) {
+                for (let j = playerY_min; j <= playerY_max; j++) {
+                    if (x === i && y === j) {
+                        return false;
+                    }
                 }
             }
-        }
 
-        if (this.game.entity_handler.isMobAt(x, y)) {
-            return false;
+            if (this.game.entity_handler.isMobAt(x, y)) {
+                return false;
+            }
         }
+        
 
         //Check block data for placement requirements
 
