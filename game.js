@@ -285,8 +285,12 @@ class Game {
                 {txt: ['New game'], callback: () => {
                     console.log('loading game...');
     
+                    if (this.saveExists(i)) {
+                        if (!confirm('Create a new game and overwrite the previous save?')) return;
+                    }
                     closeSlotMenu();
                     this.menu_renderers.new_game[i].init();
+
                 }},
                 {txt: ['Load game'], callback: () => {
                     if (this.saveExists(i)) {
