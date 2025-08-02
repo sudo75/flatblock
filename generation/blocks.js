@@ -20,6 +20,8 @@ class Meta {
         this.damage = 1;
         this.purpose = 'all';
 
+        this.requireClick_interact = false; // to place/interect
+
         this.spriteSheetX = 0;
 
         this.fuel_value = 0;
@@ -221,6 +223,8 @@ class Block_water extends Block_Liquid {
         this.id = 13;
 
         this.spread_speed = 10;
+
+        this.requireClick_interact = true;
     }
 
     interact(seletedItemID) {
@@ -474,6 +478,8 @@ class Item_bucketWater extends Item {
         this.giveItemUponPlace = 50;
 
         this.maxStackSize = 1;
+
+        this.requireClick_interact = true;
     }
 }
 

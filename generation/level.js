@@ -30,7 +30,22 @@ class Level {
 
         this.time = 0;
         this.sun_strength = 15; //0 - 15
-    }
+
+        this.mouseInfoRight = {
+            down: false,
+            new_click: false,
+            game: this.game, // will assign below
+
+            update() {
+                const down_previous = this.down;
+                const down_current = this.game.input.mouseDown_right;
+
+                this.new_click = down_current && !down_previous;
+                this.down = down_current;
+            }
+        };
+        
+        }
 
     incrementTime() {
         this.time++;
@@ -1042,6 +1057,8 @@ class Level {
     }
 
     computeBlockPlacing() {
+        this.mouseInfoRight.update();
+
         const selectedX = this.game.player.selectedBlock.x;
         const selectedY = this.game.player.selectedBlock.y;
 
@@ -1052,8 +1069,12 @@ class Level {
         
         const placeblockID_ = this.item_directory.getProperty(slotItemID, 'placeBlock_id');
         const placeBlockID = placeblockID_ ? placeblockID_: slotItemID;
+        
+        const requireClick_interact = this.item_directory.getProperty(slotItemID, 'requireClick_interact');
 
-        if (this.game.input.mouseDown_right && this.calc.isWithinWorldBounds(selectedX, selectedY)) {
+        if (requireClick_interact && !this.mouseInfoRight.new_click) return;
+
+        if (this.mouseInfoRight.down && this.calc.isWithinWorldBounds(selectedX, selectedY)) {
             if (
                 this.calc.getBlockData(selectedX, selectedY).type !== 'solid' &&
                 this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim &&
@@ -1077,6 +1098,8 @@ class Level {
             } else {
                 const chunk_id = this.calc.getChunkID(selectedX);
                 const rel_x = this.calc.getRelativeX(selectedX);
+
+                if (this.calc.getBlockData(selectedX, selectedY).requireClick_interact && !this.mouseInfoRight.new_click) return;
 
                 this.data[chunk_id].block_data[rel_x][selectedY].interact(slotItemID);
             }
