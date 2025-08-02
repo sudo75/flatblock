@@ -395,7 +395,7 @@ class Block_farmlandWet extends Block_Solid {
 
 class Block_wheat extends Block_Solid {
     constructor(x, y) {
-        super('wheat', x, y, 40, './assets/textures/wheat.png');
+        super('wheat', x, y, 0, './assets/textures/wheat.png');
         this.id = 16;
         this.itemDrop_id = [
             {id: 40, quantity: 1}
@@ -828,7 +828,7 @@ class Item_diamondAxe extends Item_axe {
 class Item_shovel extends Tool {
     constructor(name, texture_location) {
         super(name, texture_location);
-        this.purpose = [1, 2]; //list of block IDs the tool breaks
+        this.purpose = [1, 2, 14, 15]; //list of block IDs the tool breaks
 
         this.toolClass = 'shovel';
     }
