@@ -111,6 +111,9 @@ class Meta {
                         '/assets/sounds/break_wood_4.mp3'
                     ]
                 },
+                broke: {
+                    default: ['/assets/sounds/clack_low.mp3']
+                },
                 walk: { // walking on a block
                     dirt: [
                         '/assets/sounds/break_gravel_1.mp3',

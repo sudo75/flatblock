@@ -1177,6 +1177,14 @@ class Level {
 
                 //Break block
                 if (breakStatus >= hardness) {
+                    // Play sound
+                    const block = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y];
+                    if (block.sound) {
+                        const broke_sound = block.getSound('broke');
+                        block.playSound(broke_sound, 0.5);
+                    }
+
+                    // Break block
                     this.generator.breakBlock(this.current_breaking.x, this.current_breaking.y);
                     this.current_breaking = null;
 
