@@ -65,7 +65,7 @@ class Menu_Inventory extends Menu {
                 this.Menu_ComponentUI_1.x = this.x + (this.real_width - this.Menu_ComponentUI_1.real_width) / 2;
                 break;
             case 'chest':
-                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Chest(this, 0.95, 0.5, 4, 9);
+                this.Menu_ComponentUI_1 = new Menu_ComponentUI_Chest(this, 0.95, 0.5, 3, 9);
                 break;
             case 'furnace':
                 this.Menu_ComponentUI_1 = new Menu_ComponentUI_Furnace(this, 0.6, 0.3);
