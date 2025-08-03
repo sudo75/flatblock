@@ -118,7 +118,11 @@ class Meta {
                     dirt: [
                         '../assets/sounds/break_gravel_1.mp3',
                         '../assets/sounds/break_gravel_2.mp3',
-                        '../assets/sounds/break_gravel_3.mp3'
+                        '../assets/sounds/break_gravel_3.mp3',
+                        '../assets/sounds/walk_grass_1.mp3',
+                        '../assets/sounds/walk_grass_2.mp3',
+                        '../assets/sounds/walk_grass_3.mp3',
+                        '../assets/sounds/walk_grass_4.mp3'
                     ],
                     wood: [
                         '../assets/sounds/break_wood_1.mp3',

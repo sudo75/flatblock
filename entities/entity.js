@@ -379,10 +379,10 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
                 
                 const soundPlaying = this.calc.getBlockData(xCentre, yBelowFeet).soundPlaying;
 
-                if (!soundPlaying) {
+                if (!soundPlaying && this.calc.randomBool(60)) {
                     const sound = this.game.level.generator.excecuteMethod(xCentre, yBelowFeet, 'getSound', ['walk']);
 
-                    if (sound) this.game.level.generator.excecuteMethod(xCentre, yBelowFeet, 'playSound', [sound, 0.2, 200]);
+                    if (sound) this.game.level.generator.excecuteMethod(xCentre, yBelowFeet, 'playSound', [sound, 0.15, 400]);
                 }
             }
 
