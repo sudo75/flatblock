@@ -46,6 +46,11 @@ class Entity_item extends Entity {
                 if (this.game.player.inventory.canAddItem(this.itemID)) { //If can be picked up
                     this.game.player.inventory.addItems(this.itemID, this.durability);
                     this.active = false;
+                    
+                    // Play sound
+                    const pop_sound = new Audio('../assets/sounds/pop.wav');
+                    pop_sound.volume = 0.15;
+                    pop_sound.play();
                 }
                 
             }
