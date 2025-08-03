@@ -1785,7 +1785,7 @@ class Block_chest extends Block_Solid {
 
 class Block_craftingTable extends Block_Solid {
     constructor(x, y) {
-        super('chest', x, y, 40, './assets/textures/crafting_table.png');
+        super('crafting_table', x, y, 40, './assets/textures/crafting_table.png');
         this.id = 10;
         this.itemDrop_id = [
             {id: 10, quantity: 1}
