@@ -94,21 +94,21 @@ class Meta {
             soundPaths: {
                 break: {
                     dirt: [
-                        '/assets/sounds/break_gravel_1.mp3',
-                        '/assets/sounds/break_gravel_2.mp3',
-                        '/assets/sounds/break_gravel_3.mp3'
+                        '../assets/sounds/break_gravel_1.mp3',
+                        '../assets/sounds/break_gravel_2.mp3',
+                        '../assets/sounds/break_gravel_3.mp3'
                     ],
                     wood: [
-                        '/assets/sounds/break_wood_1.mp3',
-                        '/assets/sounds/break_wood_2.mp3',
-                        '/assets/sounds/break_wood_3.mp3',
-                        '/assets/sounds/break_wood_4.mp3'
+                        '../assets/sounds/break_wood_1.mp3',
+                        '../assets/sounds/break_wood_2.mp3',
+                        '../assets/sounds/break_wood_3.mp3',
+                        '../assets/sounds/break_wood_4.mp3'
                     ],
                     stone: [
-                        '/assets/sounds/break_wood_1.mp3',
-                        '/assets/sounds/break_wood_2.mp3',
-                        '/assets/sounds/break_wood_3.mp3',
-                        '/assets/sounds/break_wood_4.mp3'
+                        '../assets/sounds/break_wood_1.mp3',
+                        '../assets/sounds/break_wood_2.mp3',
+                        '../assets/sounds/break_wood_3.mp3',
+                        '../assets/sounds/break_wood_4.mp3'
                     ]
                 },
                 broke: {
@@ -116,48 +116,48 @@ class Meta {
                 },
                 walk: { // walking on a block
                     dirt: [
-                        '/assets/sounds/break_gravel_1.mp3',
-                        '/assets/sounds/break_gravel_2.mp3',
-                        '/assets/sounds/break_gravel_3.mp3'
+                        '../assets/sounds/break_gravel_1.mp3',
+                        '../assets/sounds/break_gravel_2.mp3',
+                        '../assets/sounds/break_gravel_3.mp3'
                     ],
                     wood: [
-                        '/assets/sounds/break_wood_1.mp3',
-                        '/assets/sounds/break_wood_2.mp3',
-                        '/assets/sounds/break_wood_3.mp3',
-                        '/assets/sounds/break_wood_4.mp3'
+                        '../assets/sounds/break_wood_1.mp3',
+                        '../assets/sounds/break_wood_2.mp3',
+                        '../assets/sounds/break_wood_3.mp3',
+                        '../assets/sounds/break_wood_4.mp3'
                     ],
                     stone: [
-                        '/assets/sounds/break_wood_1.mp3',
-                        '/assets/sounds/break_wood_2.mp3',
-                        '/assets/sounds/break_wood_3.mp3',
-                        '/assets/sounds/break_wood_4.mp3'
+                        '../assets/sounds/break_wood_1.mp3',
+                        '../assets/sounds/break_wood_2.mp3',
+                        '../assets/sounds/break_wood_3.mp3',
+                        '../assets/sounds/break_wood_4.mp3'
                     ]
                 },
                 wade: { // when moving THROUGH a block -- not walking on top
                     water: [
-                        '/assets/sounds/splash_1.mp3',
-                        '/assets/sounds/splash_2.mp3',
-                        '/assets/sounds/splash_3.mp3',
-                        '/assets/sounds/splash_4.mp3'
+                        '../assets/sounds/splash_1.mp3',
+                        '../assets/sounds/splash_2.mp3',
+                        '../assets/sounds/splash_3.mp3',
+                        '../assets/sounds/splash_4.mp3'
                     ]
                 },
                 interact: {
                     water: [
-                        '/assets/sounds/splash_1.mp3',
-                        '/assets/sounds/splash_2.mp3',
-                        '/assets/sounds/splash_3.mp3',
-                        '/assets/sounds/splash_4.mp3'
+                        '../assets/sounds/splash_1.mp3',
+                        '../assets/sounds/splash_2.mp3',
+                        '../assets/sounds/splash_3.mp3',
+                        '../assets/sounds/splash_4.mp3'
                     ]
                 },
                 place: {
                     default: [
-                        '/assets/sounds/clack.wav'
+                        '../assets/sounds/clack.wav'
                     ],
                     water: [
-                        '/assets/sounds/splash_1.mp3',
-                        '/assets/sounds/splash_2.mp3',
-                        '/assets/sounds/splash_3.mp3',
-                        '/assets/sounds/splash_4.mp3'
+                        '../assets/sounds/splash_1.mp3',
+                        '../assets/sounds/splash_2.mp3',
+                        '../assets/sounds/splash_3.mp3',
+                        '../assets/sounds/splash_4.mp3'
                     ]
                 }
             }

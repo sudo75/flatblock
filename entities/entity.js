@@ -594,7 +594,7 @@ class Entity_creature extends Entity {
         }
 
         // Play sound
-        const damage_sound = new Audio('/assets/sounds/click.wav');
+        const damage_sound = new Audio('../assets/sounds/click.wav');
 
         damage_sound.play();
         
