@@ -74,6 +74,11 @@ class Meta {
 
         this.soundController = {
             setType(soundTarget, type) {
+                // Clear
+                for (const key in soundTarget) {
+                    delete soundTarget[key];
+                }
+                // Set
                 for (const key in this.soundPaths) {
                     if (!this.soundPaths?.[key]?.[type]) continue;
                     soundTarget[key] = this.soundPaths[key][type];
@@ -148,7 +153,7 @@ class Meta {
     }
 
     playSound(audio, volume = 1, cooldown = 0) {
-        if (this.soundPlaying) return;
+        if (this.soundPlaying || !audio) return;
         this.soundPlaying = true;
 
         const onTimeUpdate = () => {
