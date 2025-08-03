@@ -91,6 +91,12 @@ class Meta {
                         './assets/sounds/break_wood_2.mp3',
                         './assets/sounds/break_wood_3.mp3',
                         './assets/sounds/break_wood_4.mp3'
+                    ],
+                    stone: [
+                        './assets/sounds/break_wood_1.mp3',
+                        './assets/sounds/break_wood_2.mp3',
+                        './assets/sounds/break_wood_3.mp3',
+                        './assets/sounds/break_wood_4.mp3'
                     ]
                 },
                 walk: { // walking on a block
@@ -98,6 +104,18 @@ class Meta {
                         '/assets/sounds/break_gravel_1.mp3',
                         './assets/sounds/break_gravel_2.mp3',
                         './assets/sounds/break_gravel_3.mp3'
+                    ],
+                    wood: [
+                        './assets/sounds/break_wood_1.mp3',
+                        './assets/sounds/break_wood_2.mp3',
+                        './assets/sounds/break_wood_3.mp3',
+                        './assets/sounds/break_wood_4.mp3'
+                    ],
+                    stone: [
+                        './assets/sounds/break_wood_1.mp3',
+                        './assets/sounds/break_wood_2.mp3',
+                        './assets/sounds/break_wood_3.mp3',
+                        './assets/sounds/break_wood_4.mp3'
                     ]
                 },
                 wade: { // when moving THROUGH a block -- not walking on top
@@ -1473,6 +1491,8 @@ class Block_stone extends Block_Solid {
         ];
 
         this.furnace_result = 2; //ID of smelted item
+
+        this.soundController.setType(this.sound, 'stone');
     }
 }
 
@@ -1553,6 +1573,8 @@ class Block_planks extends Block_Solid {
         ];
 
         this.fuel_value = 300;
+
+        this.soundController.setType(this.sound, 'wood');
     }
 }
 
@@ -1638,6 +1660,8 @@ class Block_coalOre extends Block_Solid {
         ];
 
         this.furnace_result = 25;
+
+        this.soundController.setType(this.sound, 'stone');
     }
 }
 
@@ -1659,6 +1683,8 @@ class Block_copperOre extends Block_Solid {
         ];
 
         this.furnace_result = 27;
+
+        this.soundController.setType(this.sound, 'stone');
     }
 }
 
@@ -1678,6 +1704,8 @@ class Block_goldOre extends Block_Solid {
         ];
 
         this.furnace_result = 29;
+
+        this.soundController.setType(this.sound, 'stone');
     }
 }
 
@@ -1697,6 +1725,8 @@ class Block_ironOre extends Block_Solid {
         ];
 
         this.furnace_result = 31;
+
+        this.soundController.setType(this.sound, 'stone');
     }
 }
 
@@ -1716,6 +1746,8 @@ class Block_diamondOre extends Block_Solid {
         ];
 
         this.furnace_result = 33;
+
+        this.soundController.setType(this.sound, 'stone');
     }
 }
 
@@ -1741,6 +1773,8 @@ class Block_chest extends Block_Solid {
         this.inventory = new Inventory();
         this.physics = false;
         this.interactive = true;
+
+        this.soundController.setType(this.sound, 'wood');
     }
 }
 
@@ -1755,6 +1789,8 @@ class Block_craftingTable extends Block_Solid {
         this.inventory = new Inventory();
         this.physics = false;
         this.interactive = true;
+
+        this.soundController.setType(this.sound, 'wood');
     }
 }
 
@@ -1777,6 +1813,8 @@ class Block_furnace extends Block_Solid {
         this.efficiency = 200; //required process points to smelt an item
         
         this.processPoints = 0; //in ticks
+
+        this.soundController.setType(this.sound, 'stone');
     }
 
     setStatus(status_value) {
