@@ -139,11 +139,22 @@ class Meta {
                     ]
                 },
                 interact: {
-
+                    water: [
+                        '/assets/sounds/splash_1.mp3',
+                        '/assets/sounds/splash_2.mp3',
+                        '/assets/sounds/splash_3.mp3',
+                        '/assets/sounds/splash_4.mp3'
+                    ]
                 },
                 place: {
                     default: [
                         '/assets/sounds/clack.wav'
+                    ],
+                    water: [
+                        '/assets/sounds/splash_1.mp3',
+                        '/assets/sounds/splash_2.mp3',
+                        '/assets/sounds/splash_3.mp3',
+                        '/assets/sounds/splash_4.mp3'
                     ]
                 }
             }
@@ -168,23 +179,56 @@ class Meta {
         if (this.soundPlaying || !audio) return;
         this.soundPlaying = true;
 
-        const onTimeUpdate = () => {
+        const cleanup = () => {
             audio.removeEventListener('timeupdate', onTimeUpdate);
-            setTimeout(() => {
-                const progress = audio.currentTime / audio.duration;
-                if (progress >= 0.25) {
-                    this.soundPlaying = false;
-                }
-            }, cooldown);
+            audio.removeEventListener('ended', onEnded);
+            this.soundPlaying = false;
         };
 
-        audio.addEventListener('timeupdate', onTimeUpdate);
+        const onTimeUpdate = () => {
+            const progress = audio.currentTime / audio.duration;
+            if (progress >= 0.25) {
+                cleanup();
+            }
+        };
+
+        const onEnded = () => {
+            cleanup();
+        };
 
         // Effects
         audio.volume = volume;
-        
+
+        // Listeners
+        audio.addEventListener('timeupdate', onTimeUpdate);
+        audio.addEventListener('ended', onEnded);
+
         // Play
         audio.play();
+    }
+
+    playSoundInteract(volume = 1) {
+        return new Promise((resolve) => {
+            const audio = this.getSound('interact');
+            if (this.soundPlaying || !audio) {
+                return resolve();
+            }
+
+            this.soundPlaying = true;
+
+            const onTimeUpdate = () => {
+                const progress = audio.currentTime / audio.duration;
+                if (progress >= 0.25) {
+                    audio.removeEventListener('timeupdate', onTimeUpdate);
+                    this.soundPlaying = false;
+                    resolve(); // resolve once 25% has played
+                }
+            };
+
+            audio.addEventListener('timeupdate', onTimeUpdate);
+            audio.volume = volume;
+            audio.play();
+        });
     }
 
     setStatus(status_value) {
@@ -349,6 +393,7 @@ class Block_water extends Block_Liquid {
 
     interact(seletedItemID) {
         if (seletedItemID === 50 && this.source && !this.untouchable) {
+            this.playSound(this.getSound('interact'), 1, 0);
             this.removeItem = true;
             this.giveItem = {
                 id: 51, // Water bucket
