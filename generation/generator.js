@@ -314,6 +314,18 @@ class Generator {
         this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y][property] = data;
     }
 
+    excecuteMethod(x, y, method, args) { // method as a string, args as an array
+        const chunkID = this.calc.getChunkID(x);
+        const relX = this.calc.getRelativeX(x);
+        const block = this.data[chunkID].block_data[relX][y];
+
+        if (typeof block[method] === 'function') {
+            return block[method](...args); // ...args will spread array into multiple args
+        } else {
+            console.warn(`Method '${method}' not found on block at (${x}, ${y})`);
+        }
+    }
+
     breakBlock(x, y) {
         const itemIDs = this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].itemDrop_id;
 

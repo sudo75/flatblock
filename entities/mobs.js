@@ -15,7 +15,7 @@ class Mob extends Entity_creature {
             v_minVel: -20
         };
         
-        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel, texture_location);
+        super(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel, texture_location, false);
         
         this.entityType = 'mob';
 

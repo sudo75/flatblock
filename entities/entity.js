@@ -1,5 +1,5 @@
 class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperately
-    constructor(game, entityID, x, y, width_blocks, height_blocks, vel_data) {
+    constructor(game, entityID, x, y, width_blocks, height_blocks, vel_data, sound) {
         this.game = game;
         this.ctx = this.game.ctx_entities;
         
@@ -12,6 +12,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
         this.id = entityID;
 
         this.direction = 'right'; //facing direction
+
+        this.sound = sound;
 
         this.x = x; // x = 0 at left
         this.y = y; // y = 0 at bottom
@@ -362,6 +364,34 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 
         this.ensureBlockCompliance(possibleX, possibleY);
 
+        // Play sound
+        if (this.sound) {
+            const xCentre = this.calc.hardRoundDown(this.x + this.width_blocks);
+            const yBelowFeet = Math.floor(this.y) - 1;
+            const yAtFeet = Math.floor(this.y);
+
+            // Walking sound
+            if (this.isOnSolidBlock() && this.h_vel !== 0) {
+                
+                const soundPlaying = this.calc.getBlockData(xCentre, yBelowFeet).soundPlaying;
+
+                if (!soundPlaying) {
+                    const sound = this.game.level.generator.excecuteMethod(xCentre, yBelowFeet, 'getSound', ['walk']);
+
+                    if (sound) this.game.level.generator.excecuteMethod(xCentre, yBelowFeet, 'playSound', [sound, 0.2, 200]);
+                }
+            }
+
+            // Wading sound
+            const soundPlaying_wading = this.calc.getBlockData(xCentre, yAtFeet).soundPlaying;
+
+            if (!soundPlaying_wading && this.h_vel !== 0) {
+                const sound = this.game.level.generator.excecuteMethod(xCentre, yAtFeet, 'getSound', ['wade']);
+
+                if (sound) this.game.level.generator.excecuteMethod(xCentre, yAtFeet, 'playSound', [sound, 0.25, 800]);
+            }
+        }
+
         //Set entity position
         this.updatePos(deltaTime);
     }
@@ -426,8 +456,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
 export { Entity };
 
 class Entity_creature extends Entity {
-    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel_data, texture_location) {
-        super(game, entityID, x, y, width_blocks, height_blocks, vel_data, texture_location);
+    constructor(game, entityID, x, y, width_blocks, height_blocks, health, maxHealth, vel_data, texture_location, sound) {
+        super(game, entityID, x, y, width_blocks, height_blocks, vel_data, sound);
         
         this.texture_location = texture_location;
 

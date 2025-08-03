@@ -72,37 +72,83 @@ class Meta {
         this.giveItem = null; // {id: ..., quantity: ...}
         this.decrementDurability = false;
 
-        this.sound = {
-            get(audio_class) {
-                const audioArray = this[audio_class];
-
-                const randIndex = Math.floor(Math.random() * audioArray.length);
-
-                return new Audio(audioArray[randIndex]);
+        this.soundController = {
+            setType(soundTarget, type) {
+                for (const key in this.soundPaths) {
+                    if (!this.soundPaths?.[key]?.[type]) continue;
+                    soundTarget[key] = this.soundPaths[key][type];
+                }
             },
-            break: [
-                '/assets/sounds/break_gravel_1.mp3',
-                './assets/sounds/break_gravel_2.mp3',
-                './assets/sounds/break_gravel_3.mp3',
-            ]
+            soundPaths: {
+                break: {
+                    dirt: [
+                        '/assets/sounds/break_gravel_1.mp3',
+                        './assets/sounds/break_gravel_2.mp3',
+                        './assets/sounds/break_gravel_3.mp3'
+                    ],
+                    wood: [
+                        './assets/sounds/break_wood_1.mp3',
+                        './assets/sounds/break_wood_2.mp3',
+                        './assets/sounds/break_wood_3.mp3',
+                        './assets/sounds/break_wood_4.mp3'
+                    ]
+                },
+                walk: { // walking on a block
+                    dirt: [
+                        '/assets/sounds/break_gravel_1.mp3',
+                        './assets/sounds/break_gravel_2.mp3',
+                        './assets/sounds/break_gravel_3.mp3'
+                    ]
+                },
+                wade: { // when moving THROUGH a block -- not walking on top
+                    water: [
+                        '/assets/sounds/splash_1.mp3',
+                        '/assets/sounds/splash_2.mp3',
+                        '/assets/sounds/splash_3.mp3',
+                        '/assets/sounds/splash_4.mp3'
+                    ]
+                },
+                interact: {
+
+                }
+            }
         }
+
+        this.sound = {};
+
+        this.soundController.setType(this.sound, 'dirt');
         this.soundPlaying = false;
     }
 
-    playSound(audio) {
+    getSound(audio_class) {
+        if (!this.sound?.[audio_class]) return;
+        const audioArray = this.sound[audio_class];
+
+        const randIndex = Math.floor(Math.random() * audioArray.length);
+
+        return new Audio(audioArray[randIndex]);
+    }
+
+    playSound(audio, volume = 1, cooldown = 0) {
         if (this.soundPlaying) return;
         this.soundPlaying = true;
 
         const onTimeUpdate = () => {
-        const progress = audio.currentTime / audio.duration;
-            if (progress >= 0.25) {
-                this.soundPlaying = false;
-                audio.removeEventListener('timeupdate', onTimeUpdate);
-            }
+            audio.removeEventListener('timeupdate', onTimeUpdate);
+            setTimeout(() => {
+                const progress = audio.currentTime / audio.duration;
+                if (progress >= 0.25) {
+                    this.soundPlaying = false;
+                }
+            }, cooldown);
         };
 
         audio.addEventListener('timeupdate', onTimeUpdate);
 
+        // Effects
+        audio.volume = volume;
+        
+        // Play
         audio.play();
     }
 
@@ -240,8 +286,6 @@ class Block_Liquid extends Block {
         this.liquid_spread = 8;
         this.source = true;
 
-        this.sound = null;
-
         this.touchCooldown = 4; // Number of ticks that must have passed for the liquid to be interacted with again
     }
 
@@ -264,6 +308,8 @@ class Block_water extends Block_Liquid {
         this.entityBound = false;
 
         this.requireClick_interact = true;
+
+        this.soundController.setType(this.sound, 'water');
     }
 
     interact(seletedItemID) {
@@ -1441,6 +1487,8 @@ class Block_treeLog extends Block_Solid {
         this.transparency = 1;
 
         this.fuel_value = 400;
+
+        this.soundController.setType(this.sound, 'wood');
     }
 }
 
@@ -1454,6 +1502,8 @@ class Block_log extends Block_Solid {
 
         this.fuel_value = 400;
         this.furnace_result = 25;
+
+        this.soundController.setType(this.sound, 'wood');
     }
 }
 

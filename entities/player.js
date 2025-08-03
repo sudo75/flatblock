@@ -22,7 +22,7 @@ class Player extends Entity_creature {
         const health = 20;
         const maxHealth = 20;
 
-        super(game, 0, null, null, width_blocks, height_blocks, health, maxHealth, vel);
+        super(game, 0, null, null, width_blocks, height_blocks, health, maxHealth, vel, null, true);
         
         this.game = game;
         this.ctx = this.game.ctx_player;

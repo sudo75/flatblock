@@ -1182,8 +1182,8 @@ class Level {
                 const block = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y];
 
                 if (block.sound) {
-                    const break_sound = block.sound.get('break');
-                    block.playSound(break_sound);
+                    const break_sound = block.getSound('break');
+                    block.playSound(break_sound, 0.5);
                 }
 
             }

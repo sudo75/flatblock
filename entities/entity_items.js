@@ -2,7 +2,7 @@ import { Entity } from "./entity.js";
 
 class Entity_item extends Entity {
     constructor(game, entityID, x, y, itemID, spawnTick, dimensions, durability) {
-        super(game, entityID, x, y, 0.5, 0.5);
+        super(game, entityID, x, y, 0.5, 0.5, false);
         this.width_blocks = dimensions.width; // in unit blocks
         this.height_blocks = dimensions.height; // in unit blocks
         this.durability = durability;
