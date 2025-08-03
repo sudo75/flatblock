@@ -1507,7 +1507,7 @@ class Block_grass extends Block_Solid {
         super('grass', x, y, 60, './assets/textures/grass.png');
         this.id = 2;
         this.itemDrop_id = [
-            {id: 2, quantity: 1}
+            {id: 1, quantity: 1}
         ];
 
         this.getSeedChance = 20; //Percent chance of getting a seed when interacted with by a hoe
