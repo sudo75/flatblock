@@ -1098,6 +1098,14 @@ class Level {
                     }
                 }
 
+                // Play sound
+                const block = this.data[this.calc.getChunkID(selectedX)].block_data[this.calc.getRelativeX(selectedX)][selectedY];
+
+                if (block.sound) {
+                    const place_sound = block.getSound('place');
+                    block.playSound(place_sound, 0.5);
+                }
+
             } else {
                 const chunk_id = this.calc.getChunkID(selectedX);
                 const rel_x = this.calc.getRelativeX(selectedX);
