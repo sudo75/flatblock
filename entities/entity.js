@@ -389,7 +389,7 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             // Wading sound
             const soundPlaying_wading = this.calc.getBlockData(xCentre, yAtFeet).soundPlaying;
 
-            if (!soundPlaying_wading && this.h_vel !== 0) {
+            if (!soundPlaying_wading && (this.h_vel !== 0 || this.v_vel !== 0)) {
                 const sound = this.game.level.generator.excecuteMethod(xCentre, yAtFeet, 'getSound', ['wade']);
 
                 if (sound) this.game.level.generator.excecuteMethod(xCentre, yAtFeet, 'playSound', [sound, 0.25, 800]);
