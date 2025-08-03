@@ -371,7 +371,11 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
             const yAtFeet = Math.floor(this.y);
 
             // Walking sound
-            if (this.isOnSolidBlock() && this.h_vel !== 0) {
+            if (
+                this.calc.getBlockData(xCentre, yBelowFeet).type === 'solid' &&
+                this.calc.getBlockData(xCentre, yBelowFeet).physics &&
+                this.h_vel !== 0
+            ) {
                 
                 const soundPlaying = this.calc.getBlockData(xCentre, yBelowFeet).soundPlaying;
 
