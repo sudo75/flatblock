@@ -48,7 +48,8 @@ class Entity_item extends Entity {
                     this.active = false;
                     
                     // Play sound
-                    const pop_sound = new Audio('../assets/sounds/pop.wav');
+                    const basePath = window.location.pathname.replace(/\/[^\/]*$/, '/') + 'assets/sounds/';
+                    const pop_sound = new Audio(`${basePath}/sounds/pop.wav`);
                     pop_sound.volume = 0.15;
                     pop_sound.play();
                 }

@@ -91,77 +91,78 @@ class Meta {
                     
                 }
             },
+            basePath: window.location.pathname.replace(/\/[^\/]*$/, '/') + 'assets/sounds/',
             soundPaths: {
                 break: {
                     dirt: [
-                        '../assets/sounds/break_gravel_1.mp3',
-                        '../assets/sounds/break_gravel_2.mp3',
-                        '../assets/sounds/break_gravel_3.mp3'
+                        `${basePath}/break_gravel_1.mp3`,
+                        `${basePath}/break_gravel_2.mp3`,
+                        `${basePath}/break_gravel_3.mp3`
                     ],
                     wood: [
-                        '../assets/sounds/break_wood_1.mp3',
-                        '../assets/sounds/break_wood_2.mp3',
-                        '../assets/sounds/break_wood_3.mp3',
-                        '../assets/sounds/break_wood_4.mp3'
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ],
                     stone: [
-                        '../assets/sounds/break_wood_1.mp3',
-                        '../assets/sounds/break_wood_2.mp3',
-                        '../assets/sounds/break_wood_3.mp3',
-                        '../assets/sounds/break_wood_4.mp3'
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ]
                 },
                 broke: {
-                    default: ['/assets/sounds/clack_low.mp3']
+                    default: [`/assets/sounds/clack_low.mp3`]
                 },
                 walk: { // walking on a block
                     dirt: [
-                        '../assets/sounds/break_gravel_1.mp3',
-                        '../assets/sounds/break_gravel_2.mp3',
-                        '../assets/sounds/break_gravel_3.mp3',
-                        '../assets/sounds/walk_grass_1.mp3',
-                        '../assets/sounds/walk_grass_2.mp3',
-                        '../assets/sounds/walk_grass_3.mp3',
-                        '../assets/sounds/walk_grass_4.mp3'
+                        `${basePath}/break_gravel_1.mp3`,
+                        `${basePath}/break_gravel_2.mp3`,
+                        `${basePath}/break_gravel_3.mp3`,
+                        `${basePath}/walk_grass_1.mp3`,
+                        `${basePath}/walk_grass_2.mp3`,
+                        `${basePath}/walk_grass_3.mp3`,
+                        `${basePath}/walk_grass_4.mp3`
                     ],
                     wood: [
-                        '../assets/sounds/break_wood_1.mp3',
-                        '../assets/sounds/break_wood_2.mp3',
-                        '../assets/sounds/break_wood_3.mp3',
-                        '../assets/sounds/break_wood_4.mp3'
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ],
                     stone: [
-                        '../assets/sounds/break_wood_1.mp3',
-                        '../assets/sounds/break_wood_2.mp3',
-                        '../assets/sounds/break_wood_3.mp3',
-                        '../assets/sounds/break_wood_4.mp3'
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ]
                 },
                 wade: { // when moving THROUGH a block -- not walking on top
                     water: [
-                        '../assets/sounds/splash_1.mp3',
-                        '../assets/sounds/splash_2.mp3',
-                        '../assets/sounds/splash_3.mp3',
-                        '../assets/sounds/splash_4.mp3'
+                        `${basePath}/splash_1.mp3`,
+                        `${basePath}/splash_2.mp3`,
+                        `${basePath}/splash_3.mp3`,
+                        `${basePath}/splash_4.mp3`
                     ]
                 },
                 interact: {
                     water: [
-                        '../assets/sounds/splash_1.mp3',
-                        '../assets/sounds/splash_2.mp3',
-                        '../assets/sounds/splash_3.mp3',
-                        '../assets/sounds/splash_4.mp3'
+                        `${basePath}/splash_1.mp3`,
+                        `${basePath}/splash_2.mp3`,
+                        `${basePath}/splash_3.mp3`,
+                        `${basePath}/splash_4.mp3`
                     ]
                 },
                 place: {
                     default: [
-                        '../assets/sounds/clack.wav'
+                        `${basePath}/clack.wav`
                     ],
                     water: [
-                        '../assets/sounds/splash_1.mp3',
-                        '../assets/sounds/splash_2.mp3',
-                        '../assets/sounds/splash_3.mp3',
-                        '../assets/sounds/splash_4.mp3'
+                        `${basePath}/splash_1.mp3`,
+                        `${basePath}/splash_2.mp3`,
+                        `${basePath}/splash_3.mp3`,
+                        `${basePath}/splash_4.mp3`
                     ]
                 }
             }
