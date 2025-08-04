@@ -72,6 +72,7 @@ class Meta {
         this.giveItem = null; // {id: ..., quantity: ...}
         this.decrementDurability = false;
 
+        const basePath = window.location.pathname.replace(/\/[^\/]*$/, '/') + 'assets/sounds/';
         this.soundController = {
             setType(soundTarget, type) {
                 // Clear
@@ -91,25 +92,24 @@ class Meta {
                     
                 }
             },
-            basePath: window.location.pathname.replace(/\/[^\/]*$/, '/') + 'assets/sounds/',
             soundPaths: {
                 break: {
                     dirt: [
-                        `${this.basePath}/break_gravel_1.mp3`,
-                        `${this.basePath}/break_gravel_2.mp3`,
-                        `${this.basePath}/break_gravel_3.mp3`
+                        `${basePath}/break_gravel_1.mp3`,
+                        `${basePath}/break_gravel_2.mp3`,
+                        `${basePath}/break_gravel_3.mp3`
                     ],
                     wood: [
-                        `${this.basePath}/break_wood_1.mp3`,
-                        `${this.basePath}/break_wood_2.mp3`,
-                        `${this.basePath}/break_wood_3.mp3`,
-                        `${this.basePath}/break_wood_4.mp3`
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ],
                     stone: [
-                        `${this.basePath}/break_wood_1.mp3`,
-                        `${this.basePath}/break_wood_2.mp3`,
-                        `${this.basePath}/break_wood_3.mp3`,
-                        `${this.basePath}/break_wood_4.mp3`
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ]
                 },
                 broke: {
@@ -117,52 +117,52 @@ class Meta {
                 },
                 walk: { // walking on a block
                     dirt: [
-                        `${this.basePath}/break_gravel_1.mp3`,
-                        `${this.basePath}/break_gravel_2.mp3`,
-                        `${this.basePath}/break_gravel_3.mp3`,
-                        `${this.basePath}/walk_grass_1.mp3`,
-                        `${this.basePath}/walk_grass_2.mp3`,
-                        `${this.basePath}/walk_grass_3.mp3`,
-                        `${this.basePath}/walk_grass_4.mp3`
+                        `${basePath}/break_gravel_1.mp3`,
+                        `${basePath}/break_gravel_2.mp3`,
+                        `${basePath}/break_gravel_3.mp3`,
+                        `${basePath}/walk_grass_1.mp3`,
+                        `${basePath}/walk_grass_2.mp3`,
+                        `${basePath}/walk_grass_3.mp3`,
+                        `${basePath}/walk_grass_4.mp3`
                     ],
                     wood: [
-                        `${this.basePath}/break_wood_1.mp3`,
-                        `${this.basePath}/break_wood_2.mp3`,
-                        `${this.basePath}/break_wood_3.mp3`,
-                        `${this.basePath}/break_wood_4.mp3`
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ],
                     stone: [
-                        `${this.basePath}/break_wood_1.mp3`,
-                        `${this.basePath}/break_wood_2.mp3`,
-                        `${this.basePath}/break_wood_3.mp3`,
-                        `${this.basePath}/break_wood_4.mp3`
+                        `${basePath}/break_wood_1.mp3`,
+                        `${basePath}/break_wood_2.mp3`,
+                        `${basePath}/break_wood_3.mp3`,
+                        `${basePath}/break_wood_4.mp3`
                     ]
                 },
                 wade: { // when moving THROUGH a block -- not walking on top
                     water: [
-                        `${this.basePath}/splash_1.mp3`,
-                        `${this.basePath}/splash_2.mp3`,
-                        `${this.basePath}/splash_3.mp3`,
-                        `${this.basePath}/splash_4.mp3`
+                        `${basePath}/splash_1.mp3`,
+                        `${basePath}/splash_2.mp3`,
+                        `${basePath}/splash_3.mp3`,
+                        `${basePath}/splash_4.mp3`
                     ]
                 },
                 interact: {
                     water: [
-                        `${this.basePath}/splash_1.mp3`,
-                        `${this.basePath}/splash_2.mp3`,
-                        `${this.basePath}/splash_3.mp3`,
-                        `${this.basePath}/splash_4.mp3`
+                        `${basePath}/splash_1.mp3`,
+                        `${basePath}/splash_2.mp3`,
+                        `${basePath}/splash_3.mp3`,
+                        `${basePath}/splash_4.mp3`
                     ]
                 },
                 place: {
                     default: [
-                        `${this.basePath}/clack.wav`
+                        `${basePath}/clack.wav`
                     ],
                     water: [
-                        `${this.basePath}/splash_1.mp3`,
-                        `${this.basePath}/splash_2.mp3`,
-                        `${this.basePath}/splash_3.mp3`,
-                        `${this.basePath}/splash_4.mp3`
+                        `${basePath}/splash_1.mp3`,
+                        `${basePath}/splash_2.mp3`,
+                        `${basePath}/splash_3.mp3`,
+                        `${basePath}/splash_4.mp3`
                     ]
                 }
             }
