@@ -113,7 +113,7 @@ class Meta {
                     ]
                 },
                 broke: {
-                    default: [`/assets/sounds/clack_low.mp3`]
+                    default: [`${basePath}/clack_low.mp3`]
                 },
                 walk: { // walking on a block
                     dirt: [

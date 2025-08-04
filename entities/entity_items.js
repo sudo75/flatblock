@@ -49,7 +49,7 @@ class Entity_item extends Entity {
                     
                     // Play sound
                     const basePath = window.location.pathname.replace(/\/[^\/]*$/, '/') + 'assets/sounds/';
-                    const pop_sound = new Audio(`${basePath}/sounds/pop.wav`);
+                    const pop_sound = new Audio(`${basePath}/pop.wav`);
                     pop_sound.volume = 0.15;
                     pop_sound.play();
                 }

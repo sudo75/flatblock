@@ -595,7 +595,7 @@ class Entity_creature extends Entity {
 
         // Play sound
         const basePath = window.location.pathname.replace(/\/[^\/]*$/, '/') + 'assets/sounds/';
-        const damage_sound = new Audio(`${basePath}/sounds/click.wav`);
+        const damage_sound = new Audio(`${basePath}/click.wav`);
 
         damage_sound.play();
         
