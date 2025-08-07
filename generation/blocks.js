@@ -1554,13 +1554,25 @@ class Block_grass extends Block_Solid {
 
 class Block_stone extends Block_Solid {
     constructor(x, y) {
-        super('stone', x, y, 120, './assets/textures/stone.png');
+        super('stone', x, y, 100, './assets/textures/stone.png');
         this.id = 3;
         this.itemDrop_id = [
-            {id: 3, quantity: 1}
+            {id: 23, quantity: 1}
         ];
 
-        this.furnace_result = 2; //ID of smelted item
+        this.soundController.setType(this.sound, 'stone');
+    }
+}
+
+class Block_cobblestone extends Block_Solid {
+    constructor(x, y) {
+        super('cobblestone', x, y, 120, './assets/textures/cobblestone.png');
+        this.id = 23;
+        this.itemDrop_id = [
+            {id: 23, quantity: 1}
+        ];
+
+        this.furnace_result = 3; //ID of smelted item
 
         this.soundController.setType(this.sound, 'stone');
     }
@@ -2004,6 +2016,7 @@ class Item_Directory {
             '16': Block_wheat,
             '17': Block_sapling,
 
+            '23': Block_cobblestone,
             '24': Block_coalOre,
             '25': Item_coal,
             '26': Block_copperOre,
