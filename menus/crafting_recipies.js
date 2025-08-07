@@ -145,7 +145,7 @@ const recipies = [
         ]
     },
 
-    { // 8 stone => 1 furnace
+    { // 8 cobblestone => 1 furnace
         result: 11,
         quantity: 1,
         recipie: [
@@ -236,7 +236,7 @@ const recipies = [
         ]
     },
 
-    { // 3 stone + 2 sticks => 1 stone pickaxe
+    { // 3 cobblestone + 2 sticks => 1 stone pickaxe
         result: 130,
         quantity: 1,
         recipie: [
@@ -315,7 +315,7 @@ const recipies = [
         ]
     },
 
-    { // 3 stone + 2 sticks => 1 stone axe
+    { // 3 cobblestone + 2 sticks => 1 stone axe
         result: 136,
         quantity: 1,
         recipie: [
@@ -424,7 +424,7 @@ const recipies = [
         ]
     },
 
-    { // 1 stone + 2 sticks => 1 stone shovel
+    { // 1 cobblestone + 2 sticks => 1 stone shovel
         result: 142,
         quantity: 1,
         recipie: [
@@ -558,7 +558,7 @@ const recipies = [
         ]
     },
 
-    { // 2 stone + 1 sticks => 1 stone sword
+    { // 2 cobblestone + 1 sticks => 1 stone sword
         result: 148,
         quantity: 1,
         recipie: [
@@ -687,7 +687,7 @@ const recipies = [
         ]
     },
 
-    { // 2 stone + 2 sticks => 1 stone hoe
+    { // 2 cobblestone + 2 sticks => 1 stone hoe
         result: 154,
         quantity: 1,
         recipie: [
