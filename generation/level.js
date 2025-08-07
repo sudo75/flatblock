@@ -1077,10 +1077,9 @@ class Level {
 
         if (requireClick_interact && !this.mouseInfoRight.new_click) return;
 
-        if (this.mouseInfoRight.down && this.calc.isWithinWorldBounds(selectedX, selectedY)) {
+        if (this.mouseInfoRight.down && this.calc.isWithinWorldBounds(selectedX, selectedY) && this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim) {
             if (
                 this.calc.getBlockData(selectedX, selectedY).type !== 'solid' &&
-                this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim &&
                 this.calc.solidBlockAdjacent(selectedX, selectedY) &&
                 this.blockCanBePlaced(selectedX, selectedY, placeBlockID) &&
                 (this.item_directory.getProperty(placeBlockID, 'isBlock') || this.item_directory.getProperty(placeBlockID, 'placeBlock_id'))
