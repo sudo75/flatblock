@@ -1708,20 +1708,19 @@ class Block_torch extends Block_Solid {
         if (!this.neighbour_data) return;
 
         if (this.neighbour_data.left) {
-            if (this.neighbour_data.left.type === 'solid') {
+            if (this.neighbour_data.left.type === 'solid' && this.neighbour_data.left.torchAffinity) {
                 this.status = 1;
                 this.spriteSheetX = 16;
             }
         }
         if (this.neighbour_data.right) {
-            if (this.neighbour_data.right.type === 'solid') {
+            if (this.neighbour_data.right.type === 'solid' && this.neighbour_data.right.torchAffinity) {
                 this.status = 2;
                 this.spriteSheetX = 32;
             }
         }
-
         if (this.neighbour_data.down) {
-            if (this.neighbour_data.down.type === 'solid') {
+            if (this.neighbour_data.down.type === 'solid' && this.neighbour_data.down.torchAffinity) {
                 this.status = 0;
                 this.spriteSheetX = 0;
             }
