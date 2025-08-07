@@ -1348,7 +1348,12 @@ class MenuHandler {
         this.mouseDown_left = this.game.input.mouseDown_left;
 
         if (this.mouseDown_right) {
-            const blockData = this.game.calculator.getBlockData(this.game.player.selectedBlock.x, this.game.player.selectedBlock.y);
+            const { x: selectedX, y: selectedY } = this.game.player.selectedBlock;
+            const blockData = this.game.calculator.getBlockData(selectedX, selectedY);
+
+            const isWithinRange = this.game.player.getBlockDistance(selectedX + 0.5, selectedY + 0.5) <= this.game.player.cursorDistLim;
+            if (!isWithinRange) return;
+
             if (blockData.id === 9 && !this.aMenuIsOpen()) { //chest
                 this.hotbar.close();
                 this.healthbar.close();
