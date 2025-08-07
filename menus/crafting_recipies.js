@@ -150,9 +150,9 @@ const recipies = [
         quantity: 1,
         recipie: [
             [
-                [3, 3, 3],
-                [3, null, 3],
-                [3, 3, 3]
+                [23, 23, 23],
+                [23, null, 23],
+                [23, 23, 23]
             ]
         ]
     },
@@ -241,7 +241,7 @@ const recipies = [
         quantity: 1,
         recipie: [
             [
-                [3, 3, 3],
+                [23, 23, 23],
                 [null, 128, null],
                 [null, 128, null]
             ]
@@ -320,13 +320,13 @@ const recipies = [
         quantity: 1,
         recipie: [
             [
-                [3, 3, null],
-                [3, 128, null],
+                [23, 23, null],
+                [23, 128, null],
                 [null, 128, null]
             ],
             [
-                [null, 3, 3],
-                [null, 128, 3],
+                [null, 23, 23],
+                [null, 128, 23],
                 [null, 128, null]
             ]
         ]
@@ -429,17 +429,17 @@ const recipies = [
         quantity: 1,
         recipie: [
             [
-                [3, null, null],
+                [23, null, null],
                 [128, null, null],
                 [128, null, null]
             ],
             [
-                [null, 3, null],
+                [null, 23, null],
                 [null, 128, null],
                 [null, 128, null]
             ],
             [
-                [null, null, 3],
+                [null, null, 23],
                 [null, null, 128],
                 [null, null, 128]
             ]
@@ -563,18 +563,18 @@ const recipies = [
         quantity: 1,
         recipie: [
             [
-                [3, null, null],
-                [3, null, null],
+                [23, null, null],
+                [23, null, null],
                 [128, null, null]
             ],
             [
-                [null, 3, null],
-                [null, 3, null],
+                [null, 23, null],
+                [null, 23, null],
                 [null, 128, null]
             ],
             [
-                [null, null, 3],
-                [null, null, 3],
+                [null, null, 23],
+                [null, null, 23],
                 [null, null, 128]
             ]
         ]
@@ -692,12 +692,12 @@ const recipies = [
         quantity: 1,
         recipie: [
             [
-                [3, 3, null],
+                [23, 23, null],
                 [null, 128, null],
                 [null, 128, null]
             ],
             [
-                [null, 3, 3],
+                [null, 23, 23],
                 [null, 128, null],
                 [null, 128, null]
             ]
