@@ -579,6 +579,7 @@ class Block_wheat extends Block_Solid {
 
         this.growthChance = 0.1; //Percent chance of growth in a given tick
         this.maxGrowthState = 7;
+        this.entityBound = false;
 
         this.placeRequirements = {
             all: { // must follow all of these rules
