@@ -851,7 +851,7 @@ class Block_sapling extends Block_Solid {
 class Item_pickaxe extends Tool {
     constructor(name, texture_location) {
         super(name, texture_location);
-        this.purpose = [3, 24, 26, 28, 30, 32]; //list of block IDs the tool breaks
+        this.purpose = [3, 23, 24, 26, 28, 30, 32]; //list of block IDs the tool breaks
 
         this.toolClass = 'pickaxe';
     }
