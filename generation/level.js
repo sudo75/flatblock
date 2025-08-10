@@ -171,6 +171,39 @@ class Level {
             checkValidity: 1
         };
 
+        let verticalSimulationDistance = {above: 0, below: 0}; // in addition to current chunk
+
+        const verticalSimulationRange = (() => { // liquid and lighting are excluded
+            if (this.game.debugger.settings.vertical_chunking) {
+                const playerY = this.game.player.y;
+                const playerVerticalChunk = this.calc.getVerticalChunk(playerY);
+
+                const minBlock = (() => {
+                    const minVerticalChunk = playerVerticalChunk - verticalSimulationDistance.below;
+                    const blockY = minVerticalChunk * this.chunk_size;
+                    if (blockY < 0) {
+                        return 0;
+                    } else {
+                        return blockY;
+                    }
+                })();
+                const maxBlock = (() => {
+                    const maxVerticalChunk = playerVerticalChunk + verticalSimulationDistance.above;
+                    const blockY = (maxVerticalChunk + 1) * this.chunk_size - 1;
+
+                    if (blockY >= this.properties.height_blocks) {
+                        return this.properties.height_blocks - 1;
+                    } else {
+                        return blockY;
+                    }
+                })();
+
+                return {min: minBlock, max: maxBlock};
+            } else {
+                return {min: 0, max: this.properties.height_blocks - 1};
+            }
+        })();
+
         if (this.game.debugger.settings.performance){
             const tps = this.game.tps;
             const tps_target = this.game.tps_target;
@@ -332,7 +365,7 @@ class Level {
             //Run gametick logic of blocks
             for (let i = chunk_min; i <= chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -371,7 +404,7 @@ class Level {
             //Run validity checker
             for (let i = chunk_min; i <= chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -417,7 +450,7 @@ class Level {
             //Compute spawnItems data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -440,7 +473,7 @@ class Level {
             //Compute removeItem data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -456,7 +489,7 @@ class Level {
             //Compute giveItem data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -481,7 +514,7 @@ class Level {
             //Compute decrementDurability data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -498,7 +531,7 @@ class Level {
             //Compute onNextTick data
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -518,7 +551,7 @@ class Level {
             // Compute break_block
             for (let i = simulated_chunk_min; i <= simulated_chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
@@ -611,7 +644,7 @@ class Level {
 
             for (let i = chunk_min; i <= chunk_max; i++) {
                 for (let rel_x = 0; rel_x < this.chunk_size; rel_x++) {
-                    for (let y = 0; y < this.properties.height_blocks; y++) {
+                    for (let y = verticalSimulationRange.min; y <= verticalSimulationRange.max; y++) {
                         const block = this.data[i].block_data[rel_x][y];
     
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);

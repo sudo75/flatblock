@@ -30,6 +30,11 @@ class Calc_World {
         return chunkID;
     }
 
+    getVerticalChunk(y) {
+        const chunkIndex = Math.floor(y / this.game.level.chunk_size);
+        return chunkIndex;
+    }
+
     randomBool(chance) {
         const rand = Math.ceil(Math.random() * 100);
 
