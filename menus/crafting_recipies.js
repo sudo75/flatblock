@@ -221,6 +221,23 @@ const recipies = [
         ]
     },
 
+    { // 6 planks => 1 door
+        result: 18,
+        quantity: 1,
+        recipie: [
+            [
+                [8, 8, null],
+                [8, 8, null],
+                [8, 8, null]
+            ],
+            [
+                [null, 8, 8],
+                [null, 8, 8],
+                [null, 8, 8]
+            ]
+        ]
+    },
+
 
     // PICKAXES --------------------------->
 
