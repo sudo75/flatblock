@@ -90,7 +90,7 @@ class Inventory {
 
     canAddItem(itemID) {
         const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
-        for (let i = 0; i < this.rows * this.cols - 1; i++) {
+        for (let i = 0; i < this.rows * this.cols; i++) {
             if (this.data[i].id === itemID && this.data[i].quantity < maxStackSize) {
                 return true;
             }
@@ -104,7 +104,7 @@ class Inventory {
 
     addItems(itemID, durability) {
         const maxStackSize = this.item_directory.getProperty(itemID, 'maxStackSize');
-        for (let i = 0; i < this.rows * this.cols - 1; i++) {
+        for (let i = 0; i < this.rows * this.cols; i++) {
             if (this.data[i].id === itemID && this.data[i].quantity < maxStackSize) { //If stack does not exist
                 this.add(i);
                 return;
