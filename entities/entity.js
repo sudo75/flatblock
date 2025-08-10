@@ -91,8 +91,8 @@ class Entity { //ONLY DEALS WITH PHYSICS AND LOGIC - rendering is done seperatel
     isInLiquidBlock() {
         if (this.y >= 0) {
             if (
-                (this.calc.getBlockData(Math.floor(this.x), Math.floor(this.y)).type === 'liquid' && this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y))) ||
-                (this.calc.getBlockData(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)).type === 'liquid' && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)))
+                (this.calc.getBlockData(Math.floor(this.x), Math.floor(this.y))?.type === 'liquid' && this.calc.hasPhysics(Math.floor(this.x), Math.floor(this.y))) ||
+                (this.calc.getBlockData(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y))?.type === 'liquid' && this.calc.hasPhysics(this.calc.hardRoundDown(this.x + this.width_blocks), Math.floor(this.y)))
             ) {
                 return true;
             }
