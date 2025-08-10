@@ -12,10 +12,13 @@
 
     <p>
         Submit commands with two arguments.
-        Arg1 shall be the 'key' outlined in the settings values information below.
-        Arg2 shall be the value, whether it is an integer, boolean, etc.
+        Argument 1 should be the key, outlined in the settings information below.
+        Argument 2 should be the value, whether it is an integer, boolean, etc.
 
-        For example, 'blockview 40' will set the blockview property to 40.
+        For example,
+        a) "blockview 40" will set the "blockview" property to 40.
+        b) "fast_break true" will enable "fast_break".
+
     </p>
 
     <h2>Settings:</h2>
@@ -43,13 +46,50 @@
             console.log('No settings data found.');
         }
 
+        const settings_info = {
+            blockview: 'Sets the number of blocks that can be viewed horizontally and vertically.',
+            fly: 'Allows player to fly.',
+            fast: 'Allows player to fly fast. "fly" must be enabled for "fast" to be enabled.',
+            physics: 'Toggle for player collision physics. "fly" must be enabled for "physics" to be disabled.',
+            lighting: 'Debug lighting level text overlay for blocks.',
+            xray: 'Blocks light rendering.',
+            img_smoothing: 'Disable for crisper textures.',
+            debug_inventory: 'Gives player starter/debug items.',
+            fast_break: 'Allows player to instantly break blocks',
+            debug_menu: 'An in game menu with debug information.',
+            performance: 'Vastly improves performance by skipping certain non-critical gametick functions depending on the number of TPS (ticks per second).',
+            performance_chunks: 'Improves performance by reducing the frequency of computations for blocks far away from the player.  Allows block gametick functions to run more frequently by reducing the simulation distance in between the main block updates where all chunks within the simulation distance are updated.',
+            compression: 'Enables compression for world saving.  This will increase saving/loading times significantly, but drastically reduces disk usage.',
+            wasd: 'Enables "WASD" key inputs.  It is currently buggy and thus disabled by default.',
+            vertical_chunking: 'Inproves performance by comuting block gametick functions within a certain y-distance of the player.'
+        };
+
         for (const key in settings_parsed) {
-            const p = document.createElement('p');
+
+            // Setting text
+            const p_setting = document.createElement('p');
             
             let text = `${key}: ${settings_parsed[key]}`;
-            p.innerText = text;
+            p_setting.style.fontWeight = 'bold';
+            p_setting.innerText = text;
 
-            display_box.append(p);
+            display_box.append(p_setting);
+
+            // Info text
+            let text_info = settings_info[key];
+            if (text_info) {
+                const p_info = document.createElement('p');
+
+                p_info.style.fontStyle = 'italic';
+                p_info.style.marginTop = '-8px';
+                p_info.style.marginBottom = '12px';
+                p_info.style.textIndent = '12px';
+
+                p_info.innerText = text_info;
+
+                display_box.append(p_info);
+            }
+            
         }
         
     </script>
