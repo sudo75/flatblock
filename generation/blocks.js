@@ -936,7 +936,7 @@ class Item_diamondPickaxe extends Item_pickaxe {
 class Item_axe extends Tool {
     constructor(name, texture_location) {
         super(name, texture_location);
-        this.purpose = [4, 5, 7, 8]; //list of block IDs the tool breaks
+        this.purpose = [4, 5, 7, 8, 19, 20]; //list of block IDs the tool breaks
 
         this.toolClass = 'axe';
     }
