@@ -107,28 +107,17 @@ class Player extends Entity_creature {
     }
 
     init_debug_inventory() { // inventory test
-        this.inventory.setSlot(5, 0, 16);
-        this.inventory.setSlot(50, 1, 1);
-        this.inventory.setSlot(51, 2, 1);
-        this.inventory.setSlot(16, 3, 16);
-        this.inventory.setSlot(158, 4, 0);
+        this.inventory.setSlot(134, 0, 1);
+        this.inventory.setSlot(140, 1, 1);
+        this.inventory.setSlot(146, 2, 1);
+        this.inventory.setSlot(158, 3, 1);
 
-        this.inventory.setSlot(3, 5, 16);
-        this.inventory.setSlot(17, 6, 16);
-        this.inventory.setSlot(13, 7, 16);
-        this.inventory.setSlot(12, 8, 16);
+        this.inventory.setSlot(5, 4, 16);
+        this.inventory.setSlot(23, 5, 16);
 
-        this.inventory.setSlot(27, 9, 16);
-        this.inventory.setSlot(29, 10, 16);
-        this.inventory.setSlot(31, 11, 16);
-        this.inventory.setSlot(33, 12, 16);
-        this.inventory.setSlot(24, 13, 16);
-        this.inventory.setSlot(25, 14, 16);
-
-        this.inventory.setSlot(182, 15, 1);
-        this.inventory.setSlot(183, 16, 1);
-        this.inventory.setSlot(184, 17, 1);
-        this.inventory.setSlot(185, 18, 1);
+        this.inventory.setSlot(18, 6, 16);
+        this.inventory.setSlot(12, 7, 16);
+        this.inventory.setSlot(51, 8, 1);
 
         console.log(this.inventory.data)
     }

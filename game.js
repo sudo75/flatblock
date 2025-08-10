@@ -4,7 +4,7 @@ import { Debugger } from './debug.js'
 class Game {
     constructor(width, height) {
 
-        this.version = '0.9.0';
+        this.version = '0.10.0-dev';
 
         this.canvas_world = document.querySelector('#game_canvas_back');
         this.ctx_world = this.canvas_world.getContext('2d');

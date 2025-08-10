@@ -152,6 +152,9 @@ class Meta {
                         `${basePath}/splash_2.mp3`,
                         `${basePath}/splash_3.mp3`,
                         `${basePath}/splash_4.mp3`
+                    ],
+                    door: [
+                        `${basePath}/clack.wav`
                     ]
                 },
                 place: {
@@ -242,6 +245,14 @@ class Meta {
     setStatus(status_value) {
         this.status = status_value;
         this.spriteSheetX = 16 * status_value;
+    }
+
+    onPlace() {
+
+    }
+
+    onBreak() {
+
     }
 
     interact(seletedItemID) {
@@ -1730,6 +1741,163 @@ class Block_torch extends Block_Solid {
     }
 }
 
+class Item_door extends Item {
+    constructor() {
+        super('door', './assets/items/door.png');
+        this.id = 18;
+        this.placeBlock_id = 19;
+
+        this.fuel_value = 300;
+
+        this.soundController.setType(this.sound, 'wood');
+        this.sound.interact = this.soundController.soundPaths.interact.door;
+    }
+}
+
+class Block_doorBottom extends Block_Solid {
+    constructor(x, y) {
+        super('door_bottom', x, y, 60, './assets/textures/door_bottom.png');
+        this.id = 19;
+        this.itemDrop_id = [
+            {id: 18, quantity: 1}
+        ];
+
+        this.requireClick_interact = true;
+
+        this.open = true;
+        this.physics = false;
+
+        this.placeRequirements = {
+            all: { // must follow all of these rules
+                adjacent: [],
+
+                left: [],
+                right: [],
+                top: [0],
+                bottom: []
+            },
+
+            oneOf: []
+        };
+
+        this.soundController.setType(this.sound, 'wood');
+        this.sound.interact = this.soundController.soundPaths.interact.door;
+    }
+
+    onPlace() {
+        this.placeRequirements = { // to avoid block being destroyed during a game tick
+            all: { // must follow all of these rules
+                adjacent: [],
+
+                left: [],
+                right: [],
+                top: [],
+                bottom: []
+            },
+
+            oneOf: []
+        };
+    }
+
+    run_gametick_logic(tick) {
+        if (this.neighbour_data?.up) {
+            if (this.neighbour_data.up.id === 0) {
+                this.neighbour_data.up.onNextTick = {
+                    id: 20, // door top
+                    properties: {}
+                };
+            }
+        }
+        
+    }
+
+    interact(seletedItemID) {
+        this.playSound(this.getSound('interact'), 1, 0);
+        this.open = !this.open;
+        this.physics = !this.open;
+
+        this.setStatus(this.open ? 0: 1);
+
+        if (this.neighbour_data?.up) {
+            if (this.neighbour_data.up.id === 20) {
+                this.neighbour_data.up.open = this.open;
+                this.neighbour_data.up.physics = this.physics;
+                this.neighbour_data.up.setStatus(this.open ? 0: 1);
+                
+            }
+        }
+
+    }
+}
+
+class Block_doorTop extends Block_Solid {
+    constructor(x, y) {
+        super('door_top', x, y, 60, './assets/textures/door_top.png');
+        this.id = 20;
+        this.itemDrop_id = [];
+
+        this.requireClick_interact = true;
+
+        this.open = true;
+        this.physics = false;
+
+        this.placeRequirements = {
+            all: { // must follow all of these rules
+                adjacent: [],
+
+                left: [],
+                right: [],
+                top: [],
+                bottom: [19]
+            },
+
+            oneOf: []
+        };
+
+        this.soundController.setType(this.sound, 'wood');
+        this.sound.interact = this.soundController.soundPaths.interact.door;
+    }
+
+    interact(seletedItemID) {
+        this.playSound(this.getSound('interact'), 1, 0);
+        this.open = !this.open;
+        this.physics = !this.open;
+
+        this.setStatus(this.open ? 0: 1);
+
+        if (this.neighbour_data?.down) {
+            if (this.neighbour_data.down.id === 19) {
+                this.neighbour_data.down.open = this.open;
+                this.neighbour_data.down.physics = this.physics;
+                this.neighbour_data.down.setStatus(this.open ? 0: 1);
+            }
+        }
+
+    }
+
+    run_gametick_logic(tick) {
+        if (this.neighbour_data?.down) {
+            if (this.neighbour_data.down.id === 19) {
+                this.setStatus(this.neighbour_data.down.status);
+            }
+        }
+    }
+
+    onBreak() {
+        if (this.neighbour_data?.down) {
+            if (this.neighbour_data.down.id === 19) {
+                this.neighbour_data.down.pendingDestroy = true;
+
+                this.neighbour_data.down.onNextTick = {
+                    id: 0, // air
+                    properties: {}
+                };
+                this.neighbour_data.down.spawnItems = [{id: 18, quantity: 1}];
+            }
+        }
+    }
+}
+
 
 // Minerals -------------------------------------->
 
@@ -2015,6 +2183,9 @@ class Item_Directory {
             '15': Block_farmlandWet,
             '16': Block_wheat,
             '17': Block_sapling,
+            '18': Item_door,
+            '19': Block_doorBottom,
+            '20': Block_doorTop,
 
             '23': Block_cobblestone,
             '24': Block_coalOre,

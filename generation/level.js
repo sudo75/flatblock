@@ -337,7 +337,7 @@ class Level {
                         const abs_x = this.calc.getAbsoluteX(rel_x, i);
 
                         // Run block gametick logic
-                        if (block.run_gametick_logic) {
+                        if (block.run_gametick_logic && !block.pendingDestroy) {
                             block.run_gametick_logic(tick);
                         }
 
@@ -957,7 +957,8 @@ class Level {
             }
         }
 
-        const full_placeRequirements = this.generator.item_directory.getProperty(blockID, 'placeRequirements');
+        //const full_placeRequirements = this.generator.item_directory.getProperty(blockID, 'placeRequirements');
+        const full_placeRequirements = this.calc.getBlockData(x, y).placeRequirements;
         if (!full_placeRequirements) return true;
 
         const checkPlaceReq_all = (() => {
@@ -1097,9 +1098,10 @@ class Level {
                     }
                 }
 
-                // Play sound
                 const block = this.data[this.calc.getChunkID(selectedX)].block_data[this.calc.getRelativeX(selectedX)][selectedY];
+                block.onPlace();
 
+                // Play sound
                 if (block.sound) {
                     const place_sound = block.getSound('place');
                     block.playSound(place_sound, 0.5);
@@ -1176,8 +1178,10 @@ class Level {
 
                 //Break block
                 if (breakStatus >= hardness) {
-                    // Play sound
                     const block = this.data[this.calc.getChunkID(this.current_breaking.x)].block_data[this.calc.getRelativeX(this.current_breaking.x)][this.current_breaking.y];
+                    block.onBreak();
+
+                    // Play sound
                     if (block.sound) {
                         const broke_sound = block.getSound('broke');
                         block.playSound(broke_sound, 0.5);
