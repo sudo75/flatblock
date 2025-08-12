@@ -911,8 +911,7 @@ class Game {
                 `Throttle: ${this.performanceData_display.performance_throttle}/6`,
                 `Player: ${this.player.x.toFixed(2)}, ${this.player.y.toFixed(2)}`,
                 `Tick: ${this.performanceData_display.tick}`,
-                `Time: ${this.performanceData_display.time}`,
-                `JS Heap: ${this.performanceData_display.memory_usage?.toFixed(2)} MB`
+                `Time: ${this.performanceData_display.time}`
             ];
 
             const margin = 20;
@@ -958,8 +957,7 @@ class Game {
                         tps: this.tps,
                         performance_throttle: this.performance_throttle,
                         tick: this.tick,
-                        time: this.level.time,
-                        memory_usage: performance.memory.usedJSHeapSize / 1024 / 1024
+                        time: this.level.time
                     };
                 }
 
