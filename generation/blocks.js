@@ -672,7 +672,7 @@ class Item_bucketWater extends Item {
 
 class Block_sapling extends Block_Solid {
     constructor(x, y) {
-        super('sapling', x, y, 40, './assets/textures/sapling.png');
+        super('sapling', x, y, 1, './assets/textures/sapling.png');
         this.id = 17;
         this.itemDrop_id = [
             {id: 17, quantity: 1}
@@ -697,6 +697,8 @@ class Block_sapling extends Block_Solid {
 
         this.minimumGrowthLight = 10;
         this.torchAffinity = false;
+
+        this.entityBound = false;
     }
 
     run_gametick_logic(tick) {
