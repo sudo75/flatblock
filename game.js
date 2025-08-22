@@ -225,40 +225,46 @@ class Game {
         // Default slot menu
         const btns_slot_default = [
             {txt: [`Tiny (width: ${this.level_sizing.tiny.width_blocks}, height: ${this.level_sizing.tiny.height_blocks})`], callback: () => {
-                    console.log('loading game...');
-    
-                    this.menu_renderers.slot_default.close();
-                    this.init(null, 'tiny');
-                }},
-                {txt: [`Small (width: ${this.level_sizing.small.width_blocks}, height: ${this.level_sizing.small.height_blocks})`], callback: () => {
-                    console.log('loading game...');
-    
-                    this.menu_renderers.slot_default.close();
-                    this.init(null, 'small');
-                }},
-                {txt: [`Medium (width: ${this.level_sizing.medium.width_blocks}, height: ${this.level_sizing.medium.height_blocks})`], callback: () => {
-                    console.log('loading game...');
-    
-                    this.menu_renderers.slot_default.close();
-                    this.init(null, 'medium');
-                }},
-                {txt: [`Large (width: ${this.level_sizing.large.width_blocks}, height: ${this.level_sizing.large.height_blocks})`], callback: () => {
-                    console.log('loading game...');
-    
-                    this.menu_renderers.slot_default.close();
-                    this.init(null, 'large');
-                }},
-                {txt: [`Huge (width: ${this.level_sizing.huge.width_blocks}, height: ${this.level_sizing.huge.height_blocks})`], callback: () => {
-                    console.log('loading game...');
-    
-                    this.menu_renderers.slot_default.close();
-                    this.init(null, 'huge');
-                }},
-                {txt: [`Gigantic (width: ${this.level_sizing.gigantic.width_blocks}, height: ${this.level_sizing.gigantic.height_blocks})`], callback: () => {
-                    console.log('loading game...');
-    
-                    this.menu_renderers.slot_default.close();
-                    this.init(null, 'gigantic');
+                console.log('loading game...');
+
+                this.menu_renderers.slot_default.close();
+                this.init(null, 'tiny');
+            }},
+            {txt: [`Small (width: ${this.level_sizing.small.width_blocks}, height: ${this.level_sizing.small.height_blocks})`], callback: () => {
+                console.log('loading game...');
+
+                this.menu_renderers.slot_default.close();
+                this.init(null, 'small');
+            }},
+            {txt: [`Medium (width: ${this.level_sizing.medium.width_blocks}, height: ${this.level_sizing.medium.height_blocks})`], callback: () => {
+                console.log('loading game...');
+
+                this.menu_renderers.slot_default.close();
+                this.init(null, 'medium');
+            }},
+            {txt: [`Large (width: ${this.level_sizing.large.width_blocks}, height: ${this.level_sizing.large.height_blocks})`], callback: () => {
+                console.log('loading game...');
+
+                this.menu_renderers.slot_default.close();
+                this.init(null, 'large');
+            }},
+            {txt: [`Huge (width: ${this.level_sizing.huge.width_blocks}, height: ${this.level_sizing.huge.height_blocks})`], callback: () => {
+                console.log('loading game...');
+
+                this.menu_renderers.slot_default.close();
+                this.init(null, 'huge');
+            }},
+            {txt: [`Gigantic (width: ${this.level_sizing.gigantic.width_blocks}, height: ${this.level_sizing.gigantic.height_blocks})`], callback: () => {
+                console.log('loading game...');
+
+                this.menu_renderers.slot_default.close();
+                this.init(null, 'gigantic');
+            }},
+            
+            {txt: [`Set seed`], callback: () => {
+                    const seed = prompt("Input a seed: ");
+
+                    this.level.generator.seed = seed;
                 }},
             {txt: ['<= Back'], callback: () => {
 
@@ -377,6 +383,12 @@ class Game {
     
                     closeNewGameMenu();
                     this.init(i, 'huge');
+                }},
+
+                {txt: [`Set seed`], callback: () => {
+                    const seed = prompt("Input a seed: ");
+
+                    this.level.generator.seed = seed;
                 }},
     
                 {txt: ['<= Back'], callback: () => {
