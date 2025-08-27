@@ -27,7 +27,8 @@ class Debugger {
             performance_chunks: true,
             compression: true,
             wasd: false,
-            vertical_chunking: true
+            vertical_chunking: true,
+            do_gametick: true
         };
 
         this.applySettings();
@@ -111,6 +112,8 @@ class Debugger {
         }
 
         //Vertical chunking - no exterior settings to edit
+
+        //do_gametick - no exterior settings to edit
     }
 
     commandInput() {
@@ -237,6 +240,13 @@ class Debugger {
                     this.settings.vertical_chunking = arg2 === 'true';
                 } else {
                     alert('vertical_chunking - Input a boolean.');
+                }
+                break;
+            case 'do_gametick':
+                if (arg2 === 'true' || arg2 === 'false') {
+                    this.settings.do_gametick = arg2 === 'true';
+                } else {
+                    alert('do_gametick - Input a boolean.');
                 }
                 break;
         }

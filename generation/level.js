@@ -142,6 +142,9 @@ class Level {
     }
 
     run_gametick_logic(tick) { //Can help run blocks with animations, update block states (ex. illuminated vs. dark, etc.)
+
+        if (!this.game.debugger.settings.do_gametick) return;
+
         const toCompute = {
             gametick_logic: true,
             lighting: true,
