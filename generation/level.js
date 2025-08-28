@@ -968,10 +968,11 @@ class Level {
 
         //Check block data for placement requirements
 
-        return this.checkValidity(x, y, blockID);
+        const place_requirements = this.game.item_directory.getProperty(blockID, 'placeRequirements');
+        return this.checkValidity(x, y, place_requirements);
     }
 
-    checkValidity(x, y, blockID = this.calc.getBlockData(x, y).id) {
+    checkValidity(x, y, full_placeRequirements = this.calc.getBlockData(x, y).placeRequirements) {
         const block_left  = this.calc.isWithinWorldBounds(x - 1, y) ? this.calc.getBlockData(x - 1, y) : null;
         const block_right = this.calc.isWithinWorldBounds(x + 1, y) ? this.calc.getBlockData(x + 1, y) : null;
         const block_up = this.calc.isWithinWorldBounds(x, y + 1) ? this.calc.getBlockData(x, y + 1) : null;
@@ -994,7 +995,6 @@ class Level {
         }
 
         //const full_placeRequirements = this.generator.item_directory.getProperty(blockID, 'placeRequirements');
-        const full_placeRequirements = this.calc.getBlockData(x, y).placeRequirements;
         if (!full_placeRequirements) return true;
 
         const checkPlaceReq_all = (() => {
