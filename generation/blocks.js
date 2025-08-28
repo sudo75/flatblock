@@ -2295,6 +2295,25 @@ class Item_Directory {
         return itemIDs;
     }
 
+    getItemsWithProperties(properties) { // input [{property: {}, value: {}}] -- value is optional
+        let itemIDs = [];
+        for (const id in this.item) {
+            const itemClass = this.item[id];
+            if (!itemClass) continue;
+    
+            const itemInstance = new itemClass();
+            const hasAll = properties.every(({ property, value }) => {
+                if (!(property in itemInstance)) return false;
+                if (value !== undefined) return itemInstance[property] === value;
+                return true;
+            });
+
+            if (hasAll) itemIDs.push(id);
+        }
+
+        return itemIDs;
+    }
+
     getItemsWithPropertyAndValue(property, value) {
         const itemsWithProperty = this.getItemsWithProperty(property);
 
