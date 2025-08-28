@@ -337,7 +337,7 @@ class Generator {
 
             if (this.calc.randomBool(chance)) {
                 for (let j = 0; j < quantity; j++) {
-                    this.game.player.dropItem(x + 0.5 - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
+                    this.game.player.dropItem(x + 0.5 + (0.25 - 0.5 * Math.random()) - this.game.entity_handler.entity_item_dimensions.width / 2, y, itemID, 0, 0); // add half item width to centre
                 }
             }
             

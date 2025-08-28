@@ -22,30 +22,30 @@ class Entity_item extends Entity {
         this.entityType = 'item';
         this.key_input = [];
 
-        this.yOffset = 0;
-        this.boundToBlock = false;
+        this.canBob = false;
+    
+        this.virtual_pos = {
+            x: this.x,
+            y: this.y,
+            yOffset: 0,
+            bobbingOffset: Math.random() * 1000
+        }
     }
 
     update(input, deltaTime) {
 
-        if (this.isOnSolidBlock()) {
-            this.boundToBlock = true;
-        }
+        // Compute bobbing
+        const unix_time_ms = Date.now() + this.virtual_pos.bobbingOffset;
+        const period = 2000;
+        const amp = 0.5;
 
-        if (this.isAboveSolidBlock() && this.boundToBlock) {
-            // Compute bobbing
-            const unix_time_ms = Date.now();
-            const period = 1000;
-            const amp = 0.1;
+        const yMovement = amp * Math.sin(((2 * Math.PI * unix_time_ms) / period));
 
-            const yMovement = amp * Math.sin(((2 * Math.PI * unix_time_ms) / period)) + amp;
-
-            this.y += (yMovement - this.yOffset);
-            this.yOffset = yMovement;
-        } else {
-            super.update(input, deltaTime);
-            this.boundToBlock = false;
-        }
+        this.virtual_pos.y = this.y + (yMovement - this.virtual_pos.yOffset);
+        this.virtual_pos.yOffset = yMovement;
+        
+        super.update(input, deltaTime);
+        this.virtual_pos.x = this.x;
     }
 
     isAboveSolidBlock() { // solid block below, but not necessarily touching the item

@@ -205,8 +205,11 @@ class World_Renderer {
                 
                 const texture_location = entity.texture_location;
 
-                const real_x = (entity.x - this.leftmost_blockX) * this.game.block_size;
-                const real_y = (entity.y - this.bottommost_blockY) * this.game.block_size;
+                const entityX = entity?.virtual_pos?.x ?? entity.x;
+                const entityY = entity?.virtual_pos?.y ?? entity.y;
+
+                const real_x = (entityX - this.leftmost_blockX) * this.game.block_size;
+                const real_y = (entityY - this.bottommost_blockY) * this.game.block_size;
 
                 const spriteSheetX = 0;
 
