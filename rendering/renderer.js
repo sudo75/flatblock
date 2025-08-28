@@ -38,7 +38,7 @@ class World_Renderer {
 
             let additionalDarknessValue = 0;
 
-            if (distFromFluid > fullLightLimit) {
+            if (distFromFluid > fullLightLimit && block_data.transparency === 0) {
                 const gradientDist = distFromFluid - fullLightLimit;
 
                 additionalDarknessValue = (gradientDist / gradientSpan) * (1 - lighting_decimal);
