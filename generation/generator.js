@@ -187,8 +187,113 @@ class Generator {
             chunck.push(col);
         }
         this.data[chunk_id] = { block_data: chunck, entity_data: [] };
-        this.generate_embellishments(chunk_id);
-        this.generate_mobs(chunk_id);
+    }
+
+    carveCaves() {
+        // 50% chance of a seeded cave per chunk
+        const chunk_min = this.calc.getWorldBounds()[0];
+        const chunk_max = this.calc.getWorldBounds()[1];
+
+        // Generate possible cave locations
+        let seededCaves = [];
+        for (let chunkIndex = chunk_min; chunkIndex <= chunk_max; chunkIndex++) {
+            const generateCave = this.calc.randomBoolByTwoSeeds(this.seed, chunkIndex, 50);
+            if (generateCave) {
+                const relChunkMiddle = Math.floor(this.game.level.chunk_size / 2);
+                const absCaveX = this.calc.getAbsoluteX(relChunkMiddle, chunkIndex);
+                const y = this.calc.randomIntByTwoSeeds(this.seed, chunkIndex) / 100 * this.game.level.properties.height_blocks;
+
+                const energy = this.calc.randomIntByTwoSeeds(this.seed, absCaveX);
+                const sizeFactor = this.calc.randomIntByTwoSeeds(this.seed, y);
+                const sizeRandomness = this.calc.randomIntByTwoSeeds(this.seed, y);
+
+                seededCaves.push({x: absCaveX, y: y, energy: energy, sizeFactor: sizeFactor, sizeRandomness: sizeRandomness});
+            }
+        }
+
+
+
+        for (let i = 0; i < seededCaves.length; i++) {
+            
+            const caveLocation = {x: seededCaves[i].x, y: seededCaves[i].y};
+
+            const radius_default = 3.5;
+            const radius_min = (radius_default - (radius_default * (seededCaves[i].sizeFactor / 100 / 100) * seededCaves[i].sizeRandomness) * 0.75);
+            const radius_max = (radius_default + (radius_default * (seededCaves[i].sizeFactor / 100 / 100) * seededCaves[i].sizeRandomness) * 0.5);
+
+            const energy = Math.floor(seededCaves[i].energy / 4 + 30);
+
+            const carveCircle = (caveLocation, radius_min, radius_max, energy) => {
+                if (energy === 0) return;
+                
+                const radius_span = radius_max - radius_min;
+                const radius = this.calc.randomIntByTwoSeeds(this.seed, caveLocation.x + caveLocation.y) / 100 * radius_span + radius_min; // circle 3 - 8 blocks in radius
+
+                // Bounding box
+                const minX = Math.floor(caveLocation.x - radius);
+                const maxX = Math.ceil(caveLocation.x + radius);
+                const minY = Math.floor(caveLocation.y - radius);
+                const maxY = Math.ceil(caveLocation.y + radius);
+
+                // Carve circle
+                for (let x = minX; x <= maxX; x++) {
+                    for (let y = minY; y <= maxY; y++) {
+                        const dx = x - caveLocation.x;
+                        const dy = y - caveLocation.y;
+
+                        // euclidean distance
+                        const dist = (dx ** 2 + dy ** 2) ** 0.5;
+
+                        if (dist <= radius && this.calc.isWithinWorldBounds(x, y)) {
+                            if (this.calc.getBlockData(x, y).id !== 200) { // prevent bedrock removal
+                                this.placeBlockOnly(0, x, y);
+                            }
+                        }
+                    }
+                }
+
+                // Call recursively
+
+                const d_min = 2;
+                const d_max = 6;
+                const d_span = d_max - d_min;
+
+                const dx = (() => {
+                    const negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 50);
+                    let dx;
+
+                    if (negative) {
+                        dx = -d_min - this.calc.randomIntByTwoSeeds(this.seed, caveLocation.x) / 100 * d_span;
+                    } else {
+                        dx = d_min + this.calc.randomIntByTwoSeeds(this.seed, caveLocation.x) / 100 * d_span;
+                    }
+
+                    return dx;
+                })();
+                const dy = (() => {
+                    const negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 65);
+                    let dy;
+
+                    if (negative) {
+                        dy = -d_min - this.calc.randomIntByTwoSeeds(this.seed, caveLocation.y) / 100 * d_span;
+                    } else {
+                        dy = d_min + this.calc.randomIntByTwoSeeds(this.seed, caveLocation.y) / 100 * d_span;
+                    }
+                    
+
+                    return dy;
+                })();
+
+                const newCaveLocation = {x: caveLocation.x + dx, y: caveLocation.y + dy};
+
+                carveCircle(newCaveLocation, radius_min, radius_max, energy - 1);
+
+            }
+
+            carveCircle(caveLocation, radius_min, radius_max, energy);
+            
+        }
+
     }
 
     generate_embellishments(chunk_id) {

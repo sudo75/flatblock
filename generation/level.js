@@ -73,6 +73,14 @@ class Level {
             this.generator.generate_chunk(i);
         }
 
+        // Generate caves
+        this.generator.carveCaves();
+
+        for (let i = bounds[0]; i <= bounds[1]; i++) {
+            this.generator.generate_embellishments(i);
+            this.generator.generate_mobs(i);
+        }
+
         //Once render light
         this.calculateLighting(this.calc.getWorldBounds()[0], this.calc.getWorldBounds()[1]);
         
