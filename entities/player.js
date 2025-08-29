@@ -49,6 +49,8 @@ class Player extends Entity_creature {
 
         this.armour = 0;
         this.maxArmour = 20;
+
+        this.spawnPoint = {x: null, y: null}
     }
 
     spawn() {
@@ -58,7 +60,18 @@ class Player extends Entity_creature {
         this.real_y = this.game.height / 2;
 
         this.x = 5; // aligned to left of player
-        this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
+        this.y = null;
+        
+        while (this.y === null) {
+            this.x++;
+            // aligned to bottom of player
+            this.y = this.calculateSpawnY(Math.floor(this.x));
+        }
+
+        this.spawnPoint = {
+            x: this.x,
+            y: this.y
+        }
 
         this.inventory.init();
 
@@ -123,10 +136,11 @@ class Player extends Entity_creature {
     }
 
     calculateSpawnY(x) {
-        for (let y = 0; y < this.game.level.properties.height_blocks; y++) {
+        for (let y = this.game.level.properties.height_blocks; y >= 0; y--) {
             const block_data = this.calc.getBlockData(x, y);
+            const block_data_below = this.calc.getBlockData(x, y - 1);
 
-            if (block_data.name === 'air') {
+            if (block_data?.name === 'air' && block_data_below?.type === 'solid') {
                 return y;
             }
         }
@@ -257,8 +271,8 @@ class Player extends Entity_creature {
         this.real_x = this.game.width / 2 - this.width / 2;
         this.real_y = this.game.height / 2;
 
-        this.x = 5; // aligned to left of player
-        this.y = this.calculateSpawnY(Math.floor(this.x)) // aligned to bottom of player
+        this.x = this.spawnPoint.x; // aligned to left of player
+        this.y = this.spawnPoint.y; // aligned to bottom of player
 
         this.draw();
 
