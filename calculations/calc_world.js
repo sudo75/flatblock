@@ -103,6 +103,39 @@ class Calc_World {
         return false;
     }
 
+    randomIntByTwoSeeds(seed, seed2, chance) { // 1 - 100
+        if (seed < 0) {
+            seed *= -3.14;
+        }
+        if (seed2 < 0) {
+            seed2 *= -3.14;
+        }
+        
+        seed = Math.log10(seed);
+        seed2 = Math.log10(seed2);
+        
+        const a = 101;
+        const c = 1001;
+        const m = 2 ** 12;
+    
+        const ampl1 = Math.log10(seed);
+        const freq1 = (1 / c) * seed;
+        const hori1 = a * c * seed;
+    
+        const result1 = ampl1 * Math.sin(freq1 * ((seed) + hori1)) + a * c;
+        
+        const ampl2 = a * seed2 + c;
+        const freq2 = seed2 / 10;
+        const hori2 = a * c * seed;
+        const result2 = ampl2 * Math.sin(freq2 * ((seed2) + hori2));
+    
+        const result = (result1 * a + c * result2) % m;
+    
+        const result_normalised = (result / m) * 100;
+    
+        return result_normalised;
+    }
+
     deepCloneObj(obj) {
         const deepCopy = structuredClone(obj);
 
