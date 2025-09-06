@@ -22,19 +22,19 @@ export class OreTable {
         for (let y = 0; y < this.game.level.properties.height_blocks; y++) {
             table[y] = {
                 'coal_ore': {
-                    frequency: 6 - y / 10 //as a percent
+                    frequency: 4 + (1 - y / 40 || 0) //as a percent
                 },
                 'copper_ore': {
-                    frequency: 6 - y / 10
+                    frequency: 3 + (1 - y / 60 || 0)
                 },
                 'iron_ore': {
-                    frequency: 5 - y / 10
+                    frequency: 1 + (4 - y / 8 || 0)
                 },
                 'gold_ore': {
-                    frequency: 4 - y / 8
+                    frequency: (3 - y / 12 || 0)
                 },
                 'diamond_ore': {
-                    frequency: 4 - y / 5
+                    frequency: (2 - y / 8 || 0)
                 }
             }
         }
