@@ -875,7 +875,7 @@ class Level {
 
                     const block = this.data[i].block_data[rel_x][y];
 
-                    if (this.calc.isSolidBlock(abs_x, y)) {
+                    if (this.calc.getBlockData(abs_x, y)?.sunlight_blocking) {
                         break;
                     }
                     block.light_source_sun = this.sun_strength;
@@ -943,11 +943,12 @@ class Level {
     
                 if (block.light >= light - 1) continue;
     
-                block.light = light - 1;
+                const light_blocking = block.light_blocking;
+                block.light = light - light_blocking;
 
                 if (this.calc.getBlockData(new_x, new_y).transparency === 0) continue;
     
-                queue.push({ x: new_x, y: new_y, light: light - 1 });
+                queue.push({ x: new_x, y: new_y, light: light - light_blocking });
             }
         }
 

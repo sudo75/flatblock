@@ -7,6 +7,8 @@ class Meta {
 
         this.item_type = item_type;
         this.isBlock = true;
+        this.sunlight_blocking = true; 
+        this.light_blocking = 1;
 
         this.untouchable = false;
         this.pendingDestroy = false;
@@ -378,7 +380,8 @@ class Block_Liquid extends Block {
         this.type = 'liquid';
         this.viscosity = 0.5;
         this.sinkFactor = 0.3;
-        this.transparency = 0.8;
+        this.transparency = 1;
+        this.light_blocking = 2;
         this.physics = true;
 
         this.liquid_spread = 8;
@@ -455,6 +458,8 @@ class Block_Air extends Block {
         this.type = 'air';
         this.viscosity = 0;
         this.transparency = 1;
+        this.sunlight_blocking = false;
+        this.light_blocking = 1;
 
         this.id = 0;
 
