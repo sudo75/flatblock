@@ -427,6 +427,26 @@ class Block_water extends Block_Liquid {
     }
 }
 
+class Block_lava extends Block_Liquid {
+    constructor(x, y) {
+        super('lava', x, y, './assets/textures/lava.png');
+        this.id = 52;
+
+        this.spread_speed = 5;
+
+        this.entityBound = false;
+
+        this.requireClick_interact = true;
+
+        this.soundController.setType(this.sound, 'water');
+    }
+
+    interact(seletedItemID) {
+        
+
+    }
+}
+
 
 
 class Block_Air extends Block {
@@ -2207,6 +2227,7 @@ class Item_Directory {
             '41': Item_wheatBundle,
             '50': Item_bucket,
             '51': Item_bucketWater,
+            '52': Block_lava,
 
             '64': Item_pork,
             '65': Item_porkCooked,
