@@ -69,12 +69,12 @@ class Game {
         this.save_chunks = []; // which chunks should be saved
 
         this.level_sizing = {
-            tiny: { width_chunks: 3, width_blocks: 48, height_blocks: 120 },
-            small: { width_chunks: 7, width_blocks: 112, height_blocks: 120 },
-            medium: { width_chunks: 15, width_blocks: 240, height_blocks: 150 },
-            large: { width_chunks: 27, width_blocks: 432, height_blocks: 150 },
-            huge: { width_chunks: 53, width_blocks: 848, height_blocks: 180 },
-            gigantic: { width_chunks: 101, width_blocks: 1616, height_blocks: 200 },
+            tiny: { width_chunks: 3, width_blocks: 48, height_blocks: 128, generation_limit: 112 },
+            small: { width_chunks: 7, width_blocks: 112, height_blocks: 128, generation_limit: 112 },
+            medium: { width_chunks: 15, width_blocks: 240, height_blocks: 128, generation_limit: 112 },
+            large: { width_chunks: 27, width_blocks: 432, height_blocks: 192, generation_limit: 160 },
+            huge: { width_chunks: 53, width_blocks: 848, height_blocks: 192, generation_limit: 160 },
+            gigantic: { width_chunks: 101, width_blocks: 1616, height_blocks: 192, generation_limit: 160 },
         };
     }
 
@@ -438,6 +438,7 @@ class Game {
 
         const width_chunks = this.level_sizing[level_size].width_chunks;
         const height_blocks = this.level_sizing[level_size].height_blocks;
+        const generation_limit = this.level_sizing[level_size].generation_limit;
 
         function logPerformance(taskName, startTime, style = "color: black; font-weight: normal;") {
             const elapsedTime = (performance.now() - startTime).toFixed(1);
@@ -455,6 +456,7 @@ class Game {
             setTimeout(() => {
                 this.level.properties.width_chunks = width_chunks;
                 this.level.properties.height_blocks = height_blocks;
+                this.level.properties.generation_limit = generation_limit;
 
                 this.level.simulation_distance = 7;
                 this.level.block_simulation_distance = 7;

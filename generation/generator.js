@@ -13,9 +13,11 @@ class Generator {
         this.seed = this.generateSeed();
 
         this.settings = {
-            maxAmp_aug: 0.2, // default = 0.2
+            maxAmp_aug: 0.4, // default = 0.2
             maxFreq_aug: 0.2 // default = 0.2
         }
+
+        this.seaLevel = 60;
     }
 
     generateSeed() {
@@ -124,11 +126,16 @@ class Generator {
 
         const a = 1; //frequency
         const b = 2; //amplitude
-        const c = 60; //height_offset
+        const c = 72; //height_offset
 
         const y = b * (f1(a*x) + f2(a*x) + f3(a*x) + f4(a*x) + f5(a*x) + f6(a*x)) + c;
 
-        return Math.round(y);
+        const contour = Math.round(y);
+
+        if (contour > this.properties.generation_limit) return this.properties.generation_limit;
+        if (contour < 0) return 0;
+        
+        return contour;
     }
 
     generate_chunk(chunk_id) { //GENERATES FROM TOP TO BOTTOM
@@ -147,8 +154,6 @@ class Generator {
 
                 const dirtLevel = grassLevel - 4;
 
-                const seaLevel = 40; // The block above the highest water block
-
                 const chooseBlock = () => {
                     let blockClass = this.item_directory.item[0]; //Default to air
 
@@ -166,10 +171,10 @@ class Generator {
 
                     } else if (y < grassLevel) {
                         blockClass = this.item_directory.item[1]; //Dirt
-                    } else if (y < seaLevel - 1) {
+                    } else if (y < this.seaLevel - 1) {
                         blockClass = this.item_directory.item[13]; // Water
-                    }  else if (y < seaLevel) {
-                        if (this.getContour(absolute_x - 1) === seaLevel || this.getContour(absolute_x + 1) === seaLevel) {
+                    }  else if (y < this.seaLevel) {
+                        if (this.getContour(absolute_x - 1) === this.seaLevel || this.getContour(absolute_x + 1) === this.seaLevel) {
                             blockClass = this.item_directory.item[2]; //Grass
                         } else {
                             blockClass = this.item_directory.item[13]; // Water
@@ -181,7 +186,11 @@ class Generator {
                     return new blockClass(absolute_x, y);
                 };
 
-                const block = chooseBlock();
+                const block = (() => {
+                    if (y > this.properties.generation_limit) return new this.item_directory.item[0]; // air if above generation limit
+
+                    return chooseBlock();
+                })()
                 col.push(block);
             }
             chunck.push(col);
@@ -190,18 +199,18 @@ class Generator {
     }
 
     carveCaves() {
-        // 50% chance of a seeded cave per chunk
+        // 60% chance of a seeded cave per chunk
         const chunk_min = this.calc.getWorldBounds()[0];
         const chunk_max = this.calc.getWorldBounds()[1];
 
         // Generate possible cave locations
         let seededCaves = [];
         for (let chunkIndex = chunk_min; chunkIndex <= chunk_max; chunkIndex++) {
-            const generateCave = this.calc.randomBoolByTwoSeeds(this.seed, chunkIndex, 50);
+            const generateCave = this.calc.randomBoolByTwoSeeds(this.seed, chunkIndex, 60);
             if (generateCave) {
                 const relChunkMiddle = Math.floor(this.game.level.chunk_size / 2);
                 const absCaveX = this.calc.getAbsoluteX(relChunkMiddle, chunkIndex);
-                const y = this.calc.randomIntByTwoSeeds(this.seed, chunkIndex) / 100 * this.game.level.properties.height_blocks;
+                const y = this.calc.randomIntByTwoSeeds(this.seed, chunkIndex) / 100 * this.game.level.properties.generation_limit;
 
                 const energy = this.calc.randomIntByTwoSeeds(this.seed, absCaveX);
                 const sizeFactor = this.calc.randomIntByTwoSeeds(this.seed, y);
@@ -217,17 +226,20 @@ class Generator {
             
             const caveLocation = {x: seededCaves[i].x, y: seededCaves[i].y};
 
-            const radius_default = 3.5;
+            const radius_default = 2.5;
             const radius_min = (radius_default - (radius_default * (seededCaves[i].sizeFactor / 100 / 100) * seededCaves[i].sizeRandomness) * 0.75);
             const radius_max = (radius_default + (radius_default * (seededCaves[i].sizeFactor / 100 / 100) * seededCaves[i].sizeRandomness) * 0.5);
 
-            const energy = Math.floor(seededCaves[i].energy / 4 + 30);
+            const energy = Math.floor(seededCaves[i].energy / 3 + 30);
 
-            const carveCircle = (caveLocation, radius_min, radius_max, energy) => {
+            const carveCircle = (caveLocation, radius_min, radius_max, energy, previous = null) => {
                 if (energy === 0) return;
                 
                 const radius_span = radius_max - radius_min;
                 const radius = this.calc.randomIntByTwoSeeds(this.seed, caveLocation.x + caveLocation.y) / 100 * radius_span + radius_min; // circle 3 - 8 blocks in radius
+
+                // Don't carve caves above ground level under lakes
+                if (caveLocation.y + radius + 2 > this.getContour(caveLocation.x) && caveLocation.y + radius < this.seaLevel) return;
 
                 // Bounding box
                 const minX = Math.floor(caveLocation.x - radius);
@@ -254,12 +266,21 @@ class Generator {
 
                 // Call recursively
 
-                const d_min = 2;
-                const d_max = 6;
+                const d_min = 1;
+                const d_max = 4;
                 const d_span = d_max - d_min;
 
                 const dx = (() => {
-                    const negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 50);
+                    let negative;
+                    if (!previous) {
+                        negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 50);
+                    } else {
+                        if (!previous.dx_pos) { // if negative
+                            negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 60)
+                        } else {
+                            negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 40)
+                        }
+                    }
                     let dx;
 
                     if (negative) {
@@ -271,7 +292,17 @@ class Generator {
                     return dx;
                 })();
                 const dy = (() => {
-                    const negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 65);
+                    let negative;
+                    if (!previous) {
+                        negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 75);
+                    } else {
+                        if (!previous.dy_pos) { // if negative
+                            negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 75)
+                        } else {
+                            negative = this.calc.randomBoolByTwoSeeds(this.seed, caveLocation.x + caveLocation.y, 25)
+                        }
+                    }
+
                     let dy;
 
                     if (negative) {
@@ -286,7 +317,7 @@ class Generator {
 
                 const newCaveLocation = {x: caveLocation.x + dx, y: caveLocation.y + dy};
 
-                carveCircle(newCaveLocation, radius_min, radius_max, energy - 1);
+                carveCircle(newCaveLocation, radius_min, radius_max, energy - 1, {dx_pos: dx > 0, dy_pos: dy > 0});
 
             }
 
@@ -367,6 +398,8 @@ class Generator {
 
             const block_chunkID = this.calc.getChunkID(blockX);
 
+            if (!this.calc.isWithinWorldBounds(blockX, blockY) || y > this.properties.generation_limit) return;
+
             if (!this.calc.chunkIsGenerated(block_chunkID)) {
                 return;
             }
@@ -396,6 +429,8 @@ class Generator {
     }
 
     placeBlockOnly(blockID, x, y) {
+        if (!this.calc.isWithinWorldBounds(x, y)) return;
+
         // Get block id to place
         const placeBlock_ID = this.item_directory.getProperty(blockID, 'placeBlock_id');
 
