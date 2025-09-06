@@ -123,7 +123,7 @@ class Player extends Entity_creature {
         this.inventory.setSlot(134, 0, 1);
         this.inventory.setSlot(140, 1, 1);
         this.inventory.setSlot(146, 2, 1);
-        this.inventory.setSlot(158, 3, 1);
+        this.inventory.setSlot(52, 3, 8);
 
         this.inventory.setSlot(5, 4, 16);
         this.inventory.setSlot(23, 5, 16);
