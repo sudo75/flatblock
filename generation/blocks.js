@@ -1711,7 +1711,7 @@ class Block_torch extends Block_Solid {
         this.physics = false;
         this.transparency = 1;
 
-        this.light_source = 15;
+        this.light_source = 19;
         this.spriteSheetX = 0;
 
         this.entityBound = false;

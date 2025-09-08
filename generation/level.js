@@ -28,8 +28,11 @@ class Level {
         this.generator = new Generator(game, this.data, this.properties);
         this.item_directory = this.game.item_directory;
 
-        this.time = 0;
-        this.sun_strength = 15; //0 - 15
+        this.time = 8000;
+        this.sun_strength_default = 23;
+        this.sun_strength_min = 4;
+        this.sun_strength = 23; //0 - 15
+        this.MAX_LIGHT_LEVEL = 23;
 
         this.mouseInfoRight = {
             down: false,
@@ -593,24 +596,24 @@ class Level {
 
             //Day
             if (this.time >= 0 && this.time < 12000) {
-                this.sun_strength = 15;
+                this.sun_strength = this.sun_strength_default;
             }
 
             //Evening
             if (this.time >= 12000 && this.time < 14000) {
                 const lighting_decimal = 1 - (this.time - 12000) / 2000;
-                this.sun_strength = Math.floor(15 * (lighting_decimal));
+                this.sun_strength = Math.floor(this.sun_strength_default - (this.sun_strength_default - this.sun_strength_min) * (lighting_decimal));
             }
 
             //Night
             if (this.time >= 14000 && this.time < 22000) {
-                this.sun_strength = 0;
+                this.sun_strength = this.sun_strength_min;
             }
 
             //Morning
             if (this.time >= 22000 && this.time < 24000) {
                 const lighting_decimal = (this.time - 22000) / 2000;
-                this.sun_strength = Math.floor(15 * (lighting_decimal));
+                this.sun_strength = Math.floor(this.sun_strength_default - (this.sun_strength_default - this.sun_strength_min) * (lighting_decimal));
             }
         }
 

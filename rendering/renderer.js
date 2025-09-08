@@ -19,16 +19,16 @@ class World_Renderer {
 
 
         // Determine lighting conditions
-        const block_lighting = block_data.light; // 0 - 15
+        const block_lighting = block_data.light; // 0 - max
 
         let lighting_decimal = 0; // 0 = light, 1 = dark
         if (!this.game.debugger.settings.xray) {
 
             const lighting_decimal_min = 0;
-            const lighting_decimal_max = 0.5;
+            const lighting_decimal_max = 0.9;
             
             const lighting_decimal_span = lighting_decimal_max - lighting_decimal_min;
-            lighting_decimal = lighting_decimal_max - (block_lighting / 15) * lighting_decimal_span;
+            lighting_decimal = lighting_decimal_max - (block_lighting / this.game.level.MAX_LIGHT_LEVEL) * lighting_decimal_span;
             
             const fullLightLimit = 1; //Dist from fluid in which no additional dark mask is added
             const gradientSpan = 2; //From darkness to almost no darkness added
@@ -118,7 +118,7 @@ class World_Renderer {
         this.ctx.fillRect(left, top, blockSize, blockSize);
 
         //Lighting
-        const block_lighting = block_data.light; // 0 - 15
+        const block_lighting = block_data.light; // 0 - max
 
         if (!this.game.debugger.settings.xray) {
             let lighting_decimal = 0.6 - block_lighting / 25;
