@@ -13,12 +13,12 @@ class Level {
         this.level_size = null;
 
         // Simulation distances in chunks
-        this.simulation_distance = null; // For general block updates
-        this.block_simulation_distance = null; // For light calculations
+        this.simulation_distance = 7; // For general block updates
 
         // Simulation distances for performance ticks
-        this.simulation_distance_performance = 3;
-        this.block_simulation_distance_performance = 3;
+        this.simulation_distance_performance = 5;
+
+        this.verticalSimulationDistance = {above: 1, below: 1}; // in addition to current chunk
 
         this.chunk_size = 16;
         this.calc = this.game.calculator;
@@ -28,7 +28,7 @@ class Level {
         this.generator = new Generator(game, this.data, this.properties);
         this.item_directory = this.game.item_directory;
 
-        this.time = 8000;
+        this.time = 0;
         this.sun_strength_default = 23;
         this.sun_strength_min = 4;
         this.sun_strength = 23; //0 - 15
@@ -185,15 +185,13 @@ class Level {
             checkValidity: 1
         };
 
-        let verticalSimulationDistance = {above: 0, below: 0}; // in addition to current chunk
-
         const verticalSimulationRange = (() => { // liquid and lighting are excluded
             if (this.game.debugger.settings.vertical_chunking) {
                 const playerY = this.game.player.y;
                 const playerVerticalChunk = this.calc.getVerticalChunk(playerY);
 
                 const minBlock = (() => {
-                    const minVerticalChunk = playerVerticalChunk - verticalSimulationDistance.below;
+                    const minVerticalChunk = playerVerticalChunk - this.verticalSimulationDistance.below;
                     const blockY = minVerticalChunk * this.chunk_size;
                     if (blockY < 0) {
                         return 0;
@@ -202,7 +200,7 @@ class Level {
                     }
                 })();
                 const maxBlock = (() => {
-                    const maxVerticalChunk = playerVerticalChunk + verticalSimulationDistance.above;
+                    const maxVerticalChunk = playerVerticalChunk + this.verticalSimulationDistance.above;
                     const blockY = (maxVerticalChunk + 1) * this.chunk_size - 1;
 
                     if (blockY >= this.properties.height_blocks) {
@@ -366,13 +364,7 @@ class Level {
 
         const simulated_chunk_performance_min = this.calc.getSimulatedChunkBounds(this.simulation_distance_performance).min;
         const simulated_chunk_performance_max = this.calc.getSimulatedChunkBounds(this.simulation_distance_performance).max;
-
-        const block_simulated_chunk_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).min;
-        const block_simulated_chunk_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance).max;
     
-        const block_simulated_chunk_performance_min = this.calc.getSimulatedChunkBounds(this.block_simulation_distance_performance).min;
-        const block_simulated_chunk_performance_max = this.calc.getSimulatedChunkBounds(this.block_simulation_distance_performance).max;
-
         // GAMETICK LOGIC
 
         const gametick_logic = (chunk_min, chunk_max) => {
@@ -645,9 +637,9 @@ class Level {
 
         if (toCompute.lighting) {
             if (tick % computeFreq.lighting === 0) {
-                lighting(block_simulated_chunk_min, block_simulated_chunk_max);
+                lighting(simulated_chunk_min, simulated_chunk_max);
             } else if (tick % performanceTickFreq.lighting === 0) {
-                lighting(block_simulated_chunk_performance_min, block_simulated_chunk_performance_max);
+                lighting(simulated_chunk_performance_min, simulated_chunk_performance_max);
             }
         }
         
@@ -698,9 +690,9 @@ class Level {
 
         if (toCompute.neighbour) {
             if (tick % computeFreq.neighbour === 0) {
-                neighbour(block_simulated_chunk_min, block_simulated_chunk_max);
+                neighbour(simulated_chunk_min, simulated_chunk_max);
             } else if (tick % performanceTickFreq.neighbour === 0) {
-                neighbour(block_simulated_chunk_performance_min, block_simulated_chunk_performance_max);
+                neighbour(simulated_chunk_performance_min, simulated_chunk_performance_max);
             }
         }
 

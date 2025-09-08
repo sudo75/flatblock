@@ -458,9 +458,6 @@ class Game {
                 this.level.properties.height_blocks = height_blocks;
                 this.level.properties.generation_limit = generation_limit;
 
-                this.level.simulation_distance = 7;
-                this.level.block_simulation_distance = 7;
-
                 this.level.level_size = level_size;
 
                 this.level.generate();
@@ -817,9 +814,6 @@ class Game {
                 this.level.level_size = gameData_parsed.level_size;
                 this.tick = gameData_parsed.tick;
                 this.level.time = gameData_parsed.time;
-
-                this.level.simulation_distance = gameData_parsed.level_properties.width_chunks;
-                this.level.block_simulation_distance = 3;
 
                 resolve();
             }, 0);
