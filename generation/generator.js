@@ -437,15 +437,21 @@ class Generator {
         blockID = placeBlock_ID ? placeBlock_ID: blockID;
 
         // Get block class from block id
-        let block = this.item_directory.item[blockID];
+        let block_class = this.item_directory.item[blockID];
 
         // Do not allow non-blocks (i.e. items) to be placed
         if (!this.item_directory.getProperty(blockID, 'isBlock')) return;
 
-        // Place block
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new block(x, y);
+        const block_instance = new block_class(x, y);
+        block_instance.light = (() => {
+            const maxLightLevelOfNeighbours = Math.max(this.calc.getBlockData(x + 1, y)?.light, this.calc.getBlockData(x + 1, y + 1)?.light, this.calc.getBlockData(x - 1, y)?.light, this.calc.getBlockData(x - 1, y - 1)?.light);
+            return Math.max(maxLightLevelOfNeighbours - 1, 0);
+        })(); 
 
-        if (block && this.game.tick) {
+        // Place block
+        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = block_instance;
+
+        if (block_instance && this.game.tick) {
             this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y].placedAt = this.game.tick;
         }
     }
@@ -499,10 +505,7 @@ class Generator {
         }
 
 
-        //Set block to air
-        const Air_class = this.item_directory.item[0];
-
-        this.data[this.calc.getChunkID(x)].block_data[this.calc.getRelativeX(x)][y] = new Air_class(x, y);
+        this.placeBlockOnly(0, x, y);
     }
 }
 
